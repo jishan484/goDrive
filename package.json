@@ -1,0 +1,19 @@
+{
+  "name": "multidive",
+  "version": "1.0.0",
+  "description": "Combine multiple google drive and provide reliable query based filesyatem",
+  "main": "server.js",
+  "scripts": {
+    "test": "nodemon server.js"
+  },
+  "keywords": [
+    "multidrive",
+    "gfsQuery"
+  ],
+  "author": "jishan",
+  "license": "MIT",
+  "dependencies": {
+    "jsonwebtoken": "8.5.1",
+    "cookie-parser":"1.4.6"
+  }
+}

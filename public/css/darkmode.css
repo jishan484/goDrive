@@ -1,0 +1,6 @@
+:root{
+    --body-background:rgb(56, 56, 56);
+    --nav-background:rgb(75, 8, 8);
+    --menu-background:rgb(215 215 215);
+    --menu-transition-time:0.5s;
+}
