@@ -9,6 +9,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use((req, res, next) => {
+    res.set('Cache-Control', 'public, max-age=31536000');
     res.header("X-Powered-By", "MiFi-Server");
     next();
 });
@@ -16,7 +17,7 @@ app.use((req, res, next) => {
 app.use('/', express.static('public'));
 
 app.get('/', (req, res) => {
-    res.set('Cache-Control', 'no-store');
+    res.set('Cache-Control', 'no-cache, no-store');
     if (userService.isLoggedIn(req)) {
         res.redirect('/home');
     } else {
@@ -24,7 +25,7 @@ app.get('/', (req, res) => {
     }
 });
 app.get('/home', (req, res) => {
-    res.set('Cache-Control', 'no-store');
+    res.set('Cache-Control', 'no-cache, no-store');
     if (userService.isLoggedIn(req)) {
         res.sendFile(__dirname + '/views/home.html');
     } else {
