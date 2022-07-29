@@ -2,6 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const userService = require('./service/userService')
 const app = express();
+const port = process.env.PORT || 80;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -37,6 +38,6 @@ app.use('/portal', require('./controller/portal'));
 
 app.get('*', (req, res) => res.send('Oh! where you are going ? Stay true to your path.'));
 
-app.listen(3000, () => {
-    console.log('Server Started!\nlistening on port 0.0.0.0:3000');
+app.listen(port, () => {
+    console.log('Server Started!\nlistening on port 0.0.0.0:'+port);
 });
