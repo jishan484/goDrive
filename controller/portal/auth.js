@@ -1,5 +1,6 @@
 const express = require('express');
-const { RouterConfig } = require('./../../SystemConfig')
+const userService = require('../../service/userService');
+const { RouterConfig } = require('./../../SystemConfig');
 const router = express.Router({ mergeParams: true });
 
 
