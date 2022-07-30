@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use((req, res, next) => {
-    if(req.url.search('portal') == -1){
+    if(req.url.search('app') == -1){
         res.set('Cache-Control', 'private, max-age=86400, stale-while-revalidate=604800');
     }
     res.header("X-Powered-By", "MiFi-Server");
@@ -36,8 +36,8 @@ app.get('/home', (req, res) => {
     }
 });
 
-app.use('/portal', require('./controller/portal'));
-// app.use('/app', require('./routes/users'))
+app.use('/app', require('./controller/app'));
+// app.use('/external', require('./controller/external'))
 
 
 app.get('*', (req, res) => res.send('Ooi! where you are going ? Stay true to your path.'));

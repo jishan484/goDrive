@@ -3,15 +3,15 @@
 
 | API | GET | POST | PUT  | DELETE | DEVELOPED | TESTED |
 | :----- | :-: | :-: | :-: | :-: | :-: | :-: |
-| /portal/auth | Yes | Yes | Yes | Yes | No | No |
-| /portal/api/user/:id | Yes | No | No | No | No | No |
-| /portal/api/profile | Yes | No | Yes | No | No | No |
-| /portal/api/user/config | Yes | Yes | Yes | No | No | No |
-| /portal/api/folder | Yes | Yes | Yes | Yes | No | No |
-| /portal/api/file | Yes | Yes | Yes | Yes | No | No |
-| /portal/api/file/share | Yes | Yes | Yes | Yes | No | No |
-| /portal/api/statistic | Yes | Yes | No | No | No | No |
-| /portal/api/ftp | Yes | No | Yes | No | No | No |
+| /app/auth | Yes | Yes | Yes | Yes | No | No |
+| /app/u/user/:id | Yes | No | No | No | No | No |
+| /app/u/profile | Yes | No | Yes | No | No | No |
+| /app/u/user/config | Yes | Yes | Yes | No | No | No |
+| /app/u/folder | Yes | Yes | Yes | Yes | No | No |
+| /app/u/file | Yes | Yes | Yes | Yes | No | No |
+| /app/u/file/share | Yes | Yes | Yes | Yes | No | No |
+| /app/u/statistic | Yes | Yes | No | No | No | No |
+| /app/u/ftp | Yes | No | Yes | No | No | No |
 | /common/config | Yes | No | Yes | No | No | No |
 | /common/content | Yes | No | Yes | No | No | No |
 
