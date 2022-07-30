@@ -132,12 +132,16 @@
                     $('#loginError').text('Invalid Response from Server');
                 }
                 else{
+                    if(data.redirected){
+                        window.location.reload();
+                        return false;
+                    }
                     data.json().then(data => {
                         console.log(data);
                         if (data.status == 'success') {
                             window.location.href = '/home';
                         } else {
-                            $('#loginError').innerHTML = data.error;
+                            $('#loginError').html(data.error);
                         }
                     });
                 }

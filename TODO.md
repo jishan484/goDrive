@@ -71,7 +71,7 @@ risk and mitigation
     as defKey is not stored in db files cant be decripted. but all file details are visible to hackes
 2. in the event of db lost
     if there is no db backup taken, user can decrypt and recover all files based on locally stored encriptrd defKey and singleKey stored in `sysEncTable` folder. process will be shared latter.
-3. in the event of db and server hack [not likely it will happen if user is not using proper firewall]
+3. in the event of db and server hack [not likely it will happen if user is not using proper security mesure]
     then nothing cant be done. [If you know at the right time then lock the system using admin user]
     locking the system will delete all node delails , will delete .env.
     Then updated gdrive details as soon as possible.

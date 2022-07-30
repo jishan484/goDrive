@@ -4,14 +4,14 @@
 | API | GET | POST | PUT  | DELETE | DEVELOPED | TESTED |
 | :----- | :-: | :-: | :-: | :-: | :-: | :-: |
 | /portal/auth | Yes | Yes | Yes | Yes | No | No |
-| /portal/v/user/:id | Yes | No | No | No | No | No |
-| /portal/v/profile | Yes | No | Yes | No | No | No |
-| /portal/v/user/config | Yes | Yes | Yes | No | No | No |
-| /portal/v/folder | Yes | Yes | Yes | Yes | No | No |
-| /portal/v/file | Yes | Yes | Yes | Yes | No | No |
-| /portal/v/file/share | Yes | Yes | Yes | Yes | No | No |
-| /portal/v/statistic | Yes | Yes | No | No | No | No |
-| /portal/v/ftp | Yes | No | Yes | No | No | No |
+| /portal/api/user/:id | Yes | No | No | No | No | No |
+| /portal/api/profile | Yes | No | Yes | No | No | No |
+| /portal/api/user/config | Yes | Yes | Yes | No | No | No |
+| /portal/api/folder | Yes | Yes | Yes | Yes | No | No |
+| /portal/api/file | Yes | Yes | Yes | Yes | No | No |
+| /portal/api/file/share | Yes | Yes | Yes | Yes | No | No |
+| /portal/api/statistic | Yes | Yes | No | No | No | No |
+| /portal/api/ftp | Yes | No | Yes | No | No | No |
 | /common/config | Yes | No | Yes | No | No | No |
 | /common/content | Yes | No | Yes | No | No | No |
 

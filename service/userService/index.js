@@ -12,7 +12,6 @@ class UserService {
         if(token == 'undefined') return false;
         try {
             const decoded = jwt.verify(token, "process.env.JWT_SECRET");
-            console.log(decoded);
             return true;
         } catch (err) {
             return false;
@@ -49,10 +48,10 @@ class UserService {
                 sameSite: true,
                 secure: true
             });
-            res.status(200).send({ status: 'success', error: null, code: '200' });
+            return true;
         }
         else{
-            res.status(200).send({ status: 'failed', error: "Username and Password not matched", code: '204' });
+            return false;
         }
     }
 
