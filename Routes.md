@@ -3,7 +3,7 @@
 
 | API | GET | POST | PUT  | DELETE | DEVELOPED | TESTED |
 | :----- | :-: | :-: | :-: | :-: | :-: | :-: |
-| /app/auth | Yes | Yes | Yes | Yes | No | No |
+| /app/auth | Yes | Yes | Yes | Yes | Yes | No |
 | /app/u/user/:id | Yes | No | No | No | No | No |
 | /app/u/profile | Yes | No | Yes | No | No | No |
 | /app/u/user/config | Yes | Yes | Yes | No | No | No |

@@ -17,20 +17,20 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/', express.static('public'));
+app.use('/', express.static('resources/public'));
 
 app.get('/', (req, res) => {
     res.set('Cache-Control', 'no-cache, no-store');
     if (userService.isLoggedIn(req)) {
         res.redirect(RouterConfig.home_page_uri);
     } else {
-        res.sendFile(__dirname + '/views/login.html');
+        res.sendFile(__dirname + '/resources/views/login.html');
     }
 });
 app.get('/home', (req, res) => {
     res.set('Cache-Control', 'no-cache, no-store');
     if (userService.isLoggedIn(req)) {
-        res.sendFile(__dirname + '/views/home.html');
+        res.sendFile(__dirname + '/resources/views/home.html');
     } else {
         res.redirect(RouterConfig.force_login_redirect_uris);
     }
