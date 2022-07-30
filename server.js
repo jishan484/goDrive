@@ -2,7 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const userService = require('./service/userService')
 const app = express();
-const port = process.env.PORT | 8000;
+const port = process.env.PORT || 8000;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
