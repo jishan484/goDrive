@@ -5,5 +5,11 @@ const RouterConfig = {
    ,home_page_uri : '/home'
 }
 
+const UserConfig = {
+    salt:'$2a$10$X.Q.T.V.Y.F.S.Y.S.alasbyqy',
+    defaultRole : 'user1',
+    userRegisteration : true
+}
 
-module.exports = {RouterConfig}
+
+module.exports = {RouterConfig , UserConfig};

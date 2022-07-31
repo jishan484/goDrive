@@ -27,6 +27,14 @@ app.get('/', (req, res) => {
         res.sendFile(__dirname + '/resources/views/login.html');
     }
 });
+app.get('/register', (req, res) => {
+    res.set('Cache-Control', 'no-cache, no-store');
+    if (userService.isLoggedIn(req)) {
+        res.redirect(RouterConfig.home_page_uri);
+    } else {
+        res.sendFile(__dirname + '/resources/views/register.html');
+    }
+});
 app.get('/home', (req, res) => {
     res.set('Cache-Control', 'no-cache, no-store');
     if (userService.isLoggedIn(req)) {

@@ -18,7 +18,7 @@ function userLogin(req, res) {
         res.redirect(RouterConfig.home_page_uri);
     }
     else {
-        userService.userLogin(req, res).then((status) => {
+        userService.userLogin(req, res , (status)=>{
             if (status) {
                 res.status(200).send({ status: 'success', error: null, code: '200' });
             }
@@ -36,14 +36,22 @@ function userLogout(req, res) {
 
 
 function userRegister(req, res) {
-    res.send("ok");
+    userService.userRegister(req, res, (status,err) => {
+        if (status) {
+            res.status(200).send({ status: 'success', error: null, code: '200' });
+        }
+        else {
+            res.status(200).send({ status: 'failed', error: err, code: '204' });
+        }
+    }
+    );
 }
 
-function userValidationMiddleware(req, res, next) {
-    if (this.isLoggedIn(req)) {
-        next();
-    }
-    else {
-        res.redirect(RouterConfig.force_login_redirect_uris);
-    }
-}
+// function userValidationMiddleware(req, res, next) {
+//     if (this.isLoggedIn(req)) {
+//         next();
+//     }
+//     else {
+//         res.redirect(RouterConfig.force_login_redirect_uris);
+//     }
+// }

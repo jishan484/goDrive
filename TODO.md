@@ -19,7 +19,6 @@ modified date time
 -+-accesses [r w d] [ read-only files can be deleted by sysmonuser(Default user for system monitoring)]
 priority [temp parma super]
 parent folder [id only]
-root folder [id only]
 ---encription type
 ---encription key
 +++part details [comma separated] [ max 5 part , minimum 2]

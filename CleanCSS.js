@@ -8,7 +8,9 @@ var CSSblock = '';
 var final_css = '';
 
 // put ebery html files name here
-loadClassAndTags('public/index.html');
+loadClassAndTags('resources/views/home.html');
+loadClassAndTags('resources/views/login.html');
+loadClassAndTags('resources/views/register.html');
 
 //setting some default classes / tags / css properties[dont delete]
 setDefaultCSSBlocks();
@@ -21,7 +23,7 @@ for (var key in HTMLclassNames) {
 console.log('number of classes: ' + numberOfClasses);
 
 // read all css file
-CSSblock=loadCSS('public/vendor/css/core.css');
+CSSblock=loadCSS('resources/public/vendor/css/core.css');
 
 css_blocks = CSSblock.split('\n:\n');
 
@@ -41,7 +43,7 @@ for (var i = 0; i < css_blocks.length; i++) {
 
 // write to file
 final_css = final_css.replace(/  /g,"");
-fs.writeFileSync('public/vendor/css/coreMin.css', final_css);
+fs.writeFileSync('resources/public/vendor/css/coreMin.css', final_css);
 
 function loadClassAndTags(path) {
     lines = fs.readFileSync(path, 'utf8').split('\n');
