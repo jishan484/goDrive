@@ -8,7 +8,7 @@ module.exports = {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         userName TEXT UNIQUE KEY, 
         password TEXT,
-        accessToken TEXT, 
+        accessToken TEXT,
         role TEXT, 
         createdOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
         profile TEXT
