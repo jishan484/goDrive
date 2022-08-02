@@ -8,9 +8,9 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use((req, res, next) => {
-    if (req.url.search('/app/') == -1) {
-        res.set('Cache-Control', 'private, max-age=86400, stale-while-revalidate=604800');
-    }
+    // if (req.url.search('/app/') == -1) {
+    //     res.set('Cache-Control', 'private, max-age=86400, stale-while-revalidate=604800');
+    // }
     res.header("X-Powered-By", "MiFi-Server");
     next();
 });
