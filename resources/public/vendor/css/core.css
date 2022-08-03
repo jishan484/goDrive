@@ -17043,10 +17043,48 @@ html:not(.layout-footer-fixed) .content-wrapper {
   padding-right: 10px;
 }
 
-.zpad{
+.zpad {
   padding: 0.1rem 1rem;
   text-align: center;
 }
+
+.btn-opt {
+  padding: 0.36rem 0.1875rem !important;
+  width: 123px !important;
+  font-size: .78rem;
+}
+
+.btn-opt span {
+  top: -2px;
+  position: relative;
+}
+
+@media screen and (max-width: 290px) {
+  .col-6 {
+    width: 100%;
+  }
+}
+
+.ncb::before {
+  display: inline-block;
+  position: absolute;
+  transform: translate(-11px, -4px);
+  border-radius: 3px;
+  content: "";
+  width: 0;
+  height: 26px;
+  background: linear-gradient(90deg,#d67e7e42,#12bdbb42);
+  animation: ncbb 30s 1 linear;
+}
+
+@keyframes ncbb {
+  100%{
+    width: 54px;
+  }
+}
+
+
+
 
 
 

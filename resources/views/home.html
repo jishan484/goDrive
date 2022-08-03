@@ -241,51 +241,35 @@
 
                     <div class="container-xxl flex-grow-1 container-p-y">
                         <div class="row">
-                            <!-- Top Notification -->
-                            <div class="col-lg-12 mb-4 order-0 minpad" id="Notification_top_panel" style="display: none;">
-                                <div class="card">
-                                    <div class="d-flex align-items-end row">
-                                        <div class="col-sm-12">
-                                            <div class="card-body">
-                                                <h3 class="card-title text-primary">Good Moring Jishan! 🎉</h3>
-                                                <p class="mb-4">
-                                                    While you were away, <span class="fw-bold">23</span> new
-                                                    Notifications was sent to you.
-                                                    No new activities for now.
-                                                    3 temporary files removed from your account.
-                                                </p>
-                                                <a href="javascript:;" onclick="$('#Notification_top_panel').animate({height:0},240).hide(0)" class="btn btn-sm btn-outline-primary">Close</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--/ Top Notification -->
+
+
 
                             <!-- Top Options -->
                             <div class="col-lg-12 mb-0 order-0">
                                 <div class="card mb-3">
                                     <div class="card-body zpad">
                                         <p class="demo-inline-spacing">
-                                            <a class="btn btn-outline-primary me-1 small" data-bs-toggle="collapse" href="#collapseExample" role="button"
-                                                aria-expanded="true" aria-controls="collapseExample">
+                                            <a class="btn btn-sm btn-opt btn-secondary" data-bs-toggle="collapse" href="#collapseExample"
+                                                role="button" aria-expanded="true" aria-controls="collapseExample">
+                                                <span class="tf-icons bx bx-folder-plus"></span>
                                                 Create Folder
                                             </a>
-                                            <button class="btn btn-outline-primary me-1 small" type="button" data-bs-toggle="collapse"
+                                            <button class="btn btn-sm btn-opt btn-secondary" type="button" data-bs-toggle="collapse"
                                                 data-bs-target="#collapseExample" aria-expanded="true" aria-controls="collapseExample">
+                                                <span class="tf-icons bx bx-cloud-upload"></span>
                                                 Upload Files
                                             </button>
                                         </p>
                                         <div class="collapse" id="collapseExample" style="padding-bottom: 10px; transition: height 0.2s;">
                                             <form id="formAuthentication" class="mb-2" onsubmit="return false;">
                                                 <div class="mb-2">
-                                                    <input type="text" class="form-control" id="foldername" placeholder="Enter Folder Name"
-                                                        autofocus/>
+                                                    <center><input type="text" class="form-control w-50" id="foldername"
+                                                            placeholder="Enter Folder Name" autofocus /></center>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <span class="small" id="loginError"></span>
+                                                <div class="mb-1">
+                                                    <span class="small" id="loginError">Folder name already exist in this directory</span>
                                                 </div>
-                                                <div class="mb-3">
+                                                <div class="mb-2">
                                                     <button class="btn btn-primary w-25" type="submit">Create</button>
                                                 </div>
                                             </form>
@@ -294,6 +278,46 @@
                                 </div>
                             </div>
                             <!-- end of File manager options -->
+
+
+
+
+
+                            <!-- Top Notification -->
+                            <div class="col-lg-12 mb-2 order-0 minpad" id="Notification_top_panel" style="display: none;">
+                                <div class="card">
+                                    <div class="d-flex align-items-end row">
+                                        <div class="col-sm-12">
+                                            <div class="card-body">
+                                                <h3 class="card-title text-primary">Good Moring Jishan! 🎉</h3>
+                                                <p class="mb-3">
+                                                    While you were away, <span class="fw-bold">23</span> new
+                                                    Notifications was sent to you.
+                                                    No new activities for now.
+                                                    3 temporary files removed from your account.
+                                                </p>
+                                                <a href="javascript:;" onclick="$('#Notification_top_panel').animate({height:0},240).hide(0)" class="btn btn-sm btn-outline-primary ncb" id="notificationClose">Close</a>
+                                                <script>
+                                                    setTimeout(function() {
+                                                        $('#Notification_top_panel').animate({height:0},240).hide(0);
+                                                    }, 30000);
+                                                </script>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--/ Top Notification -->
+
+                            
+
+
+
+
+
+
+
+
                             <div class="col-lg-12 col-md-12 order-1">
                                 <div class="row">
                                     <div class="col-lg-3 col-md-4 col-6 mb-1 opadl">
