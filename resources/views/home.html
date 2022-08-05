@@ -167,8 +167,7 @@
                                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
                                     data-bs-toggle="dropdown">
                                     <div class="avatar avatar-online">
-                                        <img src="image/1.png" alt
-                                            class="w-px-40 h-auto rounded-circle" />
+                                        <img src="image/1.png" alt class="w-px-40 h-auto rounded-circle" />
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
@@ -245,48 +244,56 @@
                                 <div class="card mb-3">
                                     <div class="card-body zpad">
                                         <p class="demo-inline-spacing">
-                                            <a class="btn btn-sm btn-opt btn-secondary" data-bs-toggle="collapse" href="#collapseExample"
-                                                role="button" aria-expanded="true" aria-controls="collapseExample">
+                                            <a class="btn btn-sm btn-opt btn-secondary" data-bs-toggle="collapse"
+                                                href="#collapseExample" role="button" aria-expanded="true"
+                                                aria-controls="collapseExample">
                                                 <span class="tf-icons bx bx-folder-plus"></span>
                                                 Create Folder
                                             </a>
-                                            <button class="btn btn-sm btn-opt btn-secondary" type="button" data-bs-toggle="collapse"
-                                                data-bs-target="#collapseExample" aria-expanded="true" aria-controls="collapseExample">
+                                            <button class="btn btn-sm btn-opt btn-secondary" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#collapseExample"
+                                                aria-expanded="true" aria-controls="collapseExample">
                                                 <span class="tf-icons bx bx-cloud-upload"></span>
                                                 Upload Files
                                             </button>
-                                            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                                <button type="button" class="btn btn-outline-secondary">
-                                                    <i class="tf-icons bx bx-arrow-back"></i>
-                                                    Back
+                                        <div class="btn-group" role="group"
+                                            aria-label="Button group with nested dropdown">
+                                            <button type="button" class="btn btn-outline-secondary">
+                                                <i class="tf-icons bx bx-arrow-back"></i>
+                                                Back
+                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary">
+                                                <i class="tf-icons bx bx-home"></i>
+                                            </button>
+                                            <div class="btn-group" role="group">
+                                                <button id="btnGroupDrop1" type="button"
+                                                    class="btn btn-outline-secondary dropdown-toggle"
+                                                    data-bs-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="false">
+                                                    Sort
                                                 </button>
-                                                <button type="button" class="btn btn-outline-secondary">
-                                                    <i class="tf-icons bx bx-home"></i>
-                                                </button>
-                                                <div class="btn-group" role="group">
-                                                    <button id="btnGroupDrop1" type="button" class="btn btn-outline-secondary dropdown-toggle"
-                                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        Sort
-                                                    </button>
-                                                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                                        <a class="dropdown-item" href="javascript:void(0);">Sort by Name</a>
-                                                        <a class="dropdown-item" href="javascript:void(0);">Sort by Date</a>
-                                                        <a class="dropdown-item" href="javascript:void(0);">Sort by Size</a>
-                                                    </div>
+                                                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                                    <a class="dropdown-item" href="javascript:void(0);">Sort by Name</a>
+                                                    <a class="dropdown-item" href="javascript:void(0);">Sort by Date</a>
+                                                    <a class="dropdown-item" href="javascript:void(0);">Sort by Size</a>
                                                 </div>
                                             </div>
+                                        </div>
                                         </p>
-                                        <div class="collapse" id="collapseExample" style="padding-bottom: 10px; transition: height 0.2s;">
+                                        <div class="collapse" id="collapseExample"
+                                            style="padding-bottom: 10px; transition: height 0.2s;">
                                             <form id="formAuthentication" class="mb-2" onsubmit="return false;">
                                                 <div class="mb-2">
                                                     <center><input type="text" class="form-control w-50" id="foldername"
                                                             placeholder="Enter Folder Name" autofocus /></center>
                                                 </div>
                                                 <div class="mb-1">
-                                                    <span class="small" id="loginError">Folder name already exist in this directory</span>
+                                                    <span class="small" id="loginError">Folder name already exist in
+                                                        this directory</span>
                                                 </div>
                                                 <div class="mb-2">
-                                                    <button class="btn btn-primary w-25 mw-50" type="submit">Create</button>
+                                                    <button class="btn btn-primary w-25 mw-50"
+                                                        type="submit">Create</button>
                                                 </div>
                                             </form>
                                         </div>
@@ -298,7 +305,8 @@
 
 
                             <!-- Top Notification -->
-                            <div class="col-lg-12 mb-2 order-0 minpad" id="Notification_top_panel" style="display: none;">
+                            <div class="col-lg-12 mb-2 order-0 minpad" id="Notification_top_panel"
+                                style="display: block;">
                                 <div class="card">
                                     <div class="d-flex align-items-end row">
                                         <div class="col-sm-12">
@@ -310,10 +318,13 @@
                                                     No new activities for now.
                                                     3 temporary files removed from your account.
                                                 </p>
-                                                <a href="javascript:;" onclick="$('#Notification_top_panel').animate({height:0},240).hide(0)" class="btn btn-sm btn-outline-primary ncb" id="notificationClose">Close</a>
+                                                <a href="javascript:;"
+                                                    onclick="$('#Notification_top_panel').animate({height:0},240).hide(0)"
+                                                    class="btn btn-sm btn-outline-primary ncb"
+                                                    id="notificationClose">Close</a>
                                                 <script>
-                                                    setTimeout(function() {
-                                                        $('#Notification_top_panel').animate({height:0},240).hide(0);
+                                                    setTimeout(function () {
+                                                        $('#Notification_top_panel').animate({ height: 0 }, 240).hide(0);
                                                     }, 30000);
                                                 </script>
                                             </div>
@@ -323,7 +334,6 @@
                             </div>
                             <!--/ Top Notification -->
 
-                            
 
 
 
@@ -332,138 +342,168 @@
 
 
 
-                            <div class="col-lg-12 col-md-12 order-1">
-                                <div class="row">
-                                    <div class="col-lg-3 col-md-4 col-6 mb-3">
-                                        <div class="card">
-                                            <div class="card-body folder">
-                                                <div class="card-title d-flex align-items-start justify-content-between pointable">
-                                                    <div class="avatar flex-shrink-1">
-                                                        <img src="image/folder_ftp.png" alt="chart success" style="width:50px;height:50px;"/>
-                                                    </div>
-                                                    <div class="dropdown">
-                                                        <button class="btn p-0" type="button" id="cardOpt3"
-                                                            data-bs-toggle="dropdown" aria-haspopup="true"
-                                                            aria-expanded="false">
-                                                            <i class="bx bx-dots-vertical-rounded"></i>
-                                                        </button>
-                                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                                                            <a class="dropdown-item" href="javascript:void(0);">Star</a>
-                                                            <a class="dropdown-item"
-                                                                href="javascript:void(0);">Lock</a>
+                            <div id="folders">
+                                <div class="col-lg-12 col-md-12 order-1">
+                                    <div class="row">
+                                        <div class="col-lg-3 col-md-4 col-6 mb-3">
+                                            <div class="card">
+                                                <div class="card-body folder">
+                                                    <div
+                                                        class="card-title d-flex align-items-start justify-content-between pointable">
+                                                        <div class="avatar flex-shrink-1">
+                                                            <img src="image/folder_ftp.png" alt="chart success"
+                                                                style="width:50px;height:50px;" />
+                                                        </div>
+                                                        <div class="dropdown">
+                                                            <button class="btn p-0" type="button" id="cardOpt3"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                                <i class="bx bx-dots-vertical-rounded"></i>
+                                                            </button>
+                                                            <div class="dropdown-menu dropdown-menu-end"
+                                                                aria-labelledby="cardOpt3">
+                                                                <a class="dropdown-item"
+                                                                    href="javascript:void(0);">Star</a>
+                                                                <a class="dropdown-item"
+                                                                    href="javascript:void(0);">Lock</a>
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                    <div class="small folder-name">WSB report</div>
+                                                    <div class="folder-name-s">09/11/2022</div>
                                                 </div>
-                                                <div class="small folder-name">WSB report</div>
-                                                <div class="folder-name-s">09/11/2022</div>
                                             </div>
                                         </div>
-                                    </div>
 
 
-                                    <div class="col-lg-3 col-md-4 col-6 mb-3">
-                                        <div class="card">
-                                            <div class="card-body folder">
-                                                <div class="card-title d-flex align-items-start justify-content-between pointable">
-                                                    <div class="avatar flex-shrink-1">
-                                                        <img src="image/folder_ftp.png" alt="chart success" style="width:50px;height:50px;" />
-                                                    </div>
-                                                    <div class="dropdown">
-                                                        <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown" aria-haspopup="true"
-                                                            aria-expanded="false">
-                                                            <i class="bx bx-dots-vertical-rounded"></i>
-                                                        </button>
-                                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                                                            <a class="dropdown-item" href="javascript:void(0);">Star</a>
-                                                            <a class="dropdown-item" href="javascript:void(0);">Lock</a>
+                                        <div class="col-lg-3 col-md-4 col-6 mb-3">
+                                            <div class="card">
+                                                <div class="card-body folder">
+                                                    <div
+                                                        class="card-title d-flex align-items-start justify-content-between pointable">
+                                                        <div class="avatar flex-shrink-1">
+                                                            <img src="image/folder_ftp.png" alt="chart success"
+                                                                style="width:50px;height:50px;" />
+                                                        </div>
+                                                        <div class="dropdown">
+                                                            <button class="btn p-0" type="button" id="cardOpt3"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                                <i class="bx bx-dots-vertical-rounded"></i>
+                                                            </button>
+                                                            <div class="dropdown-menu dropdown-menu-end"
+                                                                aria-labelledby="cardOpt3">
+                                                                <a class="dropdown-item"
+                                                                    href="javascript:void(0);">Star</a>
+                                                                <a class="dropdown-item"
+                                                                    href="javascript:void(0);">Lock</a>
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                    <div class="folder-name small">abcd</div>
+                                                    <div class="folder-name-s">09/11/2022</div>
                                                 </div>
-                                                <div class="folder-name small">abcd</div>
-                                                <div class="folder-name-s">09/11/2022</div>
                                             </div>
                                         </div>
-                                    </div>
 
 
 
-                                    <div class="col-lg-3 col-md-4 col-6 mb-3">
-                                        <div class="card">
-                                            <div class="card-body folder">
-                                                <div class="card-title d-flex align-items-start justify-content-between pointable">
-                                                    <div class="avatar flex-shrink-1">
-                                                        <img src="image/folder_ftp.png" alt="chart success" style="width:50px;height:50px;" />
-                                                    </div>
-                                                    <div class="dropdown">
-                                                        <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown" aria-haspopup="true"
-                                                            aria-expanded="false">
-                                                            <i class="bx bx-dots-vertical-rounded"></i>
-                                                        </button>
-                                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                                                            <a class="dropdown-item" href="javascript:void(0);">Star</a>
-                                                            <a class="dropdown-item" href="javascript:void(0);">Lock</a>
+                                        <div class="col-lg-3 col-md-4 col-6 mb-3">
+                                            <div class="card">
+                                                <div class="card-body folder">
+                                                    <div
+                                                        class="card-title d-flex align-items-start justify-content-between pointable">
+                                                        <div class="avatar flex-shrink-1">
+                                                            <img src="image/folder_ftp.png" alt="chart success"
+                                                                style="width:50px;height:50px;" />
+                                                        </div>
+                                                        <div class="dropdown">
+                                                            <button class="btn p-0" type="button" id="cardOpt3"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                                <i class="bx bx-dots-vertical-rounded"></i>
+                                                            </button>
+                                                            <div class="dropdown-menu dropdown-menu-end"
+                                                                aria-labelledby="cardOpt3">
+                                                                <a class="dropdown-item"
+                                                                    href="javascript:void(0);">Star</a>
+                                                                <a class="dropdown-item"
+                                                                    href="javascript:void(0);">Lock</a>
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                    <div class="small folder-name">New folder</div>
+                                                    <div class="folder-name-s">09/11/2022</div>
                                                 </div>
-                                                <div class="small folder-name">New folder</div>
-                                                <div class="folder-name-s">09/11/2022</div>
                                             </div>
                                         </div>
-                                    </div>
 
 
 
-                                    <div class="col-lg-3 col-md-4 col-6 mb-3">
-                                        <div class="card">
-                                            <div class="card-body folder">
-                                                <div class="card-title d-flex align-items-start justify-content-between pointable">
-                                                    <div class="avatar flex-shrink-1">
-                                                        <img src="image/folder_ftp.png" alt="chart success" style="width:50px;height:50px;" />
-                                                    </div>
-                                                    <div class="dropdown">
-                                                        <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown" aria-haspopup="true"
-                                                            aria-expanded="false">
-                                                            <i class="bx bx-dots-vertical-rounded"></i>
-                                                        </button>
-                                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                                                            <a class="dropdown-item" href="javascript:void(0);">Star</a>
-                                                            <a class="dropdown-item" href="javascript:void(0);">Lock</a>
+                                        <div class="col-lg-3 col-md-4 col-6 mb-3">
+                                            <div class="card">
+                                                <div class="card-body folder">
+                                                    <div
+                                                        class="card-title d-flex align-items-start justify-content-between pointable">
+                                                        <div class="avatar flex-shrink-1">
+                                                            <img src="image/folder_ftp.png" alt="chart success"
+                                                                style="width:50px;height:50px;" />
+                                                        </div>
+                                                        <div class="dropdown">
+                                                            <button class="btn p-0" type="button" id="cardOpt3"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                                <i class="bx bx-dots-vertical-rounded"></i>
+                                                            </button>
+                                                            <div class="dropdown-menu dropdown-menu-end"
+                                                                aria-labelledby="cardOpt3">
+                                                                <a class="dropdown-item"
+                                                                    href="javascript:void(0);">Star</a>
+                                                                <a class="dropdown-item"
+                                                                    href="javascript:void(0);">Lock</a>
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                    <div class="small folder-name">My Documents with Image</div>
+                                                    <div class="folder-name-s">09/11/2022</div>
                                                 </div>
-                                                <div class="small folder-name">My Documents with Image</div>
-                                                <div class="folder-name-s">09/11/2022</div>
                                             </div>
                                         </div>
-                                    </div>
 
 
 
-                                    <div class="col-lg-3 col-md-4 col-6 mb-3">
-                                        <div class="card">
-                                            <div class="card-body folder">
-                                                <div class="card-title d-flex align-items-start justify-content-between pointable">
-                                                    <div class="avatar flex-shrink-1">
-                                                        <img src="image/folder_ftp.png" alt="chart success" style="width:50px;height:50px;" />
-                                                    </div>
-                                                    <div class="dropdown">
-                                                        <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown" aria-haspopup="true"
-                                                            aria-expanded="false">
-                                                            <i class="bx bx-dots-vertical-rounded"></i>
-                                                        </button>
-                                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                                                            <a class="dropdown-item" href="javascript:void(0);">Star</a>
-                                                            <a class="dropdown-item" href="javascript:void(0);">Lock</a>
+                                        <div class="col-lg-3 col-md-4 col-6 mb-3">
+                                            <div class="card">
+                                                <div class="card-body folder">
+                                                    <div
+                                                        class="card-title d-flex align-items-start justify-content-between pointable">
+                                                        <div class="avatar flex-shrink-1">
+                                                            <img src="image/folder_ftp.png" alt="chart success"
+                                                                style="width:50px;height:50px;" />
+                                                        </div>
+                                                        <div class="dropdown">
+                                                            <button class="btn p-0" type="button" id="cardOpt3"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                                <i class="bx bx-dots-vertical-rounded"></i>
+                                                            </button>
+                                                            <div class="dropdown-menu dropdown-menu-end"
+                                                                aria-labelledby="cardOpt3">
+                                                                <a class="dropdown-item"
+                                                                    href="javascript:void(0);">Star</a>
+                                                                <a class="dropdown-item"
+                                                                    href="javascript:void(0);">Lock</a>
+                                                            </div>
                                                         </div>
                                                     </div>
+                                                    <div class="small folder-name">Jishan backup</div>
+                                                    <div class="folder-name-s">09/11/2022</div>
                                                 </div>
-                                                <div class="small folder-name">Jishan backup</div>
-                                                <div class="folder-name-s">09/11/2022</div>
                                             </div>
                                         </div>
+
+
                                     </div>
-
-
                                 </div>
                             </div>
                         </div>
@@ -472,28 +512,34 @@
                             <div class="divider-text"></div>
                         </div>
 
-                        <div class="row mb-3">
-                            <div class="col-lg-3 col-md-4 col-6 mb-1">
-                                <div class="card">
-                                    <div class="card-body folder">
-                                        <div class="card-title d-flex align-items-start justify-content-between pointable">
-                                            <div class="avatar flex-shrink-1">
-                                                <img src="image/format/xlsx.svg" alt="chart success" style="width:50px;height:50px;" />
-                                            </div>
-                                            <div class="dropdown">
-                                                <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                    <i class="bx bx-dots-vertical-rounded"></i>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
-                                                    <a class="dropdown-item" href="javascript:void(0);">Star</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);">Lock</a>
+                        <div id="files">
+                            <div class="row mb-3">
+                                <div class="col-lg-3 col-md-4 col-6 mb-1">
+                                    <div class="card">
+                                        <div class="card-body folder">
+                                            <div
+                                                class="card-title d-flex align-items-start justify-content-between pointable">
+                                                <div class="avatar flex-shrink-1">
+                                                    <img src="image/format/xlsx.svg" alt="chart success"
+                                                        style="width:50px;height:50px;" />
+                                                </div>
+                                                <div class="dropdown">
+                                                    <button class="btn p-0" type="button" id="cardOpt3"
+                                                        data-bs-toggle="dropdown" aria-haspopup="true"
+                                                        aria-expanded="false">
+                                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                                    </button>
+                                                    <div class="dropdown-menu dropdown-menu-end"
+                                                        aria-labelledby="cardOpt3">
+                                                        <a class="dropdown-item" href="javascript:void(0);">Star</a>
+                                                        <a class="dropdown-item" href="javascript:void(0);">Lock</a>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <div class="small file-name">My Expenses report.xls</div>
+                                            <div class="file-name-s"><span>09/11/2022</span> <span>45KB</span></div>
+                                            <div class="file-name-s"></div>
                                         </div>
-                                        <div class="small file-name">My Expenses report.xls</div>
-                                        <div class="file-name-s"><span>09/11/2022</span> <span>45KB</span></div>
-                                        <div class="file-name-s"></div>
                                     </div>
                                 </div>
                             </div>
@@ -532,9 +578,10 @@
                                         </div>
                                         <div class="d-flex justify-content-center pt-4 gap-2">
                                             <ul class="list-group">
-                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <li
+                                                    class="list-group-item d-flex justify-content-between align-items-center">
                                                     <i class="bx bx-share me-2"></i>
-                                                    <small><span>32</span> Files Shared</small>                                                    
+                                                    <small><span>32</span> Files Shared</small>
                                                 </li>
                                             </ul>
                                         </div>
@@ -553,11 +600,12 @@
                                             </small>
                                         </div>
                                         <div class="dropdown">
-                                            <button class="btn p-0" type="button" id="orederStatistics" data-bs-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="false">
+                                            <button class="btn p-0" type="button" id="orederStatistics"
+                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <i class="bx bx-dots-vertical-rounded"></i>
                                             </button>
-                                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="orederStatistics">
+                                            <div class="dropdown-menu dropdown-menu-end"
+                                                aria-labelledby="orederStatistics">
                                                 <a class="dropdown-item" href="javascript:void(0);">Mark seen</a>
                                                 <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
                                             </div>
@@ -566,27 +614,32 @@
                                     <div class="card-body">
                                         <div class="demo-inline-spacing mt-3 margint3">
                                             <ul class="list-group">
-                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <li
+                                                    class="list-group-item d-flex justify-content-between align-items-center">
                                                     <i class="bx bx-run me-2"></i>
                                                     Activity
                                                     <span class="badge bg-primary">5</span>
                                                 </li>
-                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <li
+                                                    class="list-group-item d-flex justify-content-between align-items-center">
                                                     <i class="bx bx-bell me-2"></i>
                                                     Notification
                                                     <span class="badge bg-secondary">0</span>
                                                 </li>
-                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <li
+                                                    class="list-group-item d-flex justify-content-between align-items-center">
                                                     <i class="bx bx-support me-2"></i>
                                                     Request
                                                     <span class="badge bg-success">1</span>
                                                 </li>
-                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <li
+                                                    class="list-group-item d-flex justify-content-between align-items-center">
                                                     <i class="bx bx-share-alt me-2"></i>
                                                     Shared
                                                     <span class="badge bg-secondary">0</span>
                                                 </li>
-                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <li
+                                                    class="list-group-item d-flex justify-content-between align-items-center">
                                                     <i class="bx bx-task me-2"></i>
                                                     My Tasks
                                                     <span class="badge bg-secondary">0</span>
@@ -610,11 +663,12 @@
                                             </small>
                                         </div>
                                         <div class="dropdown">
-                                            <button class="btn p-0" type="button" id="orederStatistics" data-bs-toggle="dropdown"
-                                                aria-haspopup="true" aria-expanded="false">
+                                            <button class="btn p-0" type="button" id="orederStatistics"
+                                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <i class="bx bx-dots-vertical-rounded"></i>
                                             </button>
-                                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="orederStatistics">
+                                            <div class="dropdown-menu dropdown-menu-end"
+                                                aria-labelledby="orederStatistics">
                                                 <a class="dropdown-item" href="javascript:void(0);">Disable</a>
                                                 <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
                                                 <a class="dropdown-item" href="javascript:void(0);">Help</a>
@@ -622,28 +676,32 @@
                                         </div>
                                     </div>
                                     <div class="card-body status-card">
-                                        <h4 class="accordion-header server-details text-body d-flex" id="accordionIconOne">
+                                        <h4 class="accordion-header server-details text-body d-flex"
+                                            id="accordionIconOne">
                                             <i class="bx bx-server rpad"></i>
                                             <small>Hostname</small>
                                             <span class="badge bg-label-secondary lpad">
                                                 <small>ftp://mifi.eu.org</small>
                                             </span>
                                         </h4>
-                                        <h4 class="accordion-header server-details text-body d-flex" id="accordionIconOne">
+                                        <h4 class="accordion-header server-details text-body d-flex"
+                                            id="accordionIconOne">
                                             <i class="bx bx-user rpad"></i>
                                             <small>Uaername</small>
                                             <span class="badge bg-label-secondary lpad">
                                                 <small>jishan21</small>
                                             </span>
                                         </h4>
-                                        <h4 class="accordion-header server-details text-body d-flex" id="accordionIconOne">
+                                        <h4 class="accordion-header server-details text-body d-flex"
+                                            id="accordionIconOne">
                                             <i class="bx bx-transfer rpad"></i>
                                             <small>Port </small>
                                             <span class="badge bg-label-secondary lpad">
                                                 <small>21</small>
                                             </span>
                                         </h4>
-                                        <h4 class="accordion-header server-details text-body d-flex" id="accordionIconOne">
+                                        <h4 class="accordion-header server-details text-body d-flex"
+                                            id="accordionIconOne">
                                             <i class="bx bx-key rpad"></i>
                                             <small>Password</small>
                                             <span class="badge bg-label-secondary lpad">
@@ -655,7 +713,8 @@
                                             <div class="divider-text"></div>
                                         </div>
 
-                                        <div class="alert alert-secondary small" role="alert">Last accessed on 07/12/2022 7:20PM</div>
+                                        <div class="alert alert-secondary small" role="alert">Last accessed on
+                                            07/12/2022 7:20PM</div>
                                     </div>
                                 </div>
                             </div>
@@ -676,8 +735,7 @@
                                     document.write(new Date().getFullYear());
                                 </script>
                                 , made with ❤️ by
-                                <a href="https://mifi.eu.org" target="_blank"
-                                    class="footer-link fw-bolder">Mifi</a>
+                                <a href="https://mifi.eu.org" target="_blank" class="footer-link fw-bolder">Mifi</a>
                             </div>
                             <div>
                                 <a href="https://themeselection.com/license/" class="footer-link me-4"
