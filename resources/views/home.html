@@ -161,10 +161,6 @@
                         <!-- /Search -->
 
                         <ul class="navbar-nav flex-row align-items-center ms-auto">
-                            <!-- Place this tag where you want the button to render. -->
-                            <li class="nav-item lh-1 me-3">
-                                <a class="github-button" data-icon="octicon-star" data-size="large"></a>
-                            </li>
 
                             <!-- User -->
                             <li class="nav-item navbar-dropdown dropdown-user dropdown">
@@ -245,7 +241,7 @@
 
 
                             <!-- Top Options -->
-                            <div class="col-lg-12 mb-0 order-0">
+                            <div class="col-lg-12 mb-0 order-0 sticky-top">
                                 <div class="card mb-3">
                                     <div class="card-body zpad">
                                         <p class="demo-inline-spacing">
@@ -259,6 +255,26 @@
                                                 <span class="tf-icons bx bx-cloud-upload"></span>
                                                 Upload Files
                                             </button>
+                                            <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                                                <button type="button" class="btn btn-outline-secondary">
+                                                    <i class="tf-icons bx bx-arrow-back"></i>
+                                                    Back
+                                                </button>
+                                                <button type="button" class="btn btn-outline-secondary">
+                                                    <i class="tf-icons bx bx-home"></i>
+                                                </button>
+                                                <div class="btn-group" role="group">
+                                                    <button id="btnGroupDrop1" type="button" class="btn btn-outline-secondary dropdown-toggle"
+                                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        Sort
+                                                    </button>
+                                                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                                        <a class="dropdown-item" href="javascript:void(0);">Sort by Name</a>
+                                                        <a class="dropdown-item" href="javascript:void(0);">Sort by Date</a>
+                                                        <a class="dropdown-item" href="javascript:void(0);">Sort by Size</a>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </p>
                                         <div class="collapse" id="collapseExample" style="padding-bottom: 10px; transition: height 0.2s;">
                                             <form id="formAuthentication" class="mb-2" onsubmit="return false;">
@@ -270,7 +286,7 @@
                                                     <span class="small" id="loginError">Folder name already exist in this directory</span>
                                                 </div>
                                                 <div class="mb-2">
-                                                    <button class="btn btn-primary w-25" type="submit">Create</button>
+                                                    <button class="btn btn-primary w-25 mw-50" type="submit">Create</button>
                                                 </div>
                                             </form>
                                         </div>
@@ -278,8 +294,6 @@
                                 </div>
                             </div>
                             <!-- end of File manager options -->
-
-
 
 
 
@@ -320,7 +334,7 @@
 
                             <div class="col-lg-12 col-md-12 order-1">
                                 <div class="row">
-                                    <div class="col-lg-3 col-md-4 col-6 mb-1 opadl">
+                                    <div class="col-lg-3 col-md-4 col-6 mb-3">
                                         <div class="card">
                                             <div class="card-body folder">
                                                 <div class="card-title d-flex align-items-start justify-content-between pointable">
@@ -347,7 +361,7 @@
                                     </div>
 
 
-                                    <div class="col-lg-3 col-md-4 col-6 mb-1 opadl">
+                                    <div class="col-lg-3 col-md-4 col-6 mb-3">
                                         <div class="card">
                                             <div class="card-body folder">
                                                 <div class="card-title d-flex align-items-start justify-content-between pointable">
@@ -373,7 +387,7 @@
 
 
 
-                                    <div class="col-lg-3 col-md-4 col-6 mb-1 opadl">
+                                    <div class="col-lg-3 col-md-4 col-6 mb-3">
                                         <div class="card">
                                             <div class="card-body folder">
                                                 <div class="card-title d-flex align-items-start justify-content-between pointable">
@@ -399,7 +413,7 @@
 
 
 
-                                    <div class="col-lg-3 col-md-4 col-6 mb-1 opadl">
+                                    <div class="col-lg-3 col-md-4 col-6 mb-3">
                                         <div class="card">
                                             <div class="card-body folder">
                                                 <div class="card-title d-flex align-items-start justify-content-between pointable">
@@ -425,7 +439,7 @@
 
 
 
-                                    <div class="col-lg-3 col-md-4 col-6 mb-1 opadl">
+                                    <div class="col-lg-3 col-md-4 col-6 mb-3">
                                         <div class="card">
                                             <div class="card-body folder">
                                                 <div class="card-title d-flex align-items-start justify-content-between pointable">
@@ -458,8 +472,8 @@
                             <div class="divider-text"></div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-lg-3 col-md-4 col-6 mb-1 opadl">
+                        <div class="row mb-3">
+                            <div class="col-lg-3 col-md-4 col-6 mb-1">
                                 <div class="card">
                                     <div class="card-body folder">
                                         <div class="card-title d-flex align-items-start justify-content-between pointable">
