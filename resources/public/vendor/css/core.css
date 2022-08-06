@@ -9383,15 +9383,22 @@ a.list-group-item-gray.active,button.list-group-item-gray.active {
   max-width: 100% !important;
 }
 
-.mw-50 {
+.mmw-50 {
+  min-width: 0% !important;
+}
+
+.mmw-100 {
   min-width: 0% !important;
 }
 
 @media (max-width: 440px) {
 
-  .mw-50 {
+  .mmw-50 {
     min-width: 50% !important;
   }
+  .mmw-100 {
+    min-width: 100% !important;
+  }  
 }
 
 .vw-100 {
@@ -15687,7 +15694,7 @@ html:not(.layout-menu-fixed) .menu-inner-shadow {
 
 @media (max-width: 1199.98px) {
   .layout-navbar {
-    z-index: 1080;
+    z-index: 1020;
   }
 }
 
