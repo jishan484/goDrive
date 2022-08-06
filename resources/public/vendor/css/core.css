@@ -1885,8 +1885,16 @@ progress {
   border-color: #d9dee3;
 }
 
+.table-custom {
+  text-align: center;
+}
+
+.table-custom td:nth-child(2) {
+  text-align: left;
+}
+
 .table> :not(caption)>*>* {
-  padding: 0.625rem 1.25rem;
+  padding: 0.425rem 0.4rem;
   background-color: var(--bs-table-bg);
   border-bottom-width: 1px;
   box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
@@ -9140,6 +9148,12 @@ a.list-group-item-gray.active,button.list-group-item-gray.active {
   position: absolute !important;
 }
 
+.position-xy {
+  position: absolute;
+  left: calc(100% - 70px);
+  bottom: 22px;
+}
+
 .position-fixed {
   position: fixed !important;
 }
@@ -9414,6 +9428,10 @@ a.list-group-item-gray.active,button.list-group-item-gray.active {
 
 .h-px-150 {
   height: 150px !important;
+}
+
+.mh-px-150 {
+  max-height: 150px !important;
 }
 
 .h-px-200 {
