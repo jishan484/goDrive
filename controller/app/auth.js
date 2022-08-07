@@ -46,12 +46,3 @@ function userRegister(req, res) {
     }
     );
 }
-
-// function userValidationMiddleware(req, res, next) {
-//     if (this.isLoggedIn(req)) {
-//         next();
-//     }
-//     else {
-//         res.redirect(RouterConfig.force_login_redirect_uris);
-//     }
-// }

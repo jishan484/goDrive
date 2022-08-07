@@ -8,8 +8,8 @@ module.exports = {
     (   
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         folderName TEXT, 
+        FolderId TEXT, 
         parentFolderId INTEGER,
-        rootFolderId INTEGER, 
         folderPath TEXT, 
         fullPath TEXT, 
         createdOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -17,8 +17,7 @@ module.exports = {
         modifiedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, 
         permissions TEXT NOT NULL, 
         accesses TEXT, 
-        priority INTEGER,
-        color TEXT NOT NULL
+        priority INTEGER
         )`,
 }
 

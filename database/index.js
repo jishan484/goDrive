@@ -8,6 +8,7 @@ const db = new sqlite3.Database(dbFile);
 
 init_database();
 
+
 function checkDBFile() {
     if (!exists) {
         console.log('[DLOG] Database not found, creating a new one!');
@@ -21,14 +22,17 @@ function init_database() {
         if (!exists) {
             db.run("CREATE TABLE DATABASECHANGES (id INTEGER PRIMARY KEY AUTOINCREMENT,QueryId TEXT, changeVersion TEXT, updatedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)");
         }
-        reloadDBSchema();
+        let DBChanges = require("./DBschema");
+        reloadDBSchema(DBChanges.changes.firstOrder);
+        setImmediate(() => {
+            reloadDBSchema(DBChanges.changes.secondOrder);
+        });
     });
 }
 
-async function reloadDBSchema()
+async function reloadDBSchema(changes)
 {
-    let DBChanges = require("./DBschema");
-    DBChanges.changes.forEach(element => {
+    changes.forEach(element => {
         db.get("SELECT * FROM DATABASECHANGES WHERE QueryId = ?", element.QueryId, (err, row) => {
             if (err) {
                 console.log(err);

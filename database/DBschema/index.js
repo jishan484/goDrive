@@ -1,14 +1,17 @@
 let DBChanges = {
     version: 1,
     subVersion: 0,
-    changes: []
+    changes: {
+        firstOrder : [],
+        secondOrder : []
+    }
 }
 
 
-DBChanges.changes.push(require('./Files.js'));   // FIles table creation
-DBChanges.changes.push(require('./Folders.js'));   // Folders table creation
-DBChanges.changes.push(require('./Users.js'));   // Users table creation
-DBChanges.changes.push(require('./DefaultUser.js'));   // Default User creation
+DBChanges.changes.firstOrder.push(require('./Users.js'));   // Users table creation
+DBChanges.changes.firstOrder.push(require('./Files.js'));   // FIles table creation
+DBChanges.changes.firstOrder.push(require('./Folders.js'));   // Folders table creation
+DBChanges.changes.secondOrder.push(require('./defaultUser.js'));   // Default User creation
 
 
 module.exports = DBChanges;

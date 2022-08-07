@@ -6,7 +6,7 @@ module.exports = {
         `CREATE TABLE IF NOT EXISTS Users
     (   
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        userName TEXT UNIQUE KEY, 
+        userName TEXT, 
         password TEXT,
         accessToken TEXT,
         role TEXT, 

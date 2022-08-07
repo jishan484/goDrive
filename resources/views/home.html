@@ -34,8 +34,29 @@
 
 <body>
     <!-- Layout wrapper -->
+    <!-- Progress UI -->
+    <div class="udprogress" id="udprogress">
+        <div class="progress" style="height:2px;">
+            <div id="reqProgress" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar"
+                style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+    </div>
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
+
+            <!-- Error toast -->
+            <div id="errorToast" class="bs-toast toast toast-placement-ex m-2 fade bg-danger top-0 start-0" role="alert" aria-live="assertive"
+                aria-atomic="true" data-delay="2000">
+                <div class="toast-header">
+                    <i class="bx bx-bell me-2"></i>
+                    <div class="me-auto fw-semibold"></div>
+                    <small>Request failed</small>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body"></div>
+            </div>
+
+
             <!-- Menu -->
 
             <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
@@ -244,12 +265,12 @@
                                 <div class="card mb-3">
                                     <div class="card-body zpad">
                                         <p class="demo-inline-spacing">
-                                            <a class="btn btn-sm btn-opt btn-secondary" data-bs-toggle="collapse"
+                                            <button class="btn btn-sm btn-opt btn-secondary" data-bs-toggle="collapse"
                                                 href="#collapseCreate" role="button" aria-expanded="true"
                                                 aria-controls="collapseCreate">
                                                 <span class="tf-icons bx bx-folder-plus"></span>
                                                 Create Folder
-                                            </a>
+                                            </button>
                                             <button type="button" class="btn btn-sm btn-opt btn-secondary" data-bs-toggle="modal" data-bs-target="#basicModal">
                                                 <span class="tf-icons bx bx-cloud-upload"></span>
                                                 Upload Files
@@ -280,17 +301,18 @@
                                         </p>
                                         <div class="collapse" id="collapseCreate"
                                             style="padding-bottom: 10px; transition: height 0.2s;">
-                                            <form id="formAuthentication" class="mb-2" onsubmit="return false;">
+                                            <form id="formCreateFolder" class="mb-2" onsubmit="return false;">
                                                 <div class="mb-2">
                                                     <center><input type="text" class="form-control w-50" id="foldername"
                                                             placeholder="Enter Folder Name" autofocus /></center>
                                                 </div>
                                                 <div class="mb-1">
-                                                    <span class="small" id="loginError">Folder name already exist in
-                                                        this directory</span>
+                                                    <span class="small" id="folderCreateError"></span>
+                                                    <!-- Folder name already exist in
+                                                        this directory -->
                                                 </div>
                                                 <div class="mb-2">
-                                                    <button class="btn btn-primary w-25 mw-50"
+                                                    <button class="btn btn-primary w-25 mw-50" id="createFolderBtn"
                                                         type="submit">Create</button>
                                                 </div>
                                             </form>
@@ -809,6 +831,11 @@
                     </div>
                     <!-- / Content -->
 
+
+                   
+
+
+
                     <!-- Footer -->
                     <footer class="content-footer footer bg-footer-theme">
                         <div
@@ -848,6 +875,8 @@
         <div class="layout-overlay layout-menu-toggle"></div>
     </div>
 
+
+
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
     <script src="vendor/libs/jquery/jquery.js"></script>
@@ -862,7 +891,9 @@
     <script src="vendor/libs/apex-charts/apexcharts.js"></script>
 
     <!-- Main JS -->
+    <script src="js/local.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/request.js"></script>
 
     <!-- Page JS -->
     <script src="js/dashboards-analytics.js"></script>

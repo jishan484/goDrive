@@ -17093,7 +17093,13 @@ html:not(.layout-footer-fixed) .content-wrapper {
   }
 }
 
-
+.udprogress{
+  position: fixed;
+  top: 0; left: 0;
+  width: 100% !important;
+  height: 2px;
+  z-index: 1090;
+}
 
 
 

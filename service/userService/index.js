@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const db = require('../../database');
 const { UserConfig } = require('./../../SystemConfig.js');
+const { keyValidator } = require('./../keyValidation');
 const crypto = require('crypto');
 
 class UserService {
@@ -13,8 +14,8 @@ class UserService {
     
     // -------------------------------------ENTITIES--------------------------------------------//
 
-    get(req, callback) {
-        let user = req.body.user;
+    get(data, callback) {
+        let user = data.user;
         db.get('SELECT userName,createdOn,profile,role FROM Users WHERE userName = ?', [user], (err, row) => {
             if (err) callback(false);
             else {
@@ -24,11 +25,11 @@ class UserService {
         });
     }
 
-    save(req, callback) {
-        let user = req.body.user;
+    save(data, callback) {
+        let user = data.user;
         let userRole = UserConfig.defaultRole;
-        let profilePic = req.body.userProfilePic;
-        let password = crypto.createHash('sha256').update(req.body.password + UserConfig.salt).digest('hex');
+        let profilePic = data.userProfilePic;
+        let password = crypto.createHash('sha256').update(data.password + UserConfig.salt).digest('hex');
         db.run('INSERT INTO Users (userName,password,role,profile) VALUES (?,?,?,?)', [user, password, userRole, profilePic], (err) => {
             if (err) callback(false);
             else callback(true);
@@ -51,9 +52,9 @@ class UserService {
         }
     }
 
-    verifyUser(req, callback) {
-        let user = req.body.user;
-        let password = crypto.createHash('sha256').update(req.body.password + UserConfig.salt).digest('hex');
+    verifyUser(data, callback) {
+        let user = data.user;
+        let password = crypto.createHash('sha256').update(data.password + UserConfig.salt).digest('hex');
         db.get('SELECT * FROM Users WHERE userName = ? AND password = ?', [user, password], (err, row) => {
             if (err) callback(false);
             else {
@@ -68,9 +69,7 @@ class UserService {
     // -------------------------------------SERVICES--------------------------------------------//
 
 
-
-
-    isLoggedIn(req) {
+    isLoggedIn(req){
         if (req.cookies == undefined) return false;
         const token = (req.cookies.seid);
         if (token == 'undefined') return false;
@@ -78,22 +77,47 @@ class UserService {
             const decoded = jwt.verify(token, "process.env.JWT_SECRET");
             return true;
         } catch (err) {
+            console.log(err);
             return false;
         }
     }
 
-    getUserToken(req) {
-        let user = req.body.user;
+    isLoggedIn(req , modKey,status) {
+        if (req.cookies == undefined) return false;
+        const token = (req.cookies.seid);
+        if (token == 'undefined') return false;
+        try {
+            const decoded = jwt.verify(token, "process.env.JWT_SECRET");
+            if (modKey != null && status != null)
+            {
+                if(keyValidator.validate(modKey,decoded))
+                {
+                    status.status = true;
+                }
+                else{
+                    status.status = false;
+                }
+            }
+            return true;
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
+    }
+
+    getUserToken(data) {
+        let user = data.user;
         let token = jwt.sign({
-            id: user
+            id: user,
+            modKey: Math.random().toString(36).substr(2, 7)
         }, "process.env.JWT_SECRET");
         return token;
     }
 
     userLogin(req, res, callback) {
-        this.verifyUser(req, (status) => {
+        this.verifyUser(req.body, (status) => {
             if (status) {
-                let token = this.getUserToken(req);
+                let token = this.getUserToken(req.body);
                 res.cookie('seid', token, {
                     httpOnly: true,
                     maxAge: 1000 * 60 * 60,
@@ -110,11 +134,11 @@ class UserService {
 
     userRegister(req, res, callback) {
         req.body.userProfilePic = '';
-        this.get(req,(result)=>{
+        this.get(req.body,(result)=>{
             if(!result){
-                this.save(req, (status) => {
+                this.save(req.body, (status) => {
                     if (status) {
-                        let token = this.getUserToken(req);
+                        let token = this.getUserToken(req.body);
                         res.cookie('seid', token, {
                             httpOnly: true,
                             maxAge: 1000 * 60 * 60,
@@ -138,7 +162,7 @@ class UserService {
     userLogout(res) {
         res.clearCookie('seid');
     }
-
+    
 }
 
 var userService = new UserService();
