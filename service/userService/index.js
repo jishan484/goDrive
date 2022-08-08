@@ -68,6 +68,21 @@ class UserService {
 
     // -------------------------------------SERVICES--------------------------------------------//
 
+    getUser(data, callback) {
+        let user = data.user;
+        this.get(data, (result) => {
+            if (result) {
+                callback(result);
+            }
+            else {
+                callback(false);
+            }
+        });
+    }
+
+    getUserName(token) {
+        return jwt.verify(token, "process.env.JWT_SECRET").id;
+    }
 
     isLoggedIn(req){
         if (req.cookies == undefined) return false;

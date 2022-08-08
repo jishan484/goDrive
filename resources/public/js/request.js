@@ -2,7 +2,7 @@ $.ajaxSetup({
     headers: { 'xauthtoken': _getToken() }
 });
 
-function request(path, datas, method, token, callback) {
+function request(path, datas, method, callback) {
     $('#udprogress')[0].style.display = 'block';
     $.ajax({
         xhr: function () {
@@ -126,7 +126,7 @@ $('#createFolderBtn').click(function () {
             folderPath: _current_folder,
             action: 'createFolder'
         };
-        request("app/u/folder", payload, 'POST',_getToken(), (data) => {
+        request("app/u/folder", payload, 'POST', (data) => {
             if(data.status == 'success'){
                 $('#folderCreateError').html('Folder created successfully');
                 $('#createFolderBtn').attr('disabled', true);

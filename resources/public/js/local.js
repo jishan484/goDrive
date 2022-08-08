@@ -1,6 +1,6 @@
 // ----------All global variables ----------
 var _current_page = 1;
-var _current_folder = "";
+var _current_folder = "/home";
 var _a = "DEMOKEY";
 var isToastActive = false;
 

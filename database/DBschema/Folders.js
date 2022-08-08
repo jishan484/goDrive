@@ -8,9 +8,9 @@ module.exports = {
     (   
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         folderName TEXT, 
-        FolderId TEXT, 
-        parentFolderId INTEGER,
-        folderPath TEXT, 
+        folderId TEXT, 
+        parentFolderId TEXT,
+        folderPath TEXT,
         fullPath TEXT, 
         createdOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
         owner TEXT,
