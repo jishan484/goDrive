@@ -2,14 +2,16 @@ $.ajaxSetup({
     headers: { 'xauthtoken': _getToken() }
 });
 
-function request(path, datas, method, callback) {
-    $('#udprogress')[0].style.display = 'block';
+function request(path, datas, method, callback,backgroundFetch=true) {
+    if(backgroundFetch) $('#udprogress')[0].style.display = 'block';
     $.ajax({
         xhr: function () {
             var xhr = new window.XMLHttpRequest();
             //Upload progress and event handling
             xhr.upload.addEventListener("progress", progressHandler, false);
-            xhr.addEventListener("load", completeHandler, false);
+            if(backgroundFetch){
+                xhr.addEventListener("load", completeHandler, false);
+            }
             xhr.addEventListener("error", errorHandler, false);
             xhr.addEventListener("abort", abortHandler, false);
             return xhr;
@@ -23,6 +25,7 @@ function request(path, datas, method, callback) {
         error: (request, status, error) => {
             processError(request, error);
             completeHandler(null);
+            callback(false);
         }
     });
 }
@@ -36,6 +39,7 @@ function progressHandler(e) {
     }
 }
 function completeHandler(event) {
+    $('#reqProgress')[0].style.width = '100%';
     setTimeout(function () {
         $('#reqProgress')[0].style.width = '10%';
         $('#udprogress')[0].style.display = 'none';
@@ -63,6 +67,9 @@ function processError(request , error){
             break;
         case 403:
             errorToast('Forbidden', 'You are not authorized or<br>your session has expired. Redirecting to login page in 5 seconds.');
+            setTimeout(function () {
+                window.location.href = '/';
+            }, 5000);
             break;
         case 404:
             errorToast('Not Found', 'The requested resource was not found. Please check the URL and try again.');
@@ -115,21 +122,39 @@ function showspeed(loaded) {
 
 //============================================ App use cases ============================================================
 
+
+
+// :CREATE:FOLDER:
 $('#createFolderBtn').click(function () {
     var folderName = $('#foldername').val();
     if (folderName == null || folderName == '') {
         $('#folderCreateError').html('Folder name cannot be empty');
     }
+    else if (!folderName.match(/^[a-zA-Z0-9_.]+.+/)) {
+        $('#folderCreateError').html('Folder name cannot start with special characters');
+    }
+    else if (folderName.match(/[^a-zA-Z0-9-_\\+\\. \\(){}"':\[\]]/)) {
+        $('#folderCreateError').html('Folder name contains invalid characters');
+    }
+    else if(folderName.match(/^[._]+$/)){
+        $('#folderCreateError').html('Folder name Must contain atleast one letter or number');
+    } // /^[_.]*[a-zA-Z0-9]+[a-zA-Z0-9-_\\+\\.\\(){}"':\[\]]*$/
     else {
+        $('#createFolderBtn').attr('disabled', true);
         var payload = { 
             folderName: folderName,
-            folderPath: _current_folder,
+            folderPath: _current_folder_path,
             action: 'createFolder'
         };
-        request("app/u/folder", payload, 'POST', (data) => {
-            if(data.status == 'success'){
+        request("app/u/folder", payload, 'POST', (response) => {
+            if(response == false){
+                $('#folderCreateError').html("Some error occured!");
+                $('#createFolderBtn').attr('disabled', false);
+            }
+            if(response.status == 'success'){
                 $('#folderCreateError').html('Folder created successfully');
                 $('#createFolderBtn').attr('disabled', true);
+                loadFolders('');
                 setTimeout(() => {
                     $('#collapseCreate').toggleClass('show');
                     $('#createFolderBtn').attr('disabled', false);
@@ -138,9 +163,26 @@ $('#createFolderBtn').click(function () {
                 }, 3000);
             }
             else{
-                $('#folderCreateError').html(data.error);
+                $('#folderCreateError').html(response.error);
+                $('#createFolderBtn').attr('disabled', false);
             }
         }
         );
     }
 });
+
+
+// :FETCH:FOLDER:
+function fetchFolder(folderName,callback) {
+    var payload = {
+        folderPath: (folderName != '')?_current_folder_path+"/"+folderName:_current_folder_path,
+        folderName: folderName,
+        action: 'fetchFolder'
+    };
+    request("app/u/folder", payload, 'GET', (response) => {
+        if(response.status == 'success'){
+            callback(response.data.subFolders);
+        }
+    },false
+    );
+}

@@ -137,6 +137,7 @@ class FolderService {
                         folder.folderPath = result[i].folderPath;
                         folder.fullPath = result[i].fullPath;
                         folder.parentFolderId = result[i].parentFolderId;
+                        folder.createdOn = result[i].createdOn;
                         folder.permissions = result[i].permissions;
                         folder.accesses = result[i].accesses;
                         folder.priority = result[i].priority;
@@ -168,6 +169,11 @@ class FolderService {
 
         if(data.folderPath == "/home"){
             data.parentFolderId = "0";
+        }
+
+        if(data.folderName.match(/^[_.]*[a-zA-Z0-9]+[a-zA-Z0-9-_\\+\\. \\(){}"':\[\]]*$/)==null){
+            callback(false,"Folder name is invalid!");
+            return;
         }
 
         this.getFolderByPath({ fullPath: data.folderPath, owner: data.owner, parentFolderId: data.parentFolderId }, (result) => {

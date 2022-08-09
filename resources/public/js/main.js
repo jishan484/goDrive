@@ -17,7 +17,7 @@ let menu, animate;
       closeChildren: false
     });
     // Change parameter to true if you want scroll animation
-    window.Helpers.scrollToActive((animate = false));
+    window.Helpers.scrollToActive((animate = true));
     window.Helpers.mainMenu = menu;
   });
 
