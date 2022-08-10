@@ -85,14 +85,14 @@ function processError(request , error){
 
 function errorToast(type , msg)
 {
-    if(isToastActive) return;
-    isToastActive = true;
+    if(_isToastActive) return;
+    _isToastActive = true;
     $('#errorToast .me-auto').html(type);
     $('#errorToast .toast-body').html(msg);
     $('#errorToast').toggleClass('show');
     setTimeout(function () {
         $('#errorToast').toggleClass('show');
-        isToastActive = false;
+        _isToastActive = false;
     }, 5000);
     $('#udprogress')[0].style.display = 'none';
 }
@@ -143,8 +143,7 @@ $('#createFolderBtn').click(function () {
         $('#createFolderBtn').attr('disabled', true);
         var payload = { 
             folderName: folderName,
-            folderPath: _current_folder_path,
-            action: 'createFolder'
+            folderPath: _current_folder_path
         };
         request("app/u/folder", payload, 'POST', (response) => {
             if(response == false){
@@ -173,16 +172,33 @@ $('#createFolderBtn').click(function () {
 
 
 // :FETCH:FOLDER:
-function fetchFolder(folderName,callback) {
+function fetchFolder(folderName,callback,opt) {
     var payload = {
         folderPath: (folderName != '')?_current_folder_path+"/"+folderName:_current_folder_path,
-        folderName: folderName,
-        action: 'fetchFolder'
+        folderName: folderName
     };
     request("app/u/folder", payload, 'GET', (response) => {
         if(response.status == 'success'){
+            if(response.data.fullPath != undefined){
+                _current_folder_path = response.data.fullPath;
+                _previous_folder_path = response.data.folderPath;
+            }
+            _last_requested_folder_response = response.data;
             callback(response.data.subFolders);
         }
-    },false
+    },opt
     );
+}
+
+// :DELETE:FOLDER:
+function removeFolder(folderName,callback) {
+    var payload = {
+        folderPath: _current_folder_path,
+        folderName: folderName
+    };
+    request("app/u/folder", payload, 'DELETE', (response) => {
+        if(response.status == 'success'){
+            callback(true);
+        }
+    });
 }

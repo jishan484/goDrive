@@ -277,11 +277,11 @@
                                             </button>
                                         <div class="btn-group" role="group"
                                             aria-label="Button group with nested dropdown">
-                                            <button type="button" class="btn btn-outline-secondary">
+                                            <button type="button" class="btn btn-outline-secondary" onclick="folderBack()">
                                                 <i class="tf-icons bx bx-arrow-back"></i>
                                                 Back
                                             </button>
-                                            <button type="button" class="btn btn-outline-secondary">
+                                            <button type="button" class="btn btn-outline-secondary" onclick="folderHome()">
                                                 <i class="tf-icons bx bx-home"></i>
                                             </button>
                                             <div class="btn-group" role="group">
@@ -292,9 +292,9 @@
                                                     Sort
                                                 </button>
                                                 <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                                    <a class="dropdown-item" href="javascript:void(0);">Sort by Name</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);">Sort by Date</a>
-                                                    <a class="dropdown-item" href="javascript:void(0);">Sort by Size</a>
+                                                    <div class="dropdown-item" onclick="contentSortBy('name')">Sort by Name</div>
+                                                    <div class="dropdown-item" onclick="contentSortBy('date')">Sort by Date</div>
+                                                    <div class="dropdown-item" onclick="contentSortBy('default')">Default</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -443,7 +443,40 @@
 
                             <!-- folder list : JS rendered-->
                             <div id="folders">
-                                
+                                <!-- <div class="col-lg-3 col-md-4 col-6 mb-3">
+                   <div class="card">
+                        <div class="card-body folder" id="${folders[i].folderId}" oncontextmenu="folderOptions(this);return false;" ondblclick="folderOpen('${folders[i].folderName}')">
+                            <div class="card-title d-flex align-items-start justify-content-between pointable">
+                                <div class="avatar flex-shrink-1">
+                                    <img src="image/folder_ftp.png" alt="chart success" style="width:50px;height:50px;" />
+                                </div>
+                                <div class="dropdown" ondblclick="stopdblClick(event);return false;">
+                                    <button class="btn p-0" type="button" id="cardOpt3"
+                                        data-bs-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
+                                        <i class="bx bx-dots-vertical-rounded"></i>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a class="dropdown-item" href="javascript:void(0);">Star</a>
+                                        <a class="dropdown-item" href="javascript:void(0);">Lock</a>
+                                    </div>
+                                </div>
+                                <ul class="dropdown-menu folderOption" data-popper-placement="bottom-start">
+                                    <li><div class="dropdown-item" onclick="folderOpen('${folders[i].folderName}')">open</div></li>
+                                    <li><div class="dropdown-item" onclick="folderOpen('${folders[i].folderName}')">share</div></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><div class="dropdown-item" onclick="folderRenme('${folders[i].folderId}')">rename</div></li>
+                                    <li><div class="dropdown-item" onclick="folderCopyMove('${folders[i].folderId}')">copy / move</div></li>
+                                    <li><div class="dropdown-item" onclick="folderDelete('${folders[i].folderId}')">delete</div></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><div class="dropdown-item" onclick="folderUpdatePermission('${folders[i].folderId}')">update permission</div></li>
+                                </ul>
+                            </div>
+                            <div class="small folder-name">${folders[i].folderName}</div>
+                            <div class="folder-name-s">${folders[i].createdOn}</div>
+                        </div>
+                    </div>
+                </div> -->
                             </div>
                         </div>
 
@@ -715,7 +748,7 @@
     <script src="vendor/libs/jquery/jquery.js"></script>
     <!-- <script src="vendor/libs/popper/popper.js"></script> -->
     <script src="vendor/js/bootstrap.js"></script>
-    <script src="vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <!-- <script src="vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script> -->
 
     <script src="vendor/js/menu.js"></script>
     <!-- endbuild -->

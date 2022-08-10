@@ -104,14 +104,15 @@ class FolderService {
                 let isRoot = (data.folderPath == "/home");
                 let isParentFolderFound = false;
                 for(let i = 0; i < result.length; i++){
-                    if(result.fullPath == data.folderPath){
-                        folders.id = result.folderId;
-                        folders.folderPath = result.fullPath;
-                        folders.folderName = result.folderName;
-                        folders.parentFolderId = result.parentFolderId;
-                        folders.permissions = result.permissions;
-                        folders.accesses = result.accesses;
-                        folders.priority = result.priority;
+                    if(result[i].fullPath == data.folderPath){
+                        folders.id = result[i].folderId;
+                        folders.folderPath = result[i].folderPath;
+                        folders.fullPath = result[i].fullPath;
+                        folders.folderName = result[i].folderName;
+                        folders.parentFolderId = result[i].parentFolderId;
+                        folders.permissions = result[i].permissions;
+                        folders.accesses = result[i].accesses;
+                        folders.priority = result[i].priority;
                         isParentFolderFound = true;
                     }
                 }
@@ -121,7 +122,7 @@ class FolderService {
                 }
                 if(isRoot){
                     folders.folderId = "0";
-                    folders.folderPath = "/";
+                    folders.folderPath = "/home";
                     folders.fullPath = "/home";
                     folders.folderName = "home";
                     folders.permissions = "RW";

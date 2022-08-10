@@ -100,7 +100,7 @@ class UserService {
     isLoggedIn(req , modKey,status) {
         if (req.cookies == undefined) return false;
         const token = (req.cookies.seid);
-        if (token == 'undefined') return false;
+        if (token == undefined) return false;
         try {
             const decoded = jwt.verify(token, "process.env.JWT_SECRET");
             if (modKey != null && status != null)

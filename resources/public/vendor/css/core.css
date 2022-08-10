@@ -222,6 +222,10 @@ sup {
   top: -0.5em;
 }
 
+.folderOption {
+  top: 50px;
+}
+
 a {
   color: #696cff;
   text-decoration: none;
@@ -3139,7 +3143,7 @@ textarea.form-control-lg {
 .dropdown-item {
   display: block;
   width: 100%;
-  padding: 0.532rem 1.25rem;
+  padding: 0.3rem 1.25rem;
   clear: both;
   font-weight: 400;
   color: #697a8d;

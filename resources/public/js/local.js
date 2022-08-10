@@ -1,8 +1,12 @@
 // ----------All global variables ----------
 var _current_page = 1;
+var _home_folder_path = "/home";
 var _current_folder_path = "/home";
+var _previous_folder_path = "/home";
+var _last_requested_folder_response = {};
+var _content_sort_method = "default";
 var _a = "DEMOKEY";
-var isToastActive = false;
+var _isToastActive = false;
 
 
 
