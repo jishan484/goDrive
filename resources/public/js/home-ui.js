@@ -5,7 +5,7 @@ function renderFolders(folders) {
     for (var i = 0; i < folders.length; i++) {
         html += `<div class="col-lg-3 col-md-4 col-6 mb-3">
                    <div class="card">
-                        <div class="card-body folder" id="${folders[i].folderId}" oncontextmenu="folderOptions(this);return false;" ondblclick="folderOpen('${folders[i].folderName}')">
+                        <div class="card-body folder" id="${folders[i].folderId}" oncontextmenu="folderOptions(this,event);return false;" ondblclick="folderOpen('${folders[i].folderName}')">
                             <div class="card-title d-flex align-items-start justify-content-between pointable">
                                 <div class="avatar flex-shrink-1">
                                     <img src="image/folder_ftp.png" alt="chart success" style="width:50px;height:50px;" />
@@ -26,7 +26,7 @@ function renderFolders(folders) {
                                     <li><div class="dropdown-item" onclick="folderOpen('${folders[i].folderName}')">Share</div></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><div class="dropdown-item" onclick="folderRenme('${folders[i].folderId}')">Rename</div></li>
-                                    <li><div class="dropdown-item" onclick="folderCopyMove('${folders[i].folderId}')">Copy / move</div></li>
+                                    <li><div class="dropdown-item" onclick="folderCopyMove('${folders[i].folderId}')">Move</div></li>
                                     <li><div class="dropdown-item" onclick="folderDelete('${folders[i].folderName}')">Delete</div></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><div class="dropdown-item" onclick="folderUpdatePermission('${folders[i].folderId}')">Update permissions</div></li>
@@ -57,10 +57,13 @@ function renderFolders(folders) {
 
 
 //-------------for home-main.js------------------
-function folderOptions(elem) {
+function folderOptions(elem,event) {
+    event.preventDefault();
+    event.stopPropagation();
     var folderId = elem.id;
     if ($(elem).find('.folderOption').hasClass('show')) return false;
     $(document).off('click');
+    $('.folderBodyOption').removeClass('show');
     $('#' + folderId +' .folderOption').toggleClass('show');
     $('.folderOption').not($('#' + folderId +' .folderOption')).removeClass('show');
     $(document).on('click', function (e) {
@@ -69,6 +72,30 @@ function folderOptions(elem) {
             $(document).off('click');
         }
     });
+    return false;
+}
+
+function folderBodyOptions(elem,event) {
+    $('#bodyOptions .folderBodyOption').addClass('show');
+    // update folder body options position relative to the clicked element
+    let folderBodyOption = $('#bodyOptions .folderBodyOption');
+    let folderBodyOptionWidth = folderBodyOption.width();
+    let folderBodyOptionHeight = folderBodyOption.height();
+    let folderBodyOptionTop = event.pageY - (folderBodyOptionHeight* 0.5);
+    let folderBodyOptionLeft = event.pageX - (folderBodyOptionWidth *0.75);
+    folderBodyOption.css({
+        top: folderBodyOptionTop,
+        left: folderBodyOptionLeft
+    });
+    $('.folderOption').removeClass('show');
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('.folderBodyOption').length) {
+            $('.folderBodyOption').removeClass('show');
+            $(document).off('click');
+        }
+    });
+    event.preventDefault();
+    event.stopPropagation();
     return false;
 }
 
@@ -146,3 +173,23 @@ function sortFolders(folders) {
 setTimeout(function () {
     loadFolders('');
 },200);
+
+
+// check for site idle for more than 5 minutes on gobal events
+// var idleTime = 0;
+// $(document).ready(function () {
+//     $(this).mousemove(function (e) {
+//         idleTime = 0;
+//     });
+//     $(this).keypress(function (e) {
+//         idleTime = 0;
+//     });
+// }
+// );
+// setInterval(function () {
+//     idleTime = idleTime + 1;
+//     if (idleTime > 5) {
+//         window.location.reload();
+//     }
+// }
+// , 24000);

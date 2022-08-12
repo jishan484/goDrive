@@ -86,6 +86,7 @@ class FolderService {
         db.run('DELETE FROM Folders WHERE ( folderId = ? or fullPath = ? ) and owner = ?', [folderId,fullPath,owner], (err) => {
             if (err) callback(false);
             else callback(true);
+            console.log(this);
         });
     }
 

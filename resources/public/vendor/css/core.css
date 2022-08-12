@@ -17007,8 +17007,22 @@ html:not(.layout-footer-fixed) .content-wrapper {
 }
 
 .folder {
-  padding: 10px 0 2px 10px;
+  padding: 8px 0 4px 10px;
   user-select: none;
+  animation: folderPop 0.3s 1 ease-in-out;
+}
+
+@keyframes folderPop {
+  0% {
+    transform: scale(0.96);
+    opacity: 0.2;
+    filter: invert(0.2);
+  }
+  100% {
+    transform: scale(1);
+    filter: invert(0);
+    opacity: 1;
+  }
 }
 
 .minpad {
