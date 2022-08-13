@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "node server.js",
-    "start": "node server.js"
+    "start": "npm install && node server.js"
   },
   "engines": {
     "node": "12.x"
