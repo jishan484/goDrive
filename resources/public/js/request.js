@@ -30,11 +30,7 @@ function request(path, datas, method, callback,backgroundFetch=true) {
     });
 }
 
-function upload() {
-    var formdata = new FormData();
-    for(var i = 0; i < formFileMultiple.files.length; i++){
-        formdata.append('file', formFileMultiple.files[i]);
-    }
+function upload(file) {
     
     $.ajax({
         xhr: function () {
@@ -49,9 +45,10 @@ function upload() {
         ,
         url: 'app/u/file',
         type: 'POST',
-        data: formdata,
+        data: file,
         mimeType: 'multipart/form-data',
         cache: false,
+        headers: { 'm-filename': file.name, 'm-path': _current_folder_path,'m-mimetype': file.type },
         contentType: false,
         processData: false,
         success: (data, text) => {
@@ -67,6 +64,13 @@ function upload() {
     });
 }
 
+function uploadFile()
+{
+    for (var i = 0; i < formFileMultiple.files.length; i++)
+    {
+        upload(formFileMultiple.files[i]);
+    }
+}
 
 function progressHandler(e) {
     if (e.lengthComputable) {

@@ -8,20 +8,17 @@ var drive = new Drive();
 
 
 router.get('/', getFile); //download file/s by id , filename and folder name
-router.post('/',(req,res)=>{
-    var busboy = Busboy({
-        headers: req.headers
+router.post('/', (req, res) => {
+
+    drive.writeFile(req.headers['m-filename'], req.headers['m-mimetype'], req, (data, err) => {
+        if (err) {
+            res.status(500).json({ status: 'error', data: null, error: err, code: '500' });
+        } else {
+            res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
+        }
     });
-    
-    busboy.on('file', function (fieldname, file, filename, encoding, mimetype) {
-        console.log('File [' + fieldname + ']: filename: ' + filename + ', encoding: ' + encoding + ', mimetype: ' + mimetype);
-        drive.writeFile(filename, file);
-    });
-    busboy.on('finish', function () {
-        res.end("That's all folks!");
-    });
-    return req.pipe(busboy);
-}); //upload file/s: folder name is required
+
+});
 
 module.exports = router;
 
@@ -32,8 +29,4 @@ module.exports = router;
 
 function getFile(req, res) {
     res.status(200).json({ status: 'success', data: "result", error: null, code: '200' });
-}
-
-function uploadFile(req, res, next){
-    
 }

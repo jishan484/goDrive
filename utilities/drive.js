@@ -43,7 +43,7 @@ class Drive{
         //
     }
 
-    writeFile(fileName,fileData){
+    writeFile(fileName,mimeType,fileData,callback){
         
         let contentS = JSON.parse(fs.readFileSync(this.credentials));
 
@@ -54,28 +54,20 @@ class Drive{
 
         const driveService = google.drive({ version: 'v3', auth });
         let fileMetadata = {
-            'name': "fileName.txt"
+            'name': fileName
         };
-
+        
         driveService.files.create({
             resource: fileMetadata,
             media:{
-            mimeType: 'application/json',
+            mimeType: mimeType,
             body: fileData
         },
             fields: 'id'
         }).then(data => {
-            switch (data.status) {
-                case 200:
-                    let file = data.result;
-                    console.log('Created File Id: ', data.data);
-                    break;
-                default:
-                    console.error(data);
-                    break;
-            }
+            callback(data,null);
         }).catch(err => {
-            console.error(err);
+            callback(null,err);
         });
     }
 }
