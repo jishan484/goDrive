@@ -17,8 +17,11 @@
   "author": "jishan",
   "license": "MIT",
   "dependencies": {
+    "busboy": "^1.6.0",
     "cookie-parser": "1.4.6",
     "express": "4.17.1",
+    "express-busboy": "^9.0.0",
+    "googleapis": "^105.0.0",
     "jsonwebtoken": "8.5.1",
     "sqlite3": "^5.0.0"
   }

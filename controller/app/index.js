@@ -26,5 +26,6 @@ router.use("/u/*", (req, res, next) => {
 
 
 router.use("/u/folder", require("./folder"));
+router.use("/u/file", require("./file"));
 
 module.exports = router

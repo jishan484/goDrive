@@ -29,6 +29,45 @@ function request(path, datas, method, callback,backgroundFetch=true) {
         }
     });
 }
+
+function upload() {
+    var formdata = new FormData();
+    for(var i = 0; i < formFileMultiple.files.length; i++){
+        formdata.append('file', formFileMultiple.files[i]);
+    }
+    
+    $.ajax({
+        xhr: function () {
+            var xhr = new window.XMLHttpRequest(2);
+            //Upload progress and event handling
+            xhr.upload.addEventListener("progress", progressHandler, false);
+            xhr.addEventListener("load", completeHandler, false);
+            xhr.addEventListener("error", errorHandler, false);
+            xhr.addEventListener("abort", abortHandler, false);
+            return xhr;
+        }
+        ,
+        url: 'app/u/file',
+        type: 'POST',
+        data: formdata,
+        mimeType: 'multipart/form-data',
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: (data, text) => {
+            if(data.status == 'success'){
+                $('#uploadForm')[0].reset();
+                $('#uploadModal').modal('hide');
+                fetchFolder('',(response)=>{
+                    $('#folderList').html('');
+                    $('#folderList').append(createFolderList(response));
+                });
+            }
+        }
+    });
+}
+
+
 function progressHandler(e) {
     if (e.lengthComputable) {
         // Append progress percentage.
