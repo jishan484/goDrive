@@ -2,11 +2,12 @@ const jwt = require('jsonwebtoken');
 const db = require('../../database');
 const { UserConfig } = require('./../../SystemConfig.js');
 const { keyValidator } = require('./../keyValidation');
+const log = require('./../logService');
 const crypto = require('crypto');
 
 class UserService {
     constructor() {
-        console.log("[DLOG] user service initialized!");
+        log.log("debug","user service initialized!");
     }
 
 
@@ -17,7 +18,10 @@ class UserService {
     get(data, callback) {
         let user = data.user;
         db.get('SELECT userName,createdOn,profile,role FROM Users WHERE userName = ?', [user], (err, row) => {
-            if (err) callback(false);
+            if (err) {
+                callback(false);
+                log.log("error",err);
+            }
             else {
                 if (row == undefined) callback(false);
                 else callback(row);
@@ -31,7 +35,10 @@ class UserService {
         let profilePic = data.userProfilePic;
         let password = crypto.createHash('sha256').update(data.password + UserConfig.salt).digest('hex');
         db.run('INSERT INTO Users (userName,password,role,profile) VALUES (?,?,?,?)', [user, password, userRole, profilePic], (err) => {
-            if (err) callback(false);
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
             else callback(true);
         });
     }
@@ -46,7 +53,10 @@ class UserService {
         else if (type == 'password') {
             let password = crypto.createHash('sha256').update(data.password + UserConfig.salt).digest('hex');
             db.run('UPDATE Users SET password = ? WHERE userName = ?', [password, data.user], (err) => {
-                if (err) callback(false);
+                if (err) {
+                    callback(false);
+                    log.log("error", err);
+                }
                 else callback(true);
             });
         }
@@ -56,7 +66,10 @@ class UserService {
         let user = data.user;
         let password = crypto.createHash('sha256').update(data.password + UserConfig.salt).digest('hex');
         db.get('SELECT * FROM Users WHERE userName = ? AND password = ?', [user, password], (err, row) => {
-            if (err) callback(false);
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
             else {
                 if (row == undefined) callback(false);
                 else callback(true);
@@ -92,7 +105,7 @@ class UserService {
             const decoded = jwt.verify(token, "process.env.JWT_SECRET");
             return true;
         } catch (err) {
-            console.log(err);
+            log.log("error",err);
             return false;
         }
     }
@@ -115,7 +128,7 @@ class UserService {
             }
             return true;
         } catch (err) {
-            console.log(err);
+            log.log("error",err);
             return false;
         }
     }

@@ -16,11 +16,10 @@ module.exports = {
         lastAccessedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
         modifiedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, 
         nodeId TEXT, 
-        nodeURL TEXT NOT NULL, 
         accesses TEXT, 
         priority INTEGER,
-        parentFolderId INTEGER NOT NULL, 
-        encriptionKey TEXT NOT NULL
+        parentFolderId TEXT NOT NULL, 
+        encriptionKey TEXT
         )`,
 
 }

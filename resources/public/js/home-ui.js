@@ -128,7 +128,6 @@ function loadFolders(folderName,opt=false)
 
 function folderDelete(folderName)
 {
-    console.log(folderName);
     removeFolder(folderName, (status) => {
         if (status) {
             loadFolders('',false);

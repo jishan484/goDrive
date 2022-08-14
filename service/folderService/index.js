@@ -1,10 +1,11 @@
 const db = require("../../database");
 const userService = require("./../userService");
+const log = require("./../logService");
 
 
 class FolderService {
-    constructor(folderRepository) {
-        console.log("[DLOG] folder service initialized!");
+    constructor() {
+        log.log("debug","folder service initialized!");
     }
 
     // -------------------------------------ENTITIES--------------------------------------------//
@@ -12,7 +13,10 @@ class FolderService {
     getById(data, callback) {
         let folder = data.folderId;
         db.get('SELECT * FROM Folders WHERE folderId = ?', [folder], (err, row) => {
-            if (err) callback(false);
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
             else {
                 if (row == undefined) callback(false);
                 else callback(row);
@@ -27,7 +31,7 @@ class FolderService {
         db.all("SELECT * FROM Folders where ( fullPath = ? or parentFolderId = ? ) and owner = ?",
             [path, parentFolderId, owner], (err, row) => {
                 if (err) {
-                    console.log(err);
+                    log.log("error",err);
                     callback(false);
                 }
                 else {
@@ -42,7 +46,10 @@ class FolderService {
         let folderPath = data.folderPath;
         let owner = data.owner;
         db.all('SELECT * FROM Folders WHERE ( parentFolderId = ? or folderPath = ? or fullPath = ? ) and owner = ?', [parentFolderId, folderPath, folderPath,owner], (err, rows) => {
-            if (err) callback(false);
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
             else {
                 if (rows == undefined) callback(false);
                 else callback(rows);
@@ -62,7 +69,10 @@ class FolderService {
         let folderPath = data.folderPath;
         db.run('INSERT INTO Folders (folderId,folderName,folderPath,owner,parentFolderId,fullPath,permissions,accesses,priority) VALUES (?,?,?,?,?,?,?,?,?)',
             [folderId,folderName, folderPath, owner, parentFolderId, fullPath, permissions, accesses, priority], (err) => {
-                if (err) callback(false);
+                if (err) {
+                    callback(false);
+                    log.log("error", err);
+                }
                 else callback(true);
             });
     }
@@ -72,7 +82,10 @@ class FolderService {
             let folderName = data.folderName;
             let folderId = data.folderId;
             db.run('UPDATE Folders SET folderName = ?, modifiedOn=CURRENT_TIMESTAMP WHERE folderId = ?', [folderName, folderId], (err) => {
-                if (err) callback(false);
+                if (err) {
+                    callback(false);
+                    log.log("error", err);
+                }
                 else callback(true);
             });
         }
@@ -84,9 +97,11 @@ class FolderService {
         let owner = data.owner;
 
         db.run('DELETE FROM Folders WHERE ( folderId = ? or fullPath = ? ) and owner = ?', [folderId,fullPath,owner], (err) => {
-            if (err) callback(false);
+            if (err){
+                callback(false);
+                log.log("error",err);
+            }
             else callback(true);
-            console.log(this);
         });
     }
 
@@ -182,7 +197,6 @@ class FolderService {
             for(let i = 0; i < result.length; i++){
                 if(result[i].fullPath == data.folderPath){
                     data.parentFolderId = result[i].folderId;
-                    console.log("ooi");
                 }
                 if(result[i].fullPath == data.fullPath){
                     callback(false,"Folder already exists in the given path!");
@@ -190,7 +204,7 @@ class FolderService {
                 }
             }
             if(data.parentFolderId == "unknown"){
-                console.log("[DLOG] Parent folder not found!");
+                log.log("error","Parent folder not found! "+data.parentFolderId+" : "+data.owner);
                 callback(false,"Given parent path does not exist!");
                 return;
             }
@@ -234,7 +248,7 @@ class FolderService {
 // db.all('SELECT * FROM Folders where folderPath="/home" and owner="jishan"',(err, rows) => {
 //     if (err) callback(false);
 //     else {
-//         console.log(rows);
+//         log.log("debug",rows);
 //     }
 // });
 

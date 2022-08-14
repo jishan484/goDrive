@@ -27,7 +27,7 @@ app.get('*', (req, res) => res.send('Ooi! where you are going ? Stay true to you
 module.exports = server ={
     start: () => {
         app.listen(port, () => {
-            console.log('[SLOG] Server Started!\nlistening on port 0.0.0.0:' + port);
+            console.log('[SLOG] Server Started!\n[INFO] listening on port 0.0.0.0:' + port);
         });
     },
     stop: () => {

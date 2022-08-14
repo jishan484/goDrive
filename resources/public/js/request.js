@@ -96,11 +96,6 @@ function abortHandler(event) {
 }
 
 function processError(request , error){
-    // is request is not an object, then it is a string
-    // if(typeof error !== 'object'){
-    //     error = request;
-    // }
-    // console.log(error);
     switch (request.status) {
         case 0:
             errorToast('Network Error', 'It seems you are currently ofline! Please check your network.');
