@@ -44,6 +44,39 @@ function renderFolders(folders) {
 }
 
 
+function renderFiles(files) {
+    let html = '<div class="row mb-3">';
+    // sortFiles(files);
+    for (let i = 0; i < files.length; i++) {
+        console.log(files[i]);
+        html+=`<div class="col-lg-3 col-md-4 col-6 mb-1">
+           <div class="card">
+               <div class="card-body folder">
+                   <div class="card-title d-flex align-items-start justify-content-between pointable">
+                       <div class="avatar flex-shrink-1">
+                           <img src="image/format/xlsx.svg" alt="chart success" style="width: 50px; height: 50px;" />
+                       </div>
+                       <div class="dropdown">
+                           <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                               <i class="bx bx-dots-vertical-rounded"></i>
+                           </button>
+                           <div class="dropdown-menu dropdown-menu-end" aria-labelledby="cardOpt3">
+                               <a class="dropdown-item" href="javascript:void(0);">Star</a>
+                               <a class="dropdown-item" href="javascript:void(0);">Lock</a>
+                           </div>
+                       </div>
+                   </div>
+                   <div class="small file-name">${files[i].fileName}</div>
+                   <div class="file-name-s"><span>${files[i].modifiedOn}</span> <span>${files[i].fileSize} B</span></div>
+                   <div class="file-name-s"></div>
+               </div>
+           </div>
+       </div>`;
+    }
+    html += '</div>';
+    $('#files').html(html);
+}
+
 
 
 
@@ -122,6 +155,11 @@ function loadFolders(folderName,opt=false)
     fetchFolder(folderName, (folders) => {
         if (folders) {
             renderFolders(folders);
+            fetchFiles(folderName, (files) => {
+                if (files) {
+                    renderFiles(files);
+                }
+            });
         }
     },opt);
 }

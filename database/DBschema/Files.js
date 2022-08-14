@@ -7,6 +7,7 @@ module.exports = {
     (   
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         fileName TEXT, 
+        fileId TEXT UNIQUE,
         fileType TEXT,
         fileSize INTEGER, 
         filePath TEXT, 
@@ -17,8 +18,8 @@ module.exports = {
         modifiedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, 
         nodeId TEXT, 
         accesses TEXT, 
-        priority INTEGER,
-        parentFolderId TEXT NOT NULL, 
+        star INTEGER,
+        parentFolderId TEXT, 
         encriptionKey TEXT
         )`,
 

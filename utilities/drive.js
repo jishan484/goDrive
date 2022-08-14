@@ -10,9 +10,6 @@ class Drive{
         this.credentials = __dirname+"/cred.json";
         this.auth = null;
     }
-    authorize(credentials) {
-        
-    }
     getNewToken(oAuth2Client) {
         const authUrl = oAuth2Client.generateAuthUrl({
             access_type: 'offline',
@@ -63,9 +60,14 @@ class Drive{
             mimeType: mimeType,
             body: fileData
         },
-            fields: 'id'
+            fields: 'id,size,mimeType,name'
         }).then(data => {
-            callback(data,null);
+            if(data.status === 200){
+                callback(data.data,null);
+            }
+            else{
+                callback(data.data,true);
+            }
         }).catch(err => {
             callback(null,err);
         });

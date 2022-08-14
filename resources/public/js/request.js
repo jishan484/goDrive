@@ -48,7 +48,7 @@ function upload(file) {
         data: file,
         mimeType: 'multipart/form-data',
         cache: false,
-        headers: { 'm-filename': file.name, 'm-path': _current_folder_path,'m-mimetype': file.type },
+        headers: { 'm-filename': file.name, 'm-filepath': _current_folder_path,'m-mimetype': file.type },
         contentType: false,
         processData: false,
         success: (data, text) => {
@@ -220,6 +220,7 @@ function fetchFolder(folderName,callback,opt) {
             if(response.data.fullPath != undefined){
                 _current_folder_path = response.data.fullPath;
                 _previous_folder_path = response.data.folderPath;
+                _current_folder_id = response.data.folderId;
             }
             _last_requested_folder_response = response.data;
             callback(response.data.subFolders);
@@ -239,4 +240,17 @@ function removeFolder(folderName,callback) {
             callback(true);
         }
     });
+}
+
+function fetchFiles(folderName, callback, opt) {
+    var payload = {
+        filePath: (folderName != '') ? _current_folder_path + "/" + folderName : _current_folder_path,
+        folderName: folderName
+    };
+    request("app/u/file", payload, 'GET', (response) => {
+        if (response.status == 'success') {
+            callback(response.data);
+        }
+    }, opt
+    );
 }
