@@ -30,7 +30,8 @@ function getFile(req, res) {
 function uploadFile(req, res) {
     req.body.fileName = req.headers['m-filename'];
     req.body.filePath = req.headers['m-filepath'];
-    req.body.fileType = req.headers['m-mimetype'];
+    req.body.fileType = (req.headers['m-mimetype']=='')?'application/octet-stream':req.headers['m-mimetype'];
+
     if (req.body.fileName == undefined || req.body.fileName == null || req.body.fileName == "") {
         res.status(400).json({ status: 'error', data: null, error: "m-filename header is required", code: '400' });
         return;
@@ -39,7 +40,7 @@ function uploadFile(req, res) {
         res.status(400).json({ status: 'error', data: null, error: "m-foldername header is required", code: '400' });
         return;
     }
-    if (req.body.fileType == undefined || req.body.fileType == null || req.body.fileType == "") {
+    if (req.body.fileType == undefined || req.body.fileType == null) {
         res.status(400).json({ status: 'error', data: null, error: "m-mimetype header is required", code: '400' });
         return;
     }
@@ -52,7 +53,7 @@ function uploadFile(req, res) {
             req.body.fileSize = data.size;
             fileService.saveFile(req, (status, data) => {
                 if (status) {
-                    res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
+                    res.status(200).json({ status: 'success', data: "data", error: null, code: '200' });
                 } else {
                     res.status(200).json({ status: 'error', data: null, error: data, code: '204' });
                 }

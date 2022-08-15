@@ -50,13 +50,14 @@ class FileService {
         let fileName = data.fileName;
         let fileType = data.fileType;
         let fileSize = data.fileSize;
+        let fileFormat = data.fileFormat;
         let owner = data.owner;
         let parentFolderId = data.parentFolderId;
         let nodeId = data.nodeId;
         let access = data.access;
         let star = data.star;
         if(data.FETCH_PARENT == false){
-            db.run('INSERT INTO Files (fileId, filePath, fileName, fileType, fileSize, owner, parentFolderId, nodeId, accesses, star) VALUES (?,?,?,?,?,?,?,?,?,?)', [fileId, filePath, fileName, fileType, fileSize, owner, parentFolderId, nodeId, access, star], (err) => {
+            db.run('INSERT INTO Files (fileId, filePath, fileName, fileType, fileSize, owner, parentFolderId, nodeId, accesses, star, fileFormat) VALUES (?,?,?,?,?,?,?,?,?,?,?)', [fileId, filePath, fileName, fileType, fileSize, owner, parentFolderId, nodeId, access, star, fileFormat], (err) => {
                 if (err) {
                     callback(false);
                     log.log("error", err);
@@ -132,6 +133,7 @@ class FileService {
         data.fileName = req.body.fileName;
         data.fileType = req.body.fileType;
         data.fileSize = req.body.fileSize; //from gd
+        data.fileFormat = req.body.fileName.split('.').pop();
         data.owner = userService.getUserName(req.cookies.seid);  //from cookie
         data.parentFolderId = 0;  //from FolderService
         data.nodeId = req.body.nodeId; //from gd

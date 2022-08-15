@@ -11,6 +11,7 @@ var final_css = '';
 loadClassAndTags('resources/views/home.html');
 loadClassAndTags('resources/views/login.html');
 loadClassAndTags('resources/views/register.html');
+loadClassAndTags('resources/views/demo.html');
 
 //setting some default classes / tags / css properties[dont delete]
 setDefaultCSSBlocks();

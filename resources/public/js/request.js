@@ -30,13 +30,14 @@ function request(path, datas, method, callback,backgroundFetch=true) {
     });
 }
 
-function upload(file) {
-    
-    $.ajax({
+function upload(file,callback) {
+    _uploaded = 0;
+    _lastUpTime = (new Date()).getTime();
+    _globalUPjax = $.ajax({
         xhr: function () {
             var xhr = new window.XMLHttpRequest(2);
             //Upload progress and event handling
-            xhr.upload.addEventListener("progress", progressHandler, false);
+            xhr.upload.addEventListener("progress", uploadProgressHandler, false);
             xhr.addEventListener("load", completeHandler, false);
             xhr.addEventListener("error", errorHandler, false);
             xhr.addEventListener("abort", abortHandler, false);
@@ -52,24 +53,15 @@ function upload(file) {
         contentType: false,
         processData: false,
         success: (data, text) => {
-            if(data.status == 'success'){
-                $('#uploadForm')[0].reset();
-                $('#uploadModal').modal('hide');
-                fetchFolder('',(response)=>{
-                    $('#folderList').html('');
-                    $('#folderList').append(createFolderList(response));
-                });
-            }
+            callback(data);
+        },
+        error: (request, status, error) => {
+            processError(request, error);
+            completeHandler(null);
+            callback(false,request.status);
         }
     });
-}
-
-function uploadFile()
-{
-    for (var i = 0; i < formFileMultiple.files.length; i++)
-    {
-        upload(formFileMultiple.files[i]);
-    }
+    // _globalUPjaxB = _globalUPjax;
 }
 
 function progressHandler(e) {
@@ -79,6 +71,23 @@ function progressHandler(e) {
         var total = e.total;
         var progressValue = Math.round((loaded / total) * 100);
         $('#reqProgress')[0].style.width = progressValue + '%';
+    }
+}
+function uploadProgressHandler(e) {
+    if (e.lengthComputable) {
+        // Append progress percentage.
+        let loaded = e.loaded;
+        let total = e.total;
+        let progressValue = Math.round((loaded / total) * 100);
+        let speed = showspeed(loaded);
+        let remaining = (total - loaded) / speed;
+        // seconds to minutes seconds
+        let remainingTime = Math.floor(remaining / 60) + 'Min ' + Math.floor(remaining % 60)+'Sec';
+
+        $('#uploadProgress')[0].style.width = progressValue + '%';
+        $('#UPspeed').html(formatBytes(speed, 2) + '/s');
+        $('#UPusize').html(formatBytes(loaded, 3));
+        $('#UPtime').html((remainingTime =='NaNMin NaNSec' ? '0Min 0Sec' : remainingTime));
     }
 }
 function completeHandler(event) {
@@ -98,7 +107,7 @@ function abortHandler(event) {
 function processError(request , error){
     switch (request.status) {
         case 0:
-            errorToast('Network Error', 'It seems you are currently ofline! Please check your network.');
+            errorToast('Request Aborted', 'Request has been aborted.');
             break;
         case 401:
             errorToast('Unauthorized', 'You are not authorized to perform this action.');
@@ -127,9 +136,9 @@ function errorToast(type , msg)
     _isToastActive = true;
     $('#errorToast .me-auto').html(type);
     $('#errorToast .toast-body').html(msg);
-    $('#errorToast').toggleClass('show');
+    $('#errorToast').addClass('show');
     setTimeout(function () {
-        $('#errorToast').toggleClass('show');
+        $('#errorToast').removeClass('show');
         _isToastActive = false;
     }, 5000);
     $('#udprogress')[0].style.display = 'none';
@@ -146,13 +155,14 @@ function formatBytes(bytes, decimals) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
-var lastUpTime = 0, uploaded = 0;
+
 function showspeed(loaded) {
     var endTime = (new Date()).getTime();
-    upSpeed = ((loaded - uploaded) * 1000) / ((endTime - lastUpTime));
-    uploaded = loaded;
-    lastUpTime = endTime;
+    upSpeed = ((loaded - _uploaded) * 1000) / ((endTime - _lastUpTime));
+    _uploaded = loaded;
+    _lastUpTime = endTime;
     if (upSpeed < 0.1) upSpeed = 0;
+    return upSpeed;
 }
 
 

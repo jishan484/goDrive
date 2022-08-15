@@ -253,8 +253,6 @@
                           </div>
                           <div class="mb-1">
                             <span class="small" id="folderCreateError"></span>
-                            <!-- Folder name already exist in
-                                                        this directory -->
                           </div>
                           <div class="mb-2">
                             <button class="btn btn-primary w-25 mw-50" id="createFolderBtn" type="submit">Create</button>
@@ -263,91 +261,30 @@
                       </div>
                       <div class="modal modal-top fade" id="basicModal" tabindex="-1" style="display: none;" aria-hidden="true">
                         <div class="modal-dialog modal-lg" role="document">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h4 class="modal-title" id="exampleModalLabel1">Create Folder </h4>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                              <div class="row">
-                                <div class="col mb-3">
-                                  <center>
-                                    <input class="form-control" type="file" id="formFileMultiple" multiple="true" />
-                                  </center>
+                            <form onsubmit="return false;" id="formFileForm">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" id="exampleModalLabel1">Create Folder </h4>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col mb-3">
+                                                <center>
+                                                    <input class="form-control after-input" type="file" id="formFileMultiple" multiple="true" />
+                                                </center>
+                                            </div>
+                                        </div>
+                                        <div class="col" id="fileList">
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"> Close </button>
+                                        <button type="button" class="btn btn-primary" onclick="uploadFiles()" id="UPBTN">Upload Files</button>
+                                    </div>
                                 </div>
-                              </div>
-                              <div class="col">
-                                <div class="table-responsive text-nowrap mh-px-150 mb-2" style="z-index: 2000;">
-                                  <table class="table table-sm table-bordered table-hover table-custom">
-                                    <thead>
-                                      <tr>
-                                        <th>Count</th>
-                                        <th>File Name</th>
-                                        <th>Size</th>
-                                        <th>Action</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody class="table-border-bottom-0">
-                                      <tr>
-                                        <td>1</td>
-                                        <td>
-                                          <strong class="small">Angular and other project , but all Projects with very big name.txt</strong>
-                                        </td>
-                                        <td>2.5 MB</td>
-                                        <td>
-                                          <button class="btn btn-sm btn-danger">Remove</button>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td>1</td>
-                                        <td>
-                                          <strong class="small">Angular Project with very big name.txt</strong>
-                                        </td>
-                                        <td>2.5 MB</td>
-                                        <td>
-                                          <button class="btn btn-sm btn-danger">Remove</button>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td>1</td>
-                                        <td>
-                                          <strong class="small">Angular Project with very big name.txt</strong>
-                                        </td>
-                                        <td>2.5 MB</td>
-                                        <td>
-                                          <button class="btn btn-sm btn-danger">Remove</button>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td>1</td>
-                                        <td>
-                                          <strong class="small">Angular Project.txt</strong>
-                                        </td>
-                                        <td>2.5 MB</td>
-                                        <td>
-                                          <button class="btn btn-sm btn-danger">Remove</button>
-                                        </td>
-                                      </tr>
-                                      <tr>
-                                        <td>1</td>
-                                        <td>
-                                          <strong class="small">Angular Project.txt</strong>
-                                        </td>
-                                        <td>2.5 MB</td>
-                                        <td>
-                                          <button class="btn btn-sm btn-danger">Remove</button>
-                                        </td>
-                                      </tr>
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal"> Close </button>
-                              <button type="button" class="btn btn-primary">Create</button>
-                            </div>
-                          </div>
+                            </form>
                         </div>
                       </div>
                     </div>
@@ -594,6 +531,3 @@
     <!-- <script async defer src="https://buttons.github.io/buttons.js"></script> -->
   </body>
 </html>
-<!-- <div class="col-lg-3 col-md-4 col-6 mb-3"><div class="card"><div class="card-body folder" id="${folders[i].folderId}" oncontextmenu="folderOptions(this);return false;" ondblclick="folderOpen('${folders[i].folderName}')"><div class="card-title d-flex align-items-start justify-content-between pointable"><div class="avatar flex-shrink-1"><img src="image/folder_ftp.png" alt="chart success" style="width:50px;height:50px;" /></div><div class="dropdown" ondblclick="stopdblClick(event);return false;"><button class="btn p-0" type="button" id="cardOpt3"
-                                        data-bs-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false"><i class="bx bx-dots-vertical-rounded"></i></button><div class="dropdown-menu dropdown-menu-end"><a class="dropdown-item" href="javascript:void(0);">Star</a><a class="dropdown-item" href="javascript:void(0);">Lock</a></div></div><ul class="dropdown-menu folderOption" data-popper-placement="bottom-start"><li><div class="dropdown-item" onclick="folderOpen('${folders[i].folderName}')">open</div></li><li><div class="dropdown-item" onclick="folderOpen('${folders[i].folderName}')">share</div></li><li><hr class="dropdown-divider"></li><li><div class="dropdown-item" onclick="folderRenme('${folders[i].folderId}')">rename</div></li><li><div class="dropdown-item" onclick="folderCopyMove('${folders[i].folderId}')">copy / move</div></li><li><div class="dropdown-item" onclick="folderDelete('${folders[i].folderId}')">delete</div></li><li><hr class="dropdown-divider"></li><li><div class="dropdown-item" onclick="folderUpdatePermission('${folders[i].folderId}')">update permission</div></li></ul></div><div class="small folder-name">${folders[i].folderName}</div><div class="folder-name-s">${folders[i].createdOn}</div></div></div></div> -->

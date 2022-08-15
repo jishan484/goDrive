@@ -45,11 +45,11 @@ function renderFolders(folders) {
 
 
 function renderFiles(files) {
+    console.log(files);
     let html = '<div class="row mb-3">';
-    // sortFiles(files);
+    sortFiles(files);
     for (let i = 0; i < files.length; i++) {
-        console.log(files[i]);
-        html+=`<div class="col-lg-3 col-md-4 col-6 mb-1">
+        html+=`<div class="col-lg-3 col-md-4 col-6 mb-3">
            <div class="card">
                <div class="card-body folder">
                    <div class="card-title d-flex align-items-start justify-content-between pointable">
@@ -67,7 +67,7 @@ function renderFiles(files) {
                        </div>
                    </div>
                    <div class="small file-name">${files[i].fileName}</div>
-                   <div class="file-name-s"><span>${files[i].modifiedOn}</span> <span>${files[i].fileSize} B</span></div>
+                   <div class="file-name-s"><span>${files[i].modifiedOn}</span> <span>${formatBytes(files[i].fileSize,2)}</span></div>
                    <div class="file-name-s"></div>
                </div>
            </div>
@@ -79,10 +79,65 @@ function renderFiles(files) {
 
 
 
+function renderTableFiles(files) {
+    if(files.length == 0) {setTimeout(()=>{$('#fileList').html('')},2000); return;}
+    let html = `<div class="table-responsive text-nowrap mh-px-150 mb-2" style="z-index: 2000;">
+                    <table class="table table-sm table-bordered table-hover table-custom">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Size</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+    for (let i = 0; i < files.length; i++) {
+        html += `<tr>
+                    <td>${files[i].name}</td>
+                    <td>${formatBytes(files[i].size,2)}</td>
+                    <td><button class="btn btn-sm btn-danger" onclick="removeFile(${i})">Remove</button></td>
+                </tr>`;
+    }
+    html += `</tbody>
+                </table>
+            </div>`;
+    $('#fileList').html(html);
+
+}
 
 
-
-
+function renderUploadProgress()
+{
+    let html =
+    `<div class="row mb-1">
+        <div class="col-md-12">
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%" id="uploadProgress"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row align-left">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <span>File Name: </span><span id="UPname">f.txt</span>
+        </div>
+        <div class="col-md-6 col-lg-6 col-sm-6">
+            <span>Speed: </span><span id="UPspeed">20 Kbps</span>
+        </div>
+        <div class="col-md-6 col-lg-6 col-sm-6">
+            <span>File Size: </span><span id="UPtsize">20 MB</span>
+        </div>
+        <div class="col-md-6 col-lg-6 col-sm-6">
+            <span>Remain Time: </span><span id="UPtime">2min 30sec</span>
+        </div>
+        <div class="col-md-6 col-lg-6 col-sm-6">
+            <span>Uploaded: </span><span id="UPusize">12 MB</span>
+        </div>
+        <div class="col-md-6 col-lg-6 col-sm-6">
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="_globalUPjax.abort();"> Cancle this Upload </button> 
+        </div>
+    </div>`;
+    $('#fileList').html(html);
+}
 
 
 
@@ -207,9 +262,96 @@ function sortFolders(folders) {
     }
 }
 
+function sortFiles(files) {
+    if(_content_sort_method == 'default') return;
+    if (_content_sort_method == 'name') {
+        files.sort(function (a, b) {
+            var x = a.fileName.toLowerCase();
+            var y = b.fileName.toLowerCase();
+            return x < y ? -1 : x > y ? 1 : 0;
+        });
+    } else if (_content_sort_method == 'date') {
+        files.sort(function (a, b) {
+            var x = a.modifiedOn.toLowerCase();
+            var y = b.modifiedOn.toLowerCase();
+            return x < y ? -1 : x > y ? 1 : 0;
+        }).reverse();
+    } else{
+        _content_sort_method = 'default';
+        files.sort(function (a, b) {
+            var x = a.modifiedOn.toLowerCase();
+            var y = b.modifiedOn.toLowerCase();
+            return x < y ? -1 : x > y ? 1 : 0;
+        });
+    }
+}
+
+basicModal.ondragover = basicModal.ondragenter = function (evt) {
+    evt.preventDefault();
+};
+
+basicModal.ondrop = function (evt) {
+    formFileMultiple.files = evt.dataTransfer.files;
+    const dT = new DataTransfer();
+    dT.items.add(evt.dataTransfer.files[0]);
+    formFileMultiple.files = dT.files;
+    evt.preventDefault();
+};
+
+function uploadFiles() {
+    if (formFileMultiple.files.length > 0) {
+        renderUploadProgress();
+        $("#UPname").html(formFileMultiple.files[0].name);
+        $("#UPtsize").html(formatBytes(formFileMultiple.files[0].size, 3));
+        upload(formFileMultiple.files[0], (status, error) => {
+            if (formFileMultiple.files.length == 0) {
+                loadFolders('', true);
+                formFileForm.reset();
+                $("#fileList").html('');
+            }
+
+            if((!status && !error) || status){
+                removeFile(0);
+                $('#UPBTN').click();
+            }
+        });
+    }
+}
+
+function handelUploadError(statusCode){
+    switch(statusCode){
+        case 0:
+            $("#fileList").html("Upload Aborted. Next File upload process will start in 10sec");
+            break;
+        default:
+            $("#fileList").html("ERROR: file upload process stopped");
+            break;        
+    }
+}
+
+$("#formFileMultiple").change(function () {
+    renderTableFiles(formFileMultiple.files);
+});
+
 setTimeout(function () {
     loadFolders('');
 },200);
+
+
+
+// remove file from the list
+function removeFile(index) {
+    let dt = new DataTransfer();
+    let input = document.getElementById('formFileMultiple');
+    let { files } = input;
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        if (index !== i)
+            dt.items.add(file);
+    }
+    input.files = dt.files ;
+    renderTableFiles(input.files);
+}
 
 
 // check for site idle for more than 5 minutes on gobal events
