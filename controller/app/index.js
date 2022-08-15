@@ -18,14 +18,14 @@ router.use("/u/*", (req, res, next) => {
         }
     }
     else {
-        req.socket.end();
-        res.status(403).send({
-            uri: RouterConfig.force_login_redirect_uris,
-            error: "You are not logged in",
-            code: "403",
-            data: null
-        }).end();
-        // res.socket.destroy();
+        // req.pause();
+        // res.status(403).end("You are not logged in");
+        // // res.socket.destroy();
+        // res.redirect('back');
+        req.removeListener('data', ()=>{}); // we need to remove the event listeners so that we don't end up here more than once
+        req.removeListener('end', ()=>{});
+        res.header('Connection', 'close'); // with the Connection: close header set, node will automatically close the socket...
+        res.status(401).send('Upload too large');
     }
 });
 
