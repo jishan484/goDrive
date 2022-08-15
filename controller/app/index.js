@@ -23,7 +23,7 @@ router.use("/u/*", (req, res, next) => {
         });
         res.status(403).send({
             uri: RouterConfig.force_login_redirect_uris,
-            error: "You are not logged in",
+            error: "You are not logged in!",
             code: "403",
             data: null
         });
