@@ -18,15 +18,13 @@ router.use("/u/*", (req, res, next) => {
         }
     }
     else {
-        req.on('data',(data)=>{
-            req.socket.end();
-        });
         res.status(403).send({
             uri: RouterConfig.force_login_redirect_uris,
             error: "You are not logged in",
             code: "403",
             data: null
         });
+        res.socket.destroy();
     }
 });
 
