@@ -19,7 +19,7 @@ router.use("/u/*", (req, res, next) => {
     }
     else {
         req.on('data',(data)=>{
-            req.socket.destroy();
+            req.socket.end();
         });
         res.status(403).send({
             uri: RouterConfig.force_login_redirect_uris,
