@@ -24,7 +24,7 @@ router.use("/u/*", (req, res, next) => {
             code: "403",
             data: null
         });
-        res.socket.destroy();
+        // res.socket.destroy();
     }
 });
 
