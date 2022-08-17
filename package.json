@@ -21,6 +21,6 @@
     "express": "4.17.1",
     "googleapis": "^105.0.0",
     "jsonwebtoken": "8.5.1",
-    "sqlite3": "^5.0.0"
+    "sqlite3": "^5.0.3"
   }
 }

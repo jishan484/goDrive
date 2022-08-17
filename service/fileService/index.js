@@ -22,8 +22,7 @@ class FileService {
                 log.log("error", err);
             }
             else {
-                if (row == undefined) callback(false);
-                else callback(row);
+                callback(row);
             }
         });
     }
@@ -38,8 +37,7 @@ class FileService {
                 log.log("error", err);
             }
             else {
-                if (row == undefined) callback(false);
-                else callback(row);
+                callback(row);
             }
         });
     }
@@ -110,18 +108,33 @@ class FileService {
         data.parentFolderId = (req.body.folderId==undefined)?'':req.body.folderId;
         data.owner = userService.getUserName(req.cookies.seid);
         data.filePath = req.body.filePath;
-        
+
         if(data.parentFolderId == '' && data.filePath == undefined) {
             callback(false,"Missing parameters: parentFolderId and filePath");
             return;
         }
-
+        let response = {};
+        response.files = [];
+        response.folder = data.filePath;
         this.getByFolder(data, (row) => {
-            if (row == false) {
-                callback(false,"Files not found");
+            if(row){
+                for (let i = 0; i < row.length; i++) {
+                    let file = {};
+                    file.fileId = row[i].fileId;
+                    file.filePath = row[i].filePath;
+                    file.fileName = row[i].fileName;
+                    file.fileType = row[i].fileType;
+                    file.fileSize = row[i].fileSize;
+                    file.fileFormat = row[i].fileFormat;
+                    file.access = row[i].accesses;
+                    file.icon = row[i].fileFormat + '.svg';
+                    file.star = row[i].star;
+                    response.files.push(file);
+                }
+                callback(true, response);
             }
-            else {
-                callback(true,row);
+            else{
+                callback(false, "No files found");
             }
         });
     }

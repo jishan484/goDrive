@@ -254,7 +254,7 @@ function removeFolder(folderName,callback) {
 
 function fetchFiles(folderName, callback, opt) {
     var payload = {
-        filePath: (folderName != '') ? _current_folder_path + "/" + folderName : _current_folder_path,
+        filePath: _current_folder_path,
         folderName: folderName
     };
     request("app/u/file", payload, 'GET', (response) => {

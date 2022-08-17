@@ -45,7 +45,6 @@ function renderFolders(folders) {
 
 
 function renderFiles(files) {
-    console.log(files);
     let html = '<div class="row mb-3">';
     sortFiles(files);
     for (let i = 0; i < files.length; i++) {
@@ -210,13 +209,16 @@ function loadFolders(folderName,opt=false)
     fetchFolder(folderName, (folders) => {
         if (folders) {
             renderFolders(folders);
-            fetchFiles(folderName, (files) => {
-                if (files) {
-                    renderFiles(files);
-                }
-            });
+            loadFiles(folderName);
         }
     },opt);
+}
+
+function loadFiles(folderName)
+{
+    fetchFiles(folderName, (data) => {
+        renderFiles(data.files);
+    });
 }
 
 function folderDelete(folderName)
@@ -304,16 +306,14 @@ function uploadFiles() {
         $("#UPname").html(formFileMultiple.files[0].name);
         $("#UPtsize").html(formatBytes(formFileMultiple.files[0].size, 3));
         upload(formFileMultiple.files[0], (status, error) => {
-            if (formFileMultiple.files.length == 0) {
-                loadFolders('', true);
-                formFileForm.reset();
-                $("#fileList").html('');
-            }
-
             if((!status && !error) || status){
                 removeFile(0);
                 $('#UPBTN').click();
             }
+            setTimeout(() => {
+                loadFiles();
+                console.log('upload complete');
+            }, 1000);
         });
     }
 }
