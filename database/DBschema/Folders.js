@@ -20,6 +20,3 @@ module.exports = {
         priority INTEGER
         )`,
 }
-
-// if your are changing the table, you need to add a new unique ChangeId. 
-// QueryId must be the same in every changes.

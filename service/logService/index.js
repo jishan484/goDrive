@@ -16,6 +16,13 @@ module.exports = logs={
         }
     },
 
+    testLog : function(message,level = 'error'){
+        if(level == 'error')
+            console.log('[TEST-FAILED]', message, (new Error()).stack.split("\n")[3].trim());
+        else
+            console.log('[TEST-WARNING]', message, (new Error()).stack.split("\n")[3].trim());
+    },
+
     setLogLevel: function(logLevel){
         if(this.logLevel.includes(logLevel)){
             this.allowedLogLevel = logLevel;

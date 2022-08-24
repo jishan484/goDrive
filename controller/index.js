@@ -19,6 +19,7 @@ app.use('/', express.static('resources/public'));
 
 app.use('/', require('./pages'));
 app.use('/app', require('./app'));
+app.use('/admin', require('./admin'));
 // app.use('/external', require('./controller/external'))
 
 

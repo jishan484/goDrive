@@ -34,4 +34,10 @@ router.get('/home', (req, res) => {
     }
 });
 
+router.use('/admin', express.static(path.resolve('resources/admin')));
+
+router.get('/admin/home',(req,res)=>{
+    res.sendFile(path.resolve('resources/views/adminHome.html'));
+})
+
 module.exports = router

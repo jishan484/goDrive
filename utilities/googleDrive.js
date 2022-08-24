@@ -53,12 +53,26 @@ const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
 // time.
 const TOKEN_PATH = 'token.json';
 
+const credentials = {
+    "installed": {
+        "client_id": "362327116008-s84t091me56g2vb812ho3pl0mssfgagn.apps.googleusercontent.com",
+        "project_id": "driveapp-359312",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_secret": "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",
+        "redirect_uris": [
+            "http://localhost:8080/admin/u/drive/callback" //put your domain and port
+        ]
+    }
+};
+
 // Load client secrets from a local file.
-fs.readFile('cred.json', (err, content) => {
-    if (err) return console.log('Error loading client secret file:', err);
+// fs.readFile('cred.json', (err, content) => {
+//     if (err) return console.log('Error loading client secret file:', err);
     // Authorize a client with credentials, then call the Google Tasks API.
-    authorize(JSON.parse(content), listConnectionNames);
-});
+authorize(credentials, listConnectionNames);
+// });
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -118,29 +132,75 @@ function getNewToken(oAuth2Client, callback) {
  */
 function listConnectionNames(auth) {
     const driveService = google.drive({ version: 'v3', auth });
-
+    
     let fileMetadata = {
     'name': 'icon.json'
 };
-driveService.files.create({
-    resource: fileMetadata,
-    media: {
-        mimeType: 'application/json',
-        body: fs.createReadStream('credential.json')
-    },
-    fields: 'id'
-}).then(data=>{
-    switch (data.status) {
-        case 200:
-            let file = data.result;
-            console.log('Created File Id: ', data.data);
-            break;
-        default:
-            console.error(data);
-            break;
-    }
-});
+// driveService.files.create({
+//     resource: fileMetadata,
+//     media: {
+//         mimeType: 'application/json',
+//         body: fs.createReadStream('credential.json')
+//     },
+//     fields: 'id'
+// }).then(data=>{
+//     switch (data.status) {
+//         case 200:
+//             let file = data.result;
+//             console.log('Created File Id: ', data.data);
+//             break;
+//         default:
+//             console.error(data);
+//             break;
+//     }
+// });
 
+    // function printAbout() {
+    //     var request = gapi.client.drive.about.get();
+    //     request.execute(function (resp) {
+    //         console.log('Current user name: ' + resp.name);
+    //         console.log('Root folder ID: ' + resp.rootFolderId);
+    //         console.log('Total quota (bytes): ' + resp.quotaBytesTotal);
+    //         console.log('Used quota (bytes): ' + resp.quotaBytesUsed);
+    //     });
+    // }
+
+    // fetch a folder
+
+    // driveService.files.list({
+    //     q: 'mimeType=\'application/vnd.google-apps.folder\'',
+    //     fields: '*',
+    //     spaces: 'drive',
+    // }).then(data=>{
+    //     if(data.data.files.length > 0) {
+    //         console.log("[DLOG] Drive initialized successfully");
+    //         console.log(data.data.files[0].id);
+    //     }
+    //     else{
+    //         var folderMetadata = {
+    //             'name': "MiFi_ROOT",
+    //             'mimeType': 'application/vnd.google-apps.folder'
+    //         };
+    //         driveService.files.create({
+    //             resource: folderMetadata,
+    //             fields: 'id'
+    //         }).then(data => {
+    //             console.log(data.data.id);
+    //         }).catch(err => console.log(err));
+    //     }
+    // }).catch(err => console.log(err));
+    
+    //  create a folder
+    // var folderMetadata = {
+    //     'name': "MiFi_ROOT",
+    //     'mimeType': 'application/vnd.google-apps.folder'
+    // };
+    // driveService.files.create({
+    //     resource: folderMetadata ,
+    //     fields: 'id'
+    // }).then(data=>{
+    //     console.log(data.data.id);
+    // })
 
 }
 

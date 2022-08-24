@@ -10233,6 +10233,12 @@ a.list-group-item-gray.active,button.list-group-item-gray.active {
   text-transform: capitalize !important;
 }
 
+.text-clip {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
 .text-wrap {
   white-space: normal !important;
 }

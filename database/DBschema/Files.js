@@ -20,10 +20,7 @@ module.exports = {
         accesses TEXT, 
         star INTEGER,
         parentFolderId TEXT, 
-        encriptionKey TEXT
-        )`,
+        driveId TEXT
+        )`
 
 }
-
-// if your are changing the table, you need to add a new unique ChangeId. 
-// QueryId must be the same in every changes.

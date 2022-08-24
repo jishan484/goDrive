@@ -12,6 +12,7 @@ DBChanges.changes.firstOrder.push(require('./Users.js'));   // Users table creat
 DBChanges.changes.firstOrder.push(require('./Files.js'));   // FIles table creation
 DBChanges.changes.firstOrder.push(require('./Folders.js'));   // Folders table creation
 DBChanges.changes.secondOrder.push(require('./defaultUser.js'));   // Default User creation
+DBChanges.changes.secondOrder.push(require('./Drives.js'));   // Drives table creation
 
 
 module.exports = DBChanges;
