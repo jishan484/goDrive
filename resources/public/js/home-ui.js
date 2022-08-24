@@ -305,23 +305,35 @@ function uploadFiles() {
         renderUploadProgress();
         $("#UPname").html(formFileMultiple.files[0].name);
         $("#UPtsize").html(formatBytes(formFileMultiple.files[0].size, 3));
-        upload(formFileMultiple.files[0], (status, error) => {
-            if((!status && !error) || status){
+        upload(formFileMultiple.files[0], (status, resp) => {
+            if((!status && !resp) || resp.status == 'success'){
                 removeFile(0);
                 $('#UPBTN').click();
             }
+            else{
+                handelUploadError(11, resp.error);
+                setTimeout(() => {
+                    removeFile(0);
+                    $('#UPBTN').click();
+                }, 10000);
+            }
             setTimeout(() => {
                 loadFiles();
-                console.log('upload complete');
             }, 1000);
         });
     }
 }
 
-function handelUploadError(statusCode){
+function handelUploadError(statusCode,message){
     switch(statusCode){
         case 0:
             $("#fileList").html("Upload Aborted. Next File upload process will start in 10sec");
+            break;
+        case 1:
+            $("#fileList").html("Upload failed!. Next File upload process will start in 10sec");
+            break;
+        case 11:
+            $("#fileList").html(message +'! Next File upload process will start in 10 seconds');
             break;
         default:
             $("#fileList").html("ERROR: file upload process stopped");

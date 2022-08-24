@@ -6,7 +6,7 @@ const log = require("./../logService");
 class DriveInfo{
 
     constructor(){
-        log.log("debug", "Drive service initialized!");
+        log.log("debug", "DriveInfo service initialized!");
     }
 
     // -------------------------------------ENTITIES--------------------------------------------//
@@ -18,6 +18,19 @@ class DriveInfo{
                 log.log("error", err);
             }
             else {
+                callback(row);
+            }
+        });
+    }
+
+    getByName(data,callback){
+        let driveName = data.driveName;
+        db.get("SELECT * FROM Drives WHERE driveName=?",[driveName],(err,row)=>{
+            if(err){
+                callback(false);
+                log.log('error',err);
+            }
+            else{
                 callback(row);
             }
         });
@@ -42,6 +55,19 @@ class DriveInfo{
         });
     }
 
+
+    update(data,callback){
+        let driveToken = data.driveToken;
+        let driveName = data.driveName;
+        db.run("UPDATE Drives SET driveToken=? where driveName=?",[driveToken,driveName],(err,row)=>{
+            if(err){
+                callback(false);
+                log.log('error',err);
+            } else {
+                callback(true);
+            }
+        });
+    }
 
 
 

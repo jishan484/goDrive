@@ -50,7 +50,16 @@ module.exports = class GoogleDrive extends Storage{
                 return;
             }
             this.token = token;
-            callback(true, token);
+            this.auth.setCredentials(this.token);
+            this.driveService = google.drive({ version: 'v3', auth: this.auth });
+            this.driveService.about.get({
+                fields: 'user,storageQuota'
+            }).then(data => {
+                callback(true, token, data.data.user.emailAddress);
+            }).catch(err => {
+                callback(false, 'Failed to fetch drive information!');
+                log.log("error",err);
+            });
         });
     }
 
@@ -63,19 +72,22 @@ module.exports = class GoogleDrive extends Storage{
         this.driveService.about.get({
             fields: 'user,storageQuota'
         }).then(data => {
-            this.displayName = data.data.user.displayName;
+            this.displayName = data.data.user.emailAddress;
             this.freeSpace = (data.data.storageQuota.limit - data.data.storageQuota.usage);
             this.storageInfo.image = data.data.user.photoLink;
-            this.storageInfo.email = data.data.user.emailAddress;
-        }).catch(err => log.log("error".err));
+            this.storageInfo.displayName = data.data.user.displayName;
+            this._setup(callback);
+        }).catch(err => log.log("error",err));
+    }
 
+    _setup(callback){
         this.driveService.files.list({
             q: 'mimeType=\'application/vnd.google-apps.folder\'',
-            fields: 'id,name',
+            fields: '*',
             spaces: 'drive',
         }).then(data => {
             if (data.data.files.length > 0) {
-                log.log("debug", "Drive [",this.displayName,"] initialized successfully");
+                log.log("debug", "Drive ["+ this.displayName+ "] initialized successfully");
                 this.parentFolderId = data.data.files[0].id;
                 callback(true);
             }
@@ -84,20 +96,20 @@ module.exports = class GoogleDrive extends Storage{
                     'name': "MiFi_ROOT",
                     'mimeType': 'application/vnd.google-apps.folder'
                 };
-                driveService.files.create({
+                this.driveService.files.create({
                     resource: folderMetadata,
                     fields: 'id'
                 }).then(data => {
                     this.parentFolderId = data.data.id;
                     callback(true);
-                }).catch(err => log.log("error".err));
+                }).catch(err => log.log("error",err));
             }
-        }).catch(err => log.log("error".err));
+        }).catch(err => {log.log("error",err);});
     }
 
     writeFile(fileName,mimeType,fileData, callback)
     {
-        let fileMetadata = { 'name': fileName };
+        let fileMetadata = { 'name': fileName, parents: [this.parentFolderId] };
         this.driveService.files.create({
             resource: fileMetadata,
             media: {
@@ -107,14 +119,14 @@ module.exports = class GoogleDrive extends Storage{
             fields: 'id,size,mimeType,name'
         }).then(data => {
             if (data.status === 200) {
-                callback(data.data, null);
+                callback(true,data.data);
             }
             else {
-                callback(data.data, true);
+                callback(false,data.data);
             }
         }).catch(err => {
-            log.log('error',error);
-            callback(null, err);
+            log.log('error',err);
+            callback(false, err);
         });
     }
 

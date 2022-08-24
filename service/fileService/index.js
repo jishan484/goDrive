@@ -54,8 +54,9 @@ class FileService {
         let nodeId = data.nodeId;
         let access = data.access;
         let star = data.star;
+        let driveId = data.driveId;
         if(data.FETCH_PARENT == false){
-            db.run('INSERT INTO Files (fileId, filePath, fileName, fileType, fileSize, owner, parentFolderId, nodeId, accesses, star, fileFormat) VALUES (?,?,?,?,?,?,?,?,?,?,?)', [fileId, filePath, fileName, fileType, fileSize, owner, parentFolderId, nodeId, access, star, fileFormat], (err) => {
+            db.run('INSERT INTO Files (fileId, filePath, fileName, fileType, fileSize, owner, parentFolderId, nodeId, accesses, star, fileFormat, driveId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', [fileId, filePath, fileName, fileType, fileSize, owner, parentFolderId, nodeId, access, star, fileFormat,driveId], (err) => {
                 if (err) {
                     callback(false);
                     log.log("error", err);
@@ -145,6 +146,7 @@ class FileService {
         data.filePath = req.body.filePath;
         data.fileName = req.body.fileName;
         data.fileType = req.body.fileType;
+        data.driveId = req.body.driveId;
         data.fileSize = req.body.fileSize; //from gd
         data.fileFormat = req.body.fileName.split('.').pop();
         data.owner = userService.getUserName(req.cookies.seid);  //from cookie

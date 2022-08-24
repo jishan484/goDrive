@@ -25,9 +25,9 @@ function init_database() {
         }
         let DBChanges = require("./DBschema");
         reloadDBSchema(DBChanges.changes.firstOrder);
-        setImmediate(() => {
+        setTimeout(() => {
             reloadDBSchema(DBChanges.changes.secondOrder);
-        });
+        },1500);
     });
 }
 
@@ -41,13 +41,14 @@ async function reloadDBSchema(changes)
             if (!row) {
                 db.run(element.query, (err) => {
                     if (err) {
-                        log.log('debug','[DBschema-ERROR]',err);
+                        log.log('error','[DBschema-ERROR]',err);
                     }
                     else{
-                        log.log('dbug', element.comment);
                         db.run("INSERT INTO DATABASECHANGES (QueryId, changeVersion) VALUES (?, ?)", element.QueryId, element.version, (err) => {
                             if (err) {
                                 log.log('error',err);
+                            } else {
+                                log.log('debug', element.comment + ' : ' + 'Completed');
                             }
                         });
                     }

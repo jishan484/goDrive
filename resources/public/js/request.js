@@ -53,7 +53,12 @@ function upload(file,callback) {
         contentType: false,
         processData: false,
         success: (data, text) => {
-            callback(data);
+            try{
+                data = JSON.parse(data);
+            } catch(e){
+                data = {status:'error',error:data};
+            }
+            callback(true,data);
         },
         error: (request, status, error) => {
             processError(request, error);
