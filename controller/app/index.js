@@ -11,10 +11,11 @@ router.use("/u/*", (req, res, next) => {
             next();
         }
         else{
-            req.on('data', (data) => {
-                req.socket.destroy();
-            });
-            res.status(401).send({ status: 'failed', error: "Unauthorized", code: '401' });
+            next()
+            // req.on('data', (data) => {
+            //     req.socket.destroy();
+            // });
+            // res.status(401).send({ status: 'failed', error: "Unauthorized", code: '401' });
         }
     }
     else {

@@ -13,7 +13,8 @@ drives = {
     length :  function(){ return this.ActiveDrives.length; },
     push : function(drive){
         for(let i=0;i<this.ActiveDrives.length;i++){
-            if(this.activateDrive[i].driveName == drive.driveName){
+            if (this.ActiveDrives[i].driveName == drive.name){
+                log.log('error', 'Admin tries to add same drive account!' + drive.name);
                 return;
             }
         }

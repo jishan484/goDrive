@@ -67,7 +67,7 @@ class FileService {
             });
         }
         else{
-            db.run('INSERT INTO Files (fileId, filePath, fileName, fileType, fileSize, owner, parentFolderId, nodeId, accesses, star) VALUES (?,?,?,?,?,?,(SELECT folderId FROM Folders where fullPath= ? and owner= ? ),?,?,?)', [fileId, filePath, fileName, fileType, fileSize, owner, filePath,owner, nodeId, access, star], (err) => {
+            db.run('INSERT INTO Files (fileId, filePath, fileName, fileType, fileSize, owner, parentFolderId, nodeId, accesses, star, fileFormat, driveId) VALUES (?,?,?,?,?,?,(SELECT folderId FROM Folders where fullPath= ? and owner= ? ),?,?,?,?,?)', [fileId, filePath, fileName, fileType, fileSize, owner, filePath, owner, nodeId, access, star, fileFormat, driveId], (err) => {
                 if (err) {
                     callback(false);
                     log.log("error", err);
@@ -128,6 +128,8 @@ class FileService {
                     file.fileSize = row[i].fileSize;
                     file.fileFormat = row[i].fileFormat;
                     file.access = row[i].accesses;
+                    file.modifiedOn = row[i].modifiedOn;
+                    file.lastAccessedOn = row[i].lastAccessedOn;
                     file.icon = row[i].fileFormat + '.svg';
                     file.star = row[i].star;
                     response.files.push(file);

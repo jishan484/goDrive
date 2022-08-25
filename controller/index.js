@@ -1,5 +1,6 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 const app = express();
 const port = process.env.PORT || 8000;
 
@@ -22,7 +23,9 @@ app.use('/app', require('./app'));
 app.use('/admin', require('./admin'));
 // app.use('/external', require('./controller/external'))
 
-
+app.get('/image/format/*',(req,res)=>{
+    res.sendFile(path.resolve('resources/public/image/format/app.svg'));
+});
 app.get('*', (req, res) => res.send('Ooi! where you are going ? Stay true to your path.'));
 
 module.exports = server ={

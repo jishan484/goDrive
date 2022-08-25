@@ -53,7 +53,7 @@ function renderFiles(files) {
                <div class="card-body folder">
                    <div class="card-title d-flex align-items-start justify-content-between pointable">
                        <div class="avatar flex-shrink-1">
-                           <img src="image/format/xlsx.svg" alt="chart success" style="width: 50px; height: 50px;" />
+                           <img src="image/format/${files[i].icon}" alt="chart success" style="width: 50px; height: 50px;" />
                        </div>
                        <div class="dropdown">
                            <button class="btn p-0" type="button" id="cardOpt3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
