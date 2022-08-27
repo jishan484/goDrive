@@ -5,7 +5,7 @@ const log = require("./../logService");
 
 class FolderService {
     constructor() {
-        log.log("debug","folder service initialized!");
+        log.log("debug","Folder service initialized!");
     }
 
     // -------------------------------------ENTITIES--------------------------------------------//

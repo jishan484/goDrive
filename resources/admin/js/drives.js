@@ -1,11 +1,12 @@
 var windowss = null;
 
+let payload = {
+    type: 'googleDrive',
+    action: 'add new',
+    redirectURL: window.location.protocol + "//" + window.location.host
+};
+
 function AddNewGDrive(){
-    let payload = {
-        type:'googleDrive',
-        action:'add new',
-        redirectURL: window.location.protocol + "//" + window.location.host
-    };
 
     request("u/drive",payload,'POST',(response)=>{
         if(response.status == 'success'){

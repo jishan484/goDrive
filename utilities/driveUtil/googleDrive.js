@@ -1,6 +1,8 @@
 const Storage = require("./storage.js");
 const log = require("../../service/logService");
 const { google } = require('googleapis');
+const fs = require('fs');
+const path = require('path');
 
 const credentials = {
     "installed": {
@@ -15,6 +17,22 @@ const credentials = {
         ]
     }
 };
+
+// this function checks for credential.json file inside /CREDENTIALS folder.
+// if exist (use that one)
+// else use this common credential and redirect to mifi.eu.org for smooth wild card 
+// redirection [GOOGLE DOES NOT ALLOW TO DO THAT, it has to be registered, So using this method]
+function credentials_initialize(){
+    let status = fs.existsSync(path.join('CREDENTIALS/google.json'));
+    let cred = fs.readFileSync(path.join('CREDENTIALS/google.json'));
+    try{
+        cred = JSON.parse(cred);
+        credentials = cred;
+    }catch(e){
+        log.log('error','Google oAuth2 credential found! But there is a error in JSON format!');
+    }
+}
+credentials_initialize();
 
 let SCOPES= ['https://www.googleapis.com/auth/drive.file'];
 

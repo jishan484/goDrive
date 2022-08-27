@@ -3,9 +3,10 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const app = express();
 const port = process.env.PORT || 8000;
+const parser = express.json();
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use((req,res,next)=> ignoreParsing(req) ? next() : parser(req, res, next));
 app.use(cookieParser());
 
 app.use((req, res, next) => {
@@ -31,12 +32,21 @@ app.get('*', (req, res) => res.send('Ooi! where you are going ? Stay true to you
 module.exports = server ={
     start: () => {
         app.listen(port, () => {
-            console.log('[SLOG] Server Started!\n[INFO] listening on port 0.0.0.0:' + port);
+            console.log(' [SLOG]   Server Started!\n [INFO]   Listening on 0.0.0.0:' + port);
         });
     },
     stop: () => {
         app.close(()=>{
-            console.log('[SLOG] Server closed' + Date.now());
+            console.log(' [SLOG] Server closed' + Date.now());
         });
     }
+}
+
+
+
+// ================= middlewires =============== //
+
+function ignoreParsing(req){
+    if(req.originalUrl == '/app/u/file' && req.method == 'POST') return true;
+    return false;
 }
