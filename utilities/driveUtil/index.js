@@ -30,6 +30,14 @@ drives = {
     get: function(index = 0){
         return this.ActiveDrives[index];
     },
+    getById(id){
+        for (let i = 0; i < this.ActiveDrives.length; i++) {
+            if (this.ActiveDrives[i].id == id) {
+                return this.ActiveDrives[i];
+            }
+        }
+        return null;
+    },
     getByFreeSpace: function(freeSpace){
         for(let i = 0; i < this.ActiveDrives.length; i++){
             if(this.ActiveDrives[i].freeSpace > freeSpace){
@@ -100,6 +108,10 @@ module.exports = class Drive{
     // get drive based on free space
     getDrive(fileSize){
         return this.drives.getByFreeSpace(fileSize);
+    }
+
+    getDriveById(id){
+        return this.drives.getById(id);
     }
 
     createDrive(type, redirectURL){

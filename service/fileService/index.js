@@ -1,5 +1,6 @@
 const db = require("../../database");
 const userService = require("./../userService");
+const driveService = require("./../driveService");
 const log = require("./../logService");
 
 
@@ -178,6 +179,49 @@ class FileService {
         });
     }
 
+
+    uploadFile(req, callback) {
+        driveService.uploadFile(req, (status, data) => {
+            if(status == true){
+                this.saveFile(req, (status, data) => {
+                    if (status) {
+                        callback(true, data);
+                    } else {
+                        callback(false, data);
+                    }
+                });
+            }
+        });
+    }
+
+
+    downloadFile(req,callback){
+        let data = {};
+        data.fileId = (req.body.fileId == undefined) ? '' : req.body.fileId;
+        data.owner = userService.getUserName(req.cookies.seid);
+        data.filePath = req.body.filePath;
+        data.fileName = req.body.fileName;
+
+
+        if ((data.filePath == undefined && data.fileName == undefined) && data.fileId == undefined) {
+            callback(false, "Missing parameters: filePath and fileName");
+            return;
+        }
+
+        this.getById(data, (rows) => {
+            req.body.driveId = rows.driveId;
+            req.body.nodeId = rows.nodeId;
+            req.body.fileName = rows.fileName;
+            req.body.fileSizeX = rows.fileSize;
+            req.body.fileType = rows.fileType;
+            driveService.downloadFile(req,(status,data)=>{
+                callback(status, data);
+            });
+        }); 
+    }
 }
+
+
+
 
 module.exports = new FileService();

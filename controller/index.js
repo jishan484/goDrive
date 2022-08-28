@@ -44,7 +44,7 @@ module.exports = server ={
 
 
 
-// ================= middlewires =============== //
+// ================= middleware =============== //
 
 function ignoreParsing(req){
     if(req.originalUrl == '/app/u/file' && req.method == 'POST') return true;

@@ -50,7 +50,7 @@ function renderFiles(files) {
     for (let i = 0; i < files.length; i++) {
         html+=`<div class="col-lg-3 col-md-4 col-6 mb-3">
            <div class="card">
-               <div class="card-body folder">
+               <div class="card-body folder" id=${files[i].fileId} oncontextmenu="folderOptions(this,event);return false;" ondblclick="folderOpen('${files[i].fileId}')">
                    <div class="card-title d-flex align-items-start justify-content-between pointable">
                        <div class="avatar flex-shrink-1">
                            <img src="image/format/${files[i].icon}" alt="chart success" style="width: 50px; height: 50px;" />
@@ -64,6 +64,16 @@ function renderFiles(files) {
                                <a class="dropdown-item" href="javascript:void(0);">Lock</a>
                            </div>
                        </div>
+                       <ul class="dropdown-menu folderOption" data-popper-placement="bottom-start">
+                            <li><div class="dropdown-item" onclick="fileDownload('${files[i].fileId}')">Download</div></li>
+                            <li><div class="dropdown-item" onclick="folderOpen('${files[i].fileId}')">Share</div></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><div class="dropdown-item" onclick="folderRenme('${files[i].fileId}')">Rename</div></li>
+                            <li><div class="dropdown-item" onclick="folderCopyMove('${files[i].fileId}')">Move</div></li>
+                            <li><div class="dropdown-item" onclick="folderDelete('${files[i].fileId}')">Delete</div></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><div class="dropdown-item" onclick="folderUpdatePermission('${files[i].fileId}')">Update permissions</div></li>
+                       </ul>
                    </div>
                    <div class="small file-name">${files[i].fileName}</div>
                    <div class="file-name-s"><span>${files[i].modifiedOn}</span> <span>${formatBytes(files[i].fileSize,2)}</span></div>
@@ -363,6 +373,14 @@ function removeFile(index) {
     }
     input.files = dt.files ;
     renderTableFiles(input.files);
+}
+
+// for file options
+
+function fileDownload(fileId){
+    var path = 'api/u/file?Fileid=' + fileId;
+    var dlif = $('<iframe/>', { 'src': path }).hide();
+    $("body").html(dlif);
 }
 
 

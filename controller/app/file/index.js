@@ -1,13 +1,10 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const driveService = require("./../../../service/driveService");
 const fileService = require("./../../../service/fileService");
-const Drive = require("./../../../utilities/drive.js");
-
-var drive = new Drive();
 
 
-router.get('/', getFile); //download file/s by id , filename and folder name
+router.get('/', getFile);
+router.get('/download', downloadFile); //download file/s by id or (filename and folder name)
 router.post('/', uploadFile);
 
 module.exports = router;
@@ -47,27 +44,26 @@ function uploadFile(req, res) {
         return;
     }
 
-    driveService.uploadFile(req,(status,data)=>{
+    fileService.uploadFile(req, (status, data) => {
         if (status) {
-            res.status(200).json({ status: 'success', data: "data", error: null, code: '200' });
+            res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
         } else {
             res.status(200).json({ status: 'error', data: null, error: data, code: '204' }).end();
         }
     });
+}
 
-    // drive.writeFile(req.body.fileName, req.body.fileType, req, (data,err) => {
-    //     if (err) {
-    //         res.status(200).json({ status: 'error', data: null, error: err, code: '204' });
-    //     } else {
-    //         req.body.nodeId = data.id;
-    //         req.body.fileSize = data.size;
-    //         fileService.saveFile(req, (status, data) => {
-    //             if (status) {
-    //                 res.status(200).json({ status: 'success', data: "data", error: null, code: '200' });
-    //             } else {
-    //                 res.status(200).json({ status: 'error', data: null, error: data, code: '204' });
-    //             }
-    //         });
-    //     }
-    // });
+function downloadFile(req,res){
+    req.body = req.query;
+    console.log(req.body.fileId)
+    fileService.downloadFile(req,(status,data)=>{
+        if (status) {
+            res.set('Content-Disposition',' attachment; filename="'+req.body.fileName+'"');
+            res.set('Content-Length', req.body.fileSizeX);
+            console.log(req.body.fileSizeX, req.body.fileName, req.body.fileType)
+            data.pipe(res);
+        } else {
+            res.status(200).json({ status: 'error', data: null, error: data, code: '204' }).end();
+        }
+    })
 }

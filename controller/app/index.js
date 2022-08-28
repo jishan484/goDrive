@@ -4,22 +4,40 @@ const userService = require('./../../service/userService');
 const { RouterConfig } = require('./../../SystemConfig');
 
 router.use("/auth", require("./auth.js"));
-router.use("/u/*", (req, res, next) => {
+
+router.use("/u/*", checkAuth);
+
+router.use("/u/folder", require("./folder"));
+router.use("/u/file", require("./file"));
+
+module.exports = router
+
+
+
+// ============== middleware ================== //
+
+function checkAuth(req,res,next){
     let status = { status: false };
-    if (userService.isLoggedIn(req, req.headers.xauthtoken,status)) {
-        if(status.status){
+    if (userService.isLoggedIn(req, req.headers.xauthtoken, status)) {
+        if (status.status) {
             next();
         }
-        else{
-            next()
-            // req.on('data', (data) => {
-            //     req.socket.destroy();
-            // });
-            // res.status(401).send({ status: 'failed', error: "Unauthorized", code: '401' });
+        else {
+            // for file download : check token param
+            if (req.method == 'GET' && req.baseUrl == '/app/u/file/download') {
+                // no requirement for xauthtoken check...JWT token is enough
+                next();
+                return;
+            }
+
+            req.on('data', (data) => {
+                req.socket.destroy();
+            });
+            res.status(401).send({ status: 'failed', error: "Unauthorized", code: '401' });
         }
     }
     else {
-        req.on('data',(data)=>{
+        req.on('data', (data) => {
             req.socket.destroy();
         });
         res.status(403).send({
@@ -29,10 +47,4 @@ router.use("/u/*", (req, res, next) => {
             data: null
         });
     }
-});
-
-
-router.use("/u/folder", require("./folder"));
-router.use("/u/file", require("./file"));
-
-module.exports = router
+}

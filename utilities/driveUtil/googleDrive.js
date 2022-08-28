@@ -150,10 +150,15 @@ module.exports = class GoogleDrive extends Storage{
 
 
     readFile(nodeId, callback){
-        let fileMetadata = { 'fileId': nodeId };
         this.driveService.files.get({
-
-        });
+            fileId:nodeId,
+            alt: 'media'
+        }, { responseType: 'stream' }).then(res=>{
+            callback(true,res.data);
+        }).catch(err=>{
+            log.log('error', err);
+            callback(false, err);
+        })
     }
 
     deleteFile(nodeId , callback){

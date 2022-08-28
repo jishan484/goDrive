@@ -73,15 +73,32 @@ class DriveService{
                     req.body.nodeId = resp.id;
                     req.body.fileSize = resp.size;
                     req.body.driveId = drive.id;
-                    fileService.saveFile(req, (status, data) => {
-                        if (status) {
-                            callback(true,data);
-                        } else {
-                            callback(false,data);
-                        }
-                    });
+                    callback(true,'File uploaded');
                 } else{
                     callback(false,'Failed to save this file! code : ERRDRV');
+                }
+            });
+        }
+    }
+
+    downloadFile(req,callback){
+        let drive = this.driveUtil.getDriveById(req.body.driveId);
+        // console.log(req.driveId, this.driveUtil.drives);
+        if (drive == null && this.driveUtil.drives.length() > 0) {
+            callback(false, 'The system cannot find the file specified');
+        } else if (this.driveUtil.drives.length() == 0) {
+            callback(false, 'There is no active Drive found!');
+        } else if(drive.drive == null){
+            callback(false, 'Drives not intiated. Please wait for 10 seconds!');
+        } else{
+            drive.drive.readFile(req.body.nodeId,(status,resp)=>{
+                if(status){
+                    req.body.nodeId = resp.id;
+                    req.body.fileSize = resp.size;
+                    req.body.driveId = drive.id;
+                    callback(true,resp);
+                } else{
+                    callback(false,'Failed to download this file! code : ERRDRV');
                 }
             });
         }
