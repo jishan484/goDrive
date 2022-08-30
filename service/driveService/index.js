@@ -83,7 +83,6 @@ class DriveService{
 
     downloadFile(req,callback){
         let drive = this.driveUtil.getDriveById(req.body.driveId);
-        // console.log(req.driveId, this.driveUtil.drives);
         if (drive == null && this.driveUtil.drives.length() > 0) {
             callback(false, 'The system cannot find the file specified');
         } else if (this.driveUtil.drives.length() == 0) {

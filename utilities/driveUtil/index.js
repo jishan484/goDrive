@@ -132,7 +132,7 @@ module.exports = class Drive{
                     newDriveData.driveToken = JSON.stringify(token);
                     newDriveData.priority = 2; //todo
                     callback(status,newDriveData);
-                    initDrives();
+                    setTimeout(()=>{initDrives();},1500);
                 } else callback(status,'Request failed');
             });
         }

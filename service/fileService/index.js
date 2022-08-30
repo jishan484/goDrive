@@ -197,18 +197,21 @@ class FileService {
 
     downloadFile(req,callback){
         let data = {};
-        data.fileId = (req.body.fileId == undefined) ? '' : req.body.fileId;
+        data.fileId = req.body.fileId;
         data.owner = userService.getUserName(req.cookies.seid);
         data.filePath = req.body.filePath;
         data.fileName = req.body.fileName;
 
 
         if ((data.filePath == undefined && data.fileName == undefined) && data.fileId == undefined) {
-            callback(false, "Missing parameters: filePath and fileName");
+            callback(false, "Missing parameters: (filePath and fileName) or fileId");
             return;
         }
-
         this.getById(data, (rows) => {
+            if(rows == undefined || rows.length == 0){
+                callback(false,'File Not Found');
+                return;
+            }
             req.body.driveId = rows.driveId;
             req.body.nodeId = rows.nodeId;
             req.body.fileName = rows.fileName;

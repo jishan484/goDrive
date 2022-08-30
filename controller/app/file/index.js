@@ -55,12 +55,10 @@ function uploadFile(req, res) {
 
 function downloadFile(req,res){
     req.body = req.query;
-    console.log(req.body.fileId)
     fileService.downloadFile(req,(status,data)=>{
         if (status) {
             res.set('Content-Disposition',' attachment; filename="'+req.body.fileName+'"');
             res.set('Content-Length', req.body.fileSizeX);
-            console.log(req.body.fileSizeX, req.body.fileName, req.body.fileType)
             data.pipe(res);
         } else {
             res.status(200).json({ status: 'error', data: null, error: data, code: '204' }).end();

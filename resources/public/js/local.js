@@ -10,7 +10,7 @@ var _content_sort_method = "default";
 var _a = "DEMOKEY";
 var _isToastActive = false;
 var _globalUPjaxB = {
-    about: function (e) {
+    abort: function (e) {
         console.log("Nothing to abort");
     }
 }

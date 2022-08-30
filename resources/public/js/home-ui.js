@@ -378,11 +378,14 @@ function removeFile(index) {
 // for file options
 
 function fileDownload(fileId){
-    var path = 'api/u/file?Fileid=' + fileId;
-    var dlif = $('<iframe/>', { 'src': path }).hide();
-    $("body").html(dlif);
+    var path = window.location.protocol + "//" + window.location.host+'/app/u/file/download?fileId=' + fileId;
+    var a = popupwindow(path,'DownloadFile',500,600);
 }
-
+function popupwindow(url, title, w, h) {
+    var left = (screen.width / 2) - (w / 2);
+    var top = (screen.height / 2) - (h / 2);
+    return window.open(url, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
+}
 
 // check for site idle for more than 5 minutes on gobal events
 // var idleTime = 0;
