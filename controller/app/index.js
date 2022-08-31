@@ -38,7 +38,9 @@ function checkAuth(req,res,next){
     }
     else {
         req.on('data', (data) => {
-            req.socket.destroy();
+            // req.socket.destroy();
+            req.pause(); // stream paused
+            req.destroy();
         });
         res.status(403).send({
             uri: RouterConfig.force_login_redirect_uris,
