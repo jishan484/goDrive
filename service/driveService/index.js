@@ -12,6 +12,30 @@ class DriveService{
         log.log('debug','Drive Manager service initialized!');
     }
 
+    getAllDrive(callback){
+        if (this.driveUtil.drives.ActiveDrives.length == 0){
+            callback(false,'No Drive available!')
+        }
+        else{
+            let allDrives = [];
+            for(let i=0;i<this.driveUtil.drives.ActiveDrives.length;i++){
+                let drive = {};
+                drive.name = this.driveUtil.drives.ActiveDrives[i].name;
+                drive.type = this.driveUtil.drives.ActiveDrives[i].type;
+                drive.priority = this.driveUtil.drives.ActiveDrives[i].priority;
+                drive.freeSpace = this.driveUtil.drives.ActiveDrives[i].freeSpace;
+                drive.status = this.driveUtil.drives.ActiveDrives[i].status;
+                drive.lastUsed = this.driveUtil.drives.ActiveDrives[i].lastUsed;
+                // if (this.driveUtil.drives.ActiveDrives[i].drive != null &&
+                //     this.driveUtil.drives.ActiveDrives[i].drive.storageInfo.image != null){
+                //     drive.icon = this.driveUtil.drives.ActiveDrives[i].drive.storageInfo.image; 
+                // } // NOT PLANNED : FUTURE UPDATE
+                allDrives.push(drive);
+            }
+            callback(true,allDrives);
+        }
+    }
+
     addNewDrive(req, callback){
         let type = req.body.type;
         switch(type){

@@ -27,6 +27,9 @@ drives = {
             return b.priority - a.priority;
         });
     },
+    clear: function(){
+        this.ActiveDrives = [];
+    },
     get: function(index = 0){
         return this.ActiveDrives[index];
     },
@@ -40,7 +43,7 @@ drives = {
     },
     getByFreeSpace: function(freeSpace){
         for(let i = 0; i < this.ActiveDrives.length; i++){
-            if(this.ActiveDrives[i].freeSpace > freeSpace){
+            if(this.ActiveDrives[i].freeSpace > freeSpace && this.ActiveDrives[i].status == 'Active'){
                 return this.ActiveDrives[i];
             }
         }
@@ -62,7 +65,9 @@ function initDrives(){
                     drive: null,
                     id: drive.driveId,
                     token:drive.driveToken,
-                    freeSpace: null
+                    freeSpace: null,
+                    status:'Uninitiated',
+                    lastUsed:null
                 };
                 drives.push(driveObj);
             }
@@ -83,8 +88,10 @@ function initDrive(index=0){
                 drive.drive = gdrive;
                 drive.freeSpace = gdrive.freeSpace;
                 drive.token = undefined;
+                drive.status = 'Active';
                 initDrive(index+1);
             } else {
+                drive.status = 'Deactive';
                 log.log('error', 'Drive intializantion failed!');
             }
         });
@@ -107,7 +114,9 @@ module.exports = class Drive{
     }
     // get drive based on free space
     getDrive(fileSize){
-        return this.drives.getByFreeSpace(fileSize);
+        let drive = this.drives.getByFreeSpace(fileSize);
+        drive.lastUsed = Date.now();
+        return drive;
     }
 
     getDriveById(id){
@@ -132,7 +141,7 @@ module.exports = class Drive{
                     newDriveData.driveToken = JSON.stringify(token);
                     newDriveData.priority = 2; //todo
                     callback(status,newDriveData);
-                    setTimeout(()=>{initDrives();},1500);
+                    setTimeout(()=>{this.drives.clear();initDrives();},1500);
                 } else callback(status,'Request failed');
             });
         }

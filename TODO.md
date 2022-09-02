@@ -77,3 +77,26 @@ risk and mitigation
     * please only allow port 80 and 443 to access the system. no other ports are required.
     * dont use shared server for this system.
     * if you are using shared server then dont store defKey. if you are not storing defKey then you have to pass that key every time you logged in. a slated hash of that key will be stored in db to check if it is valid.
+
+
+
+
+
+
+
+
+
+
+
+
+
+    --------------------problems----------------------
+    1. In multi node server, the free space of a drive could cause problem, if multiple client starts upload big file at a same time.
+    FIX: add a 2nd param [in-use-space] and put the size of currently uploading file sizes.
+         Substract this value for thye next file upload process.
+         if a upload gets cancelled, substact that value from [in-use-space].
+         On success substact that value from [in-use-space] and add it to [freeScace] param.
+    [TODO]{EST:7 days}
+    priority: low
+
+    2. counting...

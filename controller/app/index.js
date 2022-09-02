@@ -38,9 +38,7 @@ function checkAuth(req,res,next){
     }
     else {
         req.on('data', (data) => {
-            // req.socket.destroy();
-            req.pause(); // stream paused
-            req.destroy();
+            req.socket.destroy();
         });
         res.status(403).send({
             uri: RouterConfig.force_login_redirect_uris,
@@ -48,5 +46,6 @@ function checkAuth(req,res,next){
             code: "403",
             data: null
         });
+        return;
     }
 }

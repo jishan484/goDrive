@@ -379,7 +379,12 @@ function removeFile(index) {
 
 function fileDownload(fileId){
     var path = window.location.protocol + "//" + window.location.host+'/app/u/file/download?fileId=' + fileId;
-    var a = popupwindow(path,'DownloadFile',500,600);
+    var a = document.createElement('A');
+    a.href = path;
+    a.download = path;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
 function popupwindow(url, title, w, h) {
     var left = (screen.width / 2) - (w / 2);
