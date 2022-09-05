@@ -31,9 +31,10 @@ app.get('*', (req, res) => res.send('Ooi! where you are going ? Stay true to you
 
 module.exports = server ={
     start: () => {
-        app.listen(port, () => {
+        let server = app.listen(port, () => {
             console.log(' [SLOG]   Server Started!\n [INFO]   Listening on 0.0.0.0:' + port);
         });
+        server.timeout = 5000;
     },
     stop: () => {
         app.close(()=>{

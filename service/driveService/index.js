@@ -1,3 +1,5 @@
+"use strict"
+
 const DriveUtil = require('../../utilities/driveUtil');
 const fileService = require('./../fileService');
 const driveInfo = require('./driveInfo.js');
@@ -49,7 +51,7 @@ class DriveService{
         }
     }
 
-    saveNewDriveToken(req,callback){
+    saveNewDriveToken(req, callback){
         let code = req.body.code;
         let scope = req.body.scope;
         if(scope != undefined && scope.match("google")){
@@ -85,7 +87,7 @@ class DriveService{
     }
 
 
-    uploadFile(req,callback) {
+    uploadFile(req, callback) {
         let drive = this.driveUtil.getDrive(req.body.fileSize);
         if(drive == null && this.driveUtil.drives.length() > 0){
             callback(false,'Storage full! File cant be saved!');
@@ -105,7 +107,7 @@ class DriveService{
         }
     }
 
-    downloadFile(req,callback){
+    downloadFile(req, callback){
         let drive = this.driveUtil.getDriveById(req.body.driveId);
         if (drive == null && this.driveUtil.drives.length() > 0) {
             callback(false, 'The system cannot find the file specified');
@@ -116,12 +118,32 @@ class DriveService{
         } else{
             drive.drive.readFile(req.body.nodeId,(status,resp)=>{
                 if(status){
-                    req.body.nodeId = resp.id;
-                    req.body.fileSize = resp.size;
-                    req.body.driveId = drive.id;
                     callback(true,resp);
                 } else{
                     callback(false,'Failed to download this file! code : ERRDRV');
+                }
+            });
+        }
+    }
+
+
+    deleteFile(req, callback){
+        let drive = this.driveUtil.getDriveById(req.body.driveId);
+        if (drive == null && this.driveUtil.drives.length() > 0) {
+            callback(false, 'The system cannot find the file specified');
+        } else if (this.driveUtil.drives.length() == 0) {
+            callback(false, 'There is no active Drive found!');
+        } else if (drive.drive == null) {
+            callback(false, 'Drives not intiated. Please wait for 10 seconds!');
+        } else {
+            drive.drive.deleteFile(req.body.nodeId, (status, resp) => {
+                if (status) {
+                    req.body.nodeId = resp.id;
+                    req.body.fileSize = resp.size;
+                    req.body.driveId = drive.id;
+                    callback(true, resp);
+                } else {
+                    callback(false, 'Failed to download this file! code : ERRDRV');
                 }
             });
         }

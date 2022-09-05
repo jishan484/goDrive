@@ -7,7 +7,7 @@ const log = require("./../logService");
 class FileService {
 
     constructor() {
-        log.log("debug","folder service initialized!");
+        log.log("debug","File service initialized!");
     }
 
     // -------------------------------------ENTITIES--------------------------------------------//
@@ -101,6 +101,19 @@ class FileService {
         });
     }
 
+    delete(data, callback){
+        let fileId = data.fileId;
+        let owner = data.owner;
+        db.run('DELETE FROM Files WHERE fileId = ? and owner = ?', [fileId, owner], (err, row) => {
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
+            else {
+                callback(true);
+            }
+        });
+    }
 
 
     // -------------------------------------UTILITY--------------------------------------------//
@@ -215,12 +228,49 @@ class FileService {
             req.body.driveId = rows.driveId;
             req.body.nodeId = rows.nodeId;
             req.body.fileName = rows.fileName;
-            req.body.fileSizeX = rows.fileSize;
+            req.body.fileSize = rows.fileSize;
             req.body.fileType = rows.fileType;
             driveService.downloadFile(req,(status,data)=>{
                 callback(status, data);
             });
         }); 
+    }
+
+
+    deleteFile(req, callback){
+        let data = {};
+        data.fileId = req.body.fileId;
+        data.owner = userService.getUserName(req.cookies.seid);
+        data.filePath = req.body.filePath;
+        data.fileName = req.body.fileName;
+
+        if ((data.filePath == undefined && data.fileName == undefined) && data.fileId == undefined) {
+            callback(false, "Missing parameters: (filePath and fileName) or fileId");
+            return;
+        }
+        this.getById(data, (rows) => {
+            if (rows == undefined || rows.length == 0) {
+                callback(false, 'File Not Found');
+                return;
+            }
+            req.body.driveId = rows.driveId;
+            req.body.nodeId = rows.nodeId;
+            req.body.fileSize = rows.fileSize;
+            req.body.owner = rows.owner;
+            driveService.deleteFile(req, (status, data) => {
+                if(status == true){
+                    this.delete(req.body,(deleteStatus)=>{
+                        if (deleteStatus == true)
+                            callback(deleteStatus,'File deleted')
+                        else callback(deleteStatus, 'System failed to delete the file from database!')
+                    });
+                }
+                else{
+                    callback(status, "File not available in drive!");
+                    // mark this for repair or delete:
+                }
+            });
+        });
     }
 }
 

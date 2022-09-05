@@ -171,8 +171,6 @@ function showspeed(loaded) {
 }
 
 
-
-
 //============================================ App use cases ============================================================
 
 
@@ -264,8 +262,22 @@ function fetchFiles(folderName, callback, opt) {
     };
     request("app/u/file", payload, 'GET', (response) => {
         if (response.status == 'success') {
+            _last_requested_file_response = response.data;
             callback(response.data);
         }
+    }, opt
+    );
+}
+
+function deleteFile(fileId, callback, opt) {
+    var payload = {
+        filePath: _current_folder_path,
+        fileId: fileId
+    };
+    request("app/u/file", payload, 'DELETE', (response) => {
+        if (response.status == 'success') {
+            callback();
+        } else alert(response.data);
     }, opt
     );
 }

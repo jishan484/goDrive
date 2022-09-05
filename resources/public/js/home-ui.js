@@ -70,7 +70,7 @@ function renderFiles(files) {
                             <li><hr class="dropdown-divider"></li>
                             <li><div class="dropdown-item" onclick="folderRenme('${files[i].fileId}')">Rename</div></li>
                             <li><div class="dropdown-item" onclick="folderCopyMove('${files[i].fileId}')">Move</div></li>
-                            <li><div class="dropdown-item" onclick="folderDelete('${files[i].fileId}')">Delete</div></li>
+                            <li><div class="dropdown-item" onclick="fileDelete('${files[i].fileId}')">Delete</div></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><div class="dropdown-item" onclick="folderUpdatePermission('${files[i].fileId}')">Update permissions</div></li>
                        </ul>
@@ -247,8 +247,8 @@ function contentSortBy(sortBy) {
     else{
         _content_sort_method = sortBy;
     }
-    let tempFolders = _last_requested_folder_response;
-    renderFolders(tempFolders.subFolders);
+    renderFolders(_last_requested_folder_response.subFolders);
+    renderFiles(_last_requested_file_response.files)
 }
 function sortFolders(folders) {
     if(_content_sort_method == 'default') return;
@@ -386,10 +386,12 @@ function fileDownload(fileId){
     a.click();
     document.body.removeChild(a);
 }
-function popupwindow(url, title, w, h) {
-    var left = (screen.width / 2) - (w / 2);
-    var top = (screen.height / 2) - (h / 2);
-    return window.open(url, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
+
+
+function fileDelete(fileId){
+    deleteFile(fileId,()=>{
+        loadFiles();
+    },true);
 }
 
 // check for site idle for more than 5 minutes on gobal events

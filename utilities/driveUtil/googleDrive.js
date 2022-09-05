@@ -128,7 +128,7 @@ module.exports = class GoogleDrive extends Storage{
     writeFile(fileName,mimeType,fileData, callback)
     {
         let fileMetadata = { 'name': fileName, parents: [this.parentFolderId] };
-        this.driveService.files.create({
+        var a = this.driveService.files.create({
             resource: fileMetadata,
             media: {
                 mimeType: mimeType,
@@ -143,7 +143,8 @@ module.exports = class GoogleDrive extends Storage{
                 callback(false,data.data);
             }
         }).catch(err => {
-            log.log('error',err);
+            if(err.code == 408) log.log('info','user cancelled file upload! : '+fileName);
+            log.log('error',err.code);
             callback(false, err);
         });
     }
@@ -158,11 +159,34 @@ module.exports = class GoogleDrive extends Storage{
         }).catch(err=>{
             log.log('error', err);
             callback(false, err);
-        })
+        });
     }
 
-    deleteFile(nodeId , callback){
-
+    deleteFile(nodeId , callback , option){
+        if(option != undefined && option.trashed){
+            return this.moveToTrash(nodeId,callback);
+        }
+        this.driveService.files.delete({
+            fileId: nodeId
+        }).then(res => {
+            callback(true, res.data);
+        }).catch(err => {
+            log.log('error', err);
+            callback(false, err);
+        });
+    }
+    
+    
+    moveToTrash(nodeId , callback){
+        this.driveService.files.update({
+            "fileId": nodeId,
+            "trashed": true
+        }).then((res)=>{
+            callback(true,'File moved to trash!')
+        }).catch(err => {
+            log.log('error', err);
+            callback(false, err);
+        });
     }
 
     getInfo(){

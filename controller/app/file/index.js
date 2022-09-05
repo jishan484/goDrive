@@ -6,6 +6,7 @@ const fileService = require("./../../../service/fileService");
 router.get('/', getFile);
 router.get('/download', downloadFile); //download file/s by id or (filename and folder name)
 router.post('/', uploadFile);
+router.delete('/',deleteFile);
 
 module.exports = router;
 
@@ -43,7 +44,9 @@ function uploadFile(req, res) {
         res.status(400).json({ status: 'error', data: null, error: "m-mimetype header is required", code: '400' });
         return;
     }
-
+    req.on('close',()=>{
+        req.unpipe();
+    });
     fileService.uploadFile(req, (status, data) => {
         if (status) {
             res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
@@ -58,10 +61,21 @@ function downloadFile(req,res){
     fileService.downloadFile(req,(status,data)=>{
         if (status) {
             res.set('Content-Disposition',' attachment; filename="'+req.body.fileName+'"');
-            res.set('Content-Length', req.body.fileSizeX);
+            res.set('Content-Length', req.body.fileSize);
             data.pipe(res);
         } else {
             res.status(200).json({ status: 'error', data: null, error: data, code: '204' }).end();
         }
-    })
+    });
+}
+
+
+function deleteFile(req , res){
+    fileService.deleteFile(req, (status, data) => {
+        if (status) {
+            res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
+        } else {
+            res.status(200).json({ status: 'error', data: null, error: data, code: '204' }).end();
+        }
+    });
 }

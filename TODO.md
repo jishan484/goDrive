@@ -46,7 +46,7 @@ folder color
 
 
 ---------------------------------
-system design high level
+system design high level : TODO : TESTING IN PROGRESS
 ---------------------------------
 it devides files in multiple parts. number of parts depends on number of active gdrive account linked.
 app encrypts every part with two different keys.
@@ -90,7 +90,7 @@ risk and mitigation
 
 
 
-    --------------------problems----------------------
+    --------------------problems / bugs----------------------
     1. In multi node server, the free space of a drive could cause problem, if multiple client starts upload big file at a same time.
     FIX: add a 2nd param [in-use-space] and put the size of currently uploading file sizes.
          Substract this value for thye next file upload process.
@@ -99,4 +99,23 @@ risk and mitigation
     [TODO]{EST:7 days}
     priority: low
 
-    2. counting...
+    2. drive not initialize if one of them failed! [HIGH]{ETA:3 days}
+    3. Add email verification process during user registration...
+        This could be optional and admin has to setup SMTP details for that.
+
+
+
+
+
+
+    -------------------------planning----------------
+    1. create .well-known routes for ssl validation.
+        -> not planned : no ETA
+    2. create POST admin/api/u/ssl for importing prv & cert.
+        -> not planned : no ETA
+
+
+
+
+
+mkdir -p cert && sudo certbot certonly --manual --config-dir ./cert --work-dir ./cert && echo cert/fullchain.pem && echo '-----private key-----\n\n' && echo cert/privkey.pem

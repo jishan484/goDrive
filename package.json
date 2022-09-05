@@ -4,9 +4,9 @@
   "description": "Combine multiple google drive and provide reliable query based filesyatem",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon --ignore ./resources/ server.js",
+    "test": "nodemon --ignore ./resources/ server.js",
     "start": "node server.js",
-    "test": "node tests/index.js"
+    "unittests": "node tests/index.js"
   },
   "engines": {
     "node": "12.x"
