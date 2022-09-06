@@ -1,7 +1,6 @@
 const fs = require("fs");
 const dbFile = "./.data/sqlite.db";
 const log = require("./../service/logService");
-const exists = fs.existsSync(dbFile);
 checkDBFile();
 const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database(dbFile);
@@ -11,7 +10,11 @@ init_database();
 
 
 function checkDBFile() {
-    if (!exists) {
+    let dir = '.data';
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+    if (!fs.existsSync(dbFile)) {
         log.log('debug','Database not found, creating a new one!');
         fs.openSync(dbFile, "w");
     }
@@ -20,7 +23,7 @@ function checkDBFile() {
 function init_database() {
     log.log('debug','Databse initialized!');
     db.serialize(() => {
-        if (!exists) {
+        if (fs.existsSync(dbFile)) {
             db.run("CREATE TABLE DATABASECHANGES (id INTEGER PRIMARY KEY AUTOINCREMENT,QueryId TEXT, changeVersion TEXT, updatedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)");
         }
         let DBChanges = require("./DBschema");
