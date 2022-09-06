@@ -43,7 +43,7 @@ drives = {
     },
     getByFreeSpace: function(freeSpace){
         for(let i = 0; i < this.ActiveDrives.length; i++){
-            if(this.ActiveDrives[i].freeSpace > freeSpace && this.ActiveDrives[i].status == 'Active'){
+            if((this.ActiveDrives[i].freeSpace + this.ActiveDrives[i].inUseSpace) > freeSpace && this.ActiveDrives[i].status == 'Active'){
                 return this.ActiveDrives[i];
             }
         }
@@ -67,7 +67,17 @@ function initDrives(){
                     token:drive.driveToken,
                     freeSpace: null,
                     status:'Uninitiated',
-                    lastUsed:null
+                    lastUsed:null,
+                    inUseSpace: 0,
+                    set: function(inUseSize){
+                        this.inUseSpace+=inUseSize;
+                    },
+                    update: function(inUseSize){
+                        this.freeSpace -= inUseSize;
+                    },
+                    clear: function(inUseSize){
+                        this.inUseSpace -= inUseSize;
+                    }
                 };
                 drives.push(driveObj);
             }
@@ -115,7 +125,7 @@ module.exports = class Drive{
     // get drive based on free space
     getDrive(fileSize){
         let drive = this.drives.getByFreeSpace(fileSize);
-        drive.lastUsed = Date.now();
+        if(drive != undefined || drive != null) drive.lastUsed = Date.now();
         return drive;
     }
 

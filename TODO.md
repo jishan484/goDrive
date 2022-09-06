@@ -119,3 +119,12 @@ risk and mitigation
 
 
 mkdir -p cert && sudo certbot certonly --manual --config-dir ./cert --work-dir ./cert && echo cert/fullchain.pem && echo '-----private key-----\n\n' && echo cert/privkey.pem
+
+
+
+
+----------------next ticket-------------------
+
+put and owner = ? condition first.....
+Rename , move and delete folder functionality
+    logics are same for all. It has to be done recursively...

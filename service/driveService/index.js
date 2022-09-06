@@ -94,11 +94,14 @@ class DriveService{
         } else if (this.driveUtil.drives.length() == 0){
             callback(false, 'There is no active Drive found!');
         }else{
+            drive.set(parseInt(req.headers['content-length']));
             drive.drive.writeFile(req.body.fileName,req.body.mimetype,req,(status,resp)=>{
+                drive.set(parseInt(req.headers['content-length']));
                 if(status){
                     req.body.nodeId = resp.id;
                     req.body.fileSize = resp.size;
                     req.body.driveId = drive.id;
+                    drive.update(parseInt(req.body.fileSize));
                     callback(true,'File uploaded');
                 } else{
                     callback(false,'Failed to save this file! code : ERRDRV');
@@ -138,9 +141,7 @@ class DriveService{
         } else {
             drive.drive.deleteFile(req.body.nodeId, (status, resp) => {
                 if (status) {
-                    req.body.nodeId = resp.id;
-                    req.body.fileSize = resp.size;
-                    req.body.driveId = drive.id;
+                    drive.update((parseInt(req.body.fileSize) * -1));
                     callback(true, resp);
                 } else {
                     callback(false, 'Failed to download this file! code : ERRDRV');

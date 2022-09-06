@@ -204,6 +204,9 @@ class FileService {
                     }
                 });
             }
+            else{
+                callback(false, data);
+            }
         });
     }
 

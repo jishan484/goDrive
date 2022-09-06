@@ -30,7 +30,7 @@ function uploadFile(req, res) {
     req.body.fileName = req.headers['m-filename'];
     req.body.filePath = req.headers['m-filepath'];
     req.body.fileType = (req.headers['m-mimetype']=='')?'application/octet-stream':req.headers['m-mimetype'];
-    req.body.fileSize = req.headers['content-length'];
+    req.body.fileSize = parseInt(req.headers['content-length']);
 
     if (req.body.fileName == undefined || req.body.fileName == null || req.body.fileName == "") {
         res.status(400).json({ status: 'error', data: null, error: "m-filename header is required", code: '400' });
