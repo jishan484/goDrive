@@ -6,6 +6,7 @@ const folderService = require("./../../../service/folderService");
 router.get('/', getFolder);
 router.post('/', createFolder);
 router.delete('/', deleteFolder);
+router.patch('/',updateFolder);
 
 module.exports = router;
 
@@ -44,6 +45,18 @@ function deleteFolder(req, res){
             res.status(200).send({ status: 'success', data: result, error: null, code: '200' });
         }
         else{
+            res.status(200).send({ status: 'error', data: "DELETION_FAILED", error: result, code: '204' });
+        }
+    }
+    );
+}
+
+function updateFolder(req, res) {
+    folderService.updateFolder(req, (status, result) => {
+        if (status) {
+            res.status(200).send({ status: 'success', data: result, error: null, code: '200' });
+        }
+        else {
             res.status(200).send({ status: 'error', data: "DELETION_FAILED", error: result, code: '204' });
         }
     }

@@ -144,7 +144,7 @@ module.exports = class GoogleDrive extends Storage{
             }
         }).catch(err => {
             if(err.code == 408) log.log('info','user cancelled file upload! : '+fileName);
-            log.log('error',err.code);
+            log.log('error',err);
             callback(false, err);
         });
     }

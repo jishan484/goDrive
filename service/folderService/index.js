@@ -230,6 +230,8 @@ class FolderService {
         data.folderId = req.body.folderId;
         data.owner = userService.getUserName(req.cookies.seid);
 
+        //check request params
+
         this.delete(data, (result) => {
             if(result){
                 callback(true,"Folder deleted successfully!");
@@ -242,15 +244,27 @@ class FolderService {
         });
     }
 
+    updateFolder(req, callback){
+        let oldData = {}, newData = [], statement=[], propagate = false;
+        oldData.folderName = req.folderName;
+        oldData.folderId = req.folderId;
+        oldData.fullPath = req.body.folderPath + '/' + oldData.folderName;
+        oldData.owner = userService.getUserName(req.cookies.seid);
+        if(req.body.data == undefined){
+            callback(false, 'Updates are not mentioned!');
+        }
+        if(oldData.fullPath == '/home'){
+            callback(false, 'Permission Denied! This is a readonly foder!');
+        }
+
+        if(req.body.data.folderName != undefined){
+            statement.push('?');
+            newData.push(req.body.data.folderName);
+        }
+    }
+
+
 }
-
-
-// db.all('SELECT * FROM Folders where folderPath="/home" and owner="jishan"',(err, rows) => {
-//     if (err) callback(false);
-//     else {
-//         log.log("debug",rows);
-//     }
-// });
 
 
 module.exports = new FolderService();
