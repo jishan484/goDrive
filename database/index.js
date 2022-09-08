@@ -1,5 +1,5 @@
 const fs = require("fs");
-let dir = '/run/user/1000/.data';
+let dir = '.data';
 const dbFile = dir+"/sqlite.db";
 const log = require("./../service/logService");
 const exist = fs.existsSync(dbFile);
