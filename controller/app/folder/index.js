@@ -57,7 +57,7 @@ function updateFolder(req, res) {
             res.status(200).send({ status: 'success', data: result, error: null, code: '200' });
         }
         else {
-            res.status(200).send({ status: 'error', data: "DELETION_FAILED", error: result, code: '204' });
+            res.status(200).send({ status: 'error', data: "UPDATION_FAILED", error: result, code: '204' });
         }
     }
     );

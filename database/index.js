@@ -25,7 +25,10 @@ function init_database() {
     log.log('debug','Databse initialized!');
     db.serialize(() => {
         if (!exist) {
+            db.status = false;
             db.run("CREATE TABLE DATABASECHANGES (id INTEGER PRIMARY KEY AUTOINCREMENT,QueryId TEXT, changeVersion TEXT, updatedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)");
+        } else {
+            db.status = true;
         }
         let DBChanges = require("./DBschema");
         reloadDBSchema(DBChanges.changes.firstOrder);

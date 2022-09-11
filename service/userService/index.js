@@ -102,7 +102,7 @@ class UserService {
         const token = (req.cookies.seid);
         if (token == 'undefined') return false;
         try {
-            const decoded = jwt.verify(token, "process.env.JWT_SECRET");
+            let decoded = jwt.verify(token, "process.env.JWT_SECRET");
             return true;
         } catch (err) {
             log.log("error",err);

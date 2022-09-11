@@ -128,3 +128,6 @@ mkdir -p cert && sudo certbot certonly --manual --config-dir ./cert --work-dir .
 put and owner = ? condition first.....
 Rename , move and delete folder functionality
     logics are same for all. It has to be done recursively...
+
+    during folder rename or move... all subfolders will be effected recursively, so the files of those sub folders. Fix: remove filePath params 
+    and during fetch query get the folder id using (SELECT folderId FROM Folders where fullPath = ? and owner = ?) subquery. That way dont  have to update files location also.

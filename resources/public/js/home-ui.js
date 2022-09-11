@@ -394,6 +394,22 @@ function fileDelete(fileId){
     },true);
 }
 
+function updateFolderName(name , folderId , folderName){
+    updateFolder('name',name,folderId,folderName,(status,response)=>{
+        if(status){
+            loadFolders('',false);
+        }
+    });
+}
+
+function updateFolderLocation(location, folderId, folderName) {
+    updateFolder('location', location, folderId, folderName, (status, response) => {
+        if (status) {
+            loadFolders('', false);
+        }
+    });
+}
+
 // check for site idle for more than 5 minutes on gobal events
 // var idleTime = 0;
 // $(document).ready(function () {

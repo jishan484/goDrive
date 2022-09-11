@@ -1,18 +1,20 @@
 let assert = require('./assert.js');
 
-function Test1(){
+module.exports.Test = ()=>{
+    createDriveTest();
+    getDriveTest();
+}
+
+function createDriveTest(){
     let Drive = require('../utilities/driveUtil/index')
     let drive = new Drive();
     let res = drive.createDrive('googleDrive');
     assert.notNullandUndefined(res);
 }
 
-function Test2(){
+function getDriveTest(){
     let Drive = require('../utilities/driveUtil/index')
     let drive = new Drive();
     let res = drive.getDrive();
     assert.equals(res,null);
 }
-
-Test1();
-Test2();

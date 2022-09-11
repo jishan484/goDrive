@@ -255,6 +255,24 @@ function removeFolder(folderName,callback) {
     });
 }
 
+// :UPDATE:FOLDER:
+function updateFolder(type,data,folderId,folderName,callback){
+    let payload = {}; payload.data = {};
+    if(type == 'name'){
+        payload.data.folderName = data;
+    } else if(type == 'location'){
+        payload.data.folderPath = data;
+    } else{ callback(false,'Not a valid update type'); return; }
+
+    payload.folderPath = _current_folder_path;
+    payload.folderName = folderName;
+    payload.folderId = folderId;
+    request('/app/u/folder',payload,'PATCH',(status, response)=>{
+        callback(status , response);
+        console.log(status, response);
+    });
+}
+
 function fetchFiles(folderName, callback, opt) {
     var payload = {
         filePath: _current_folder_path,
