@@ -89,10 +89,28 @@ class FolderService {
         });
     }
 
+    updateFullPath(oldPath, newPath, owner, callback){
+        db.run('UPDATE Folders SET folderPath = REPLACE(folderPath ,? , ?) , fullPath = REPLACE(fullPath ,? , ?) WHERE owner= ? and fullPath like ?', [oldPath,newPath,oldPath,newPath,owner,oldPath+"/%"], (err) => {
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
+            else callback(true);
+        });
+        setImmediate(()=>{
+            db.run('UPDATE Files SET filePath = REPLACE(filePath ,? , ?) WHERE owner= ? and filePath like ?', [oldPath, newPath, owner, oldPath + "%"], (err) => {
+                if (err) {
+                    log.log("error", err);
+                }
+            });
+        });
+    }
+
     delete(data, callback) {
         let fullPath = data.fullPath;
         let folderId = data.folderId;
         let owner = data.owner;
+        console.log(fullPath,folderId,owner)
 
         db.run('DELETE FROM Folders WHERE ( folderId = ? or fullPath = ? ) and owner = ?', [folderId,fullPath,owner], (err) => {
             if (err){
@@ -246,7 +264,7 @@ class FolderService {
     }
 
     updateFolder(req, callback){
-        let oldData = {}, newData = [], statement=[], propagate = false , indexFolderPath = 0 , indexParentId = 0;
+        let oldData = {}, newData = [],newDataSample = {}, statement=[], propagate = false , indexFolderPath = -1 , indexParentId = -1;
         let currentFullPath = null;
         oldData.folderName = req.body.folderName;
         oldData.folderId = req.body.folderId;
@@ -267,13 +285,22 @@ class FolderService {
             return;
         }
         if(oldData.fullPath == '/home'){
-            callback(false, 'Permission Denied! This is a readonly foder!');
+            callback(false, 'Permission Denied! This is a read-only foder!');
             return;
         }
 
         if(req.body.data.folderName != undefined){
+            if(req.body.data.folderName == req.body.folderName){
+                callback(false,'New folder name is similar to the old name!'); return;
+            }
             statement.push('folderName = ?');
             newData.push(req.body.data.folderName);
+            if(req.body.data.folderPath == undefined){
+                statement.push('fullPath = ?');
+                newData.push(req.body.folderPath+'/'+req.body.data.folderName);
+                newDataSample.folderPath = req.body.folderPath;
+                newDataSample.fullPath = req.body.folderPath + '/' + req.body.data.folderName;
+            }
             propagate=true;
         }
         if (req.body.data.folderPath != undefined || req.body.data.parentFolderId != undefined){
@@ -283,6 +310,7 @@ class FolderService {
             statement.push('folderPath = ?');
             indexFolderPath = newData.length;
             newData.push(req.body.data.folderPath);
+            newDataSample.folderPath = req.body.data.folderPath;
             indexParentId = newData.length;
             statement.push('parentFolderId = ?');
             newData.push(req.body.data.parentFolderId);
@@ -295,6 +323,7 @@ class FolderService {
                 statement.push('fullPath = ?');
                 newData.push(currentFullPath);
             }
+            newDataSample.fullPath = currentFullPath;
             propagate = true;
         }
 
@@ -333,11 +362,18 @@ class FolderService {
         newData.push(oldData.folderPath);
         newData.push(oldData.owner);
 
+        if(propagate){
+            req.body.data.folderPath = newDataSample.folderPath;
+        }
         if (req.body.data.folderPath != undefined || req.body.data.parentFolderId != undefined) {
-
-            this.getFolderByPath({ fullPath: req.body.data.folderPath, owner: oldData.owner, parentFolderId: req.body.data.parentFolderId } , (results)=>{
-                if(results.length > 1) log.log('warn','Duplicate Folder present in same dir! system warning! : '+results[0].id);
+            this.getFolderByPath({ fullPath: oldData.fullPath, folderId: req.body.folderId, owner: oldData.owner } , (results)=>{
+                if(results.length > 1) {
+                    callback(false,'Duplicate Folder present in same dir!'); return;
+                }
                 let result = results[0];
+                if (result && req.body.data !=undefined && req.body.data.folderName == result.folderName) {
+                    callback(false, 'New folder name is similar to the old name!'); return;
+                }
                 if (result || req.body.data.folderPath == '/home'){
                     if (req.body.data.folderPath == '/home'){
                         result = {};
@@ -357,7 +393,23 @@ class FolderService {
                     newData[indexParentId] = result.folderId;
                     this.update(statement.join(','), newData, (status) => {
                         if (status) {
-                            callback(true, 'updated');
+                            if(propagate){
+                                if(oldData.folderName == undefined){
+                                    oldData.fullPath = results[0].fullPath;
+                                }
+                                let oldPath = oldData.fullPath;
+                                let newPath = newDataSample.fullPath;
+                                this.updateFullPath(oldPath, newPath, oldData.owner,(status)=>{
+                                    // console.log(status,oldPath,newPath,oldData.owner);
+                                    if(status){
+                                        callback(true, 'updated');
+                                    } else {
+                                        callback(false, 'SubFolder details not updated!');
+                                    }
+                                });
+                            } else {
+                                callback(true, 'updated');
+                            }
                         } else {
                             callback(false, 'Updated Failed!');
                         }

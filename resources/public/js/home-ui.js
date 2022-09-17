@@ -25,7 +25,7 @@ function renderFolders(folders) {
                                     <li><div class="dropdown-item" onclick="folderOpen('${folders[i].folderName}')">Open</div></li>
                                     <li><div class="dropdown-item" onclick="folderOpen('${folders[i].folderName}')">Share</div></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><div class="dropdown-item" onclick="folderRenme('${folders[i].folderId}')">Rename</div></li>
+                                    <li><div class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editModel" onclick="renderFolderRenameModel('${folders[i].folderId}')">Rename</div></li>
                                     <li><div class="dropdown-item" onclick="folderCopyMove('${folders[i].folderId}')">Move</div></li>
                                     <li><div class="dropdown-item" onclick="folderDelete('${folders[i].folderName}')">Delete</div></li>
                                     <li><hr class="dropdown-divider"></li>
@@ -146,6 +146,30 @@ function renderUploadProgress()
         </div>
     </div>`;
     $('#fileList').html(html);
+}
+
+function renderFolderRenameModel(folderId){
+    let html = 
+    `<div class="row">
+     <div class="col mb-3">
+       <label for="nameWithTitle" class="form-label"> Folder Name</label>
+       <input type="text" id="editModelInput1" class="form-control" placeholder="Enter New Folder Name">
+     </div>
+   </div>
+   <div class="row g-2">
+     <div class="col mb-0 small" id="editModelError"></div>
+   </div>`;
+    $('#modelEditBody').html(html);
+    html = `<button type="button" class="btn btn-outline-secondary" id='editModelClose' data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="folderRename('${folderId}')">Update Name</button>`;
+    $('#modelEditActions').html(html);
+    $('#modalEditCenterTitle').html('Edit Folder Name');
+    setTimeout(() => { $('#editModelInput1').focus(); },500);
+}
+
+function folderRename(folderId){
+    folderName = $("#editModelInput1").val();
+    updateFolderName(folderName , folderId);
 }
 
 
@@ -395,9 +419,16 @@ function fileDelete(fileId){
 }
 
 function updateFolderName(name , folderId , folderName){
-    updateFolder('name',name,folderId,folderName,(status,response)=>{
-        if(status){
-            loadFolders('',false);
+    updateFolder('name',name,folderId,folderName,(response)=>{
+        if(response.status != 'error'){
+            $("#editModelClose").click();
+            fetchFolder('', (folders) => {
+                if (folders) {
+                    renderFolders(folders);
+                }
+            }, false);
+        } else {
+            $("#editModelError").html(response.error);
         }
     });
 }

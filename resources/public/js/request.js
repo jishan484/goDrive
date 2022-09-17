@@ -260,6 +260,18 @@ function updateFolder(type,data,folderId,folderName,callback){
     let payload = {}; payload.data = {};
     if(type == 'name'){
         payload.data.folderName = data;
+        if (payload.data.folderName == null || payload.data.folderName == '') {
+            callback(false,{error:'Folder name cannot be empty'}); return;
+        }
+        else if (!payload.data.folderName.match(/^[a-zA-Z0-9_.]+.+/)) {
+            callback(false,{error:'Folder name cannot start with special characters'}); return;
+        }
+        else if (payload.data.folderName.match(/[^a-zA-Z0-9-_\\+\\. \\(){}"':\[\]]/)) {
+            callback(false,{error:'Folder name contains invalid characters'}); return;
+        }
+        else if (payload.data.folderName.match(/^[._]+$/)) {
+            callback(false,{error:'Folder name Must contain atleast one letter or number'}); return;
+        }
     } else if(type == 'location'){
         payload.data.folderPath = data;
     } else{ callback(false,'Not a valid update type'); return; }
@@ -267,9 +279,8 @@ function updateFolder(type,data,folderId,folderName,callback){
     payload.folderPath = _current_folder_path;
     payload.folderName = folderName;
     payload.folderId = folderId;
-    request('/app/u/folder',payload,'PATCH',(status, response)=>{
-        callback(status , response);
-        console.log(status, response);
+    request('/app/u/folder',payload,'PATCH',(response)=>{
+        callback(response);
     });
 }
 
