@@ -1,20 +1,32 @@
 const fs = require('fs');
 const db = require('../database');
 
-function runAllTests(){
+async function runAllTests(){
     let testFiles = fs.readdirSync(__dirname);
     testFiles = testFiles.filter((elem)=>{
         return elem != 'assert.js' && elem != 'index.js';
     });
-    testFiles.forEach((file)=>{
-        require(__dirname+'/'+file).Test();
-    });
+    for(let i=0;i<testFiles.length;i++){
+        await wait();
+        require(__dirname + '/' + testFiles[i]).Test();
+    }
 }
 
 if(db.status){
-    runAllTests();
+    setTimeout(() => {
+        runAllTests();
+    }, 100);
 } else {
     setTimeout(()=>{
         runAllTests();
     },1800);
+}
+
+
+async function wait() {
+    return new Promise(async (resolve) => {
+        setTimeout(() => {
+            resolve(true);
+        }, 1000);
+    });
 }

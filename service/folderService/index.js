@@ -29,9 +29,10 @@ class FolderService {
         let owner = data.owner;
         let folderId = data.folderId;
         let folderPath = data.folderPath;
+        let parentFolderPath = data.parentFolderPath;
         // one fullPath for parentDri and another one for targeted dir
-        db.all("SELECT * FROM Folders where ( fullPath = ? or fullPath= ? or folderId = ? ) and owner = ?",
-            [fullPath,folderPath, folderId, owner], (err, row) => {
+        db.all("SELECT * FROM Folders where ( fullPath = ? or fullPath = ? or folderPath= ? or folderId = ? ) and owner = ?",
+            [fullPath, folderPath, parentFolderPath, folderId, owner], (err, row) => {
                 if (err) {
                     log.log("error",err);
                     callback(false);
@@ -80,7 +81,7 @@ class FolderService {
     }
 
     update(subquery, data, callback) {
-        db.run('UPDATE Folders SET ' + subquery + ', modifiedOn=CURRENT_TIMESTAMP WHERE (folderId = ? OR (folderName = ? AND folderPath = ? )) and owner = ?', data, (err) => {
+        db.run('UPDATE Folders SET ' + subquery + ', modifiedOn=CURRENT_TIMESTAMP WHERE (folderId = ? OR (fullPath = ? )) and owner = ?', data, (err) => {
             if (err) {
                 callback(false);
                 log.log("error", err);
@@ -110,7 +111,6 @@ class FolderService {
         let fullPath = data.fullPath;
         let folderId = data.folderId;
         let owner = data.owner;
-        console.log(fullPath,folderId,owner)
 
         db.run('DELETE FROM Folders WHERE ( folderId = ? or fullPath = ? ) and owner = ?', [folderId,fullPath,owner], (err) => {
             if (err){
@@ -264,161 +264,134 @@ class FolderService {
     }
 
     updateFolder(req, callback){
-        let oldData = {}, newData = [],newDataSample = {}, statement=[], propagate = false , indexFolderPath = -1 , indexParentId = -1;
-        let currentFullPath = null;
-        oldData.folderName = req.body.folderName;
+        let oldData = {} , newData = {} , statement=[] , dataset=[] , propagate=false;
+        // must have oldData : folderId , (folderName,folderPath)
         oldData.folderId = req.body.folderId;
-        oldData.fullPath = req.body.folderPath + '/' + oldData.folderName;
-        oldData.folderPath = req.body.folderPath;
+        oldData.fullPath = req.body.folderPath + '/' + req.body.folderName;
         oldData.owner = userService.getUserName(req.cookies.seid);
-
-        if((oldData.folderId == undefined && (oldData.folderName == undefined && 
-            oldData.fullPath == undefined))
-            || (oldData.folderId == 'undefined' && oldData.folderName == 'undefined')
-            || (oldData.folderId == null  && oldData.folderName == null )
-            || (oldData.folderId == ''    && oldData.folderName == '')){
+        //check old data
+        if (req.body.folderPath == undefined || (oldData.folderId == undefined && (req.body.folderName == undefined && req.body.folderPath == undefined))
+            || (oldData.folderId == 'undefined' && req.body.folderName == 'undefined')
+            || (oldData.folderId == '' && req.body.folderName == '')) {
             callback(false, 'Target folder details not provided!');
             return;
         }
-        if(req.body.data == undefined){
+        // few validation before checking updated data
+        if (req.body.data == undefined) {
             callback(false, 'Updates are not mentioned!');
             return;
         }
-        if(oldData.fullPath == '/home'){
-            callback(false, 'Permission Denied! This is a read-only foder!');
-            return;
-        }
-
-        if(req.body.data.folderName != undefined){
-            if(req.body.data.folderName == req.body.folderName){
-                callback(false,'New folder name is similar to the old name!'); return;
-            }
-            statement.push('folderName = ?');
-            newData.push(req.body.data.folderName);
-            if(req.body.data.folderPath == undefined){
-                statement.push('fullPath = ?');
-                newData.push(req.body.folderPath+'/'+req.body.data.folderName);
-                newDataSample.folderPath = req.body.folderPath;
-                newDataSample.fullPath = req.body.folderPath + '/' + req.body.data.folderName;
-            }
-            propagate=true;
-        }
-        if (req.body.data.folderPath != undefined || req.body.data.parentFolderId != undefined){
-            if(req.body.folderName == undefined){
-                callback(false, 'Folder name is required for changing folder location!'); return;
-            }
-            statement.push('folderPath = ?');
-            indexFolderPath = newData.length;
-            newData.push(req.body.data.folderPath);
-            newDataSample.folderPath = req.body.data.folderPath;
-            indexParentId = newData.length;
-            statement.push('parentFolderId = ?');
-            newData.push(req.body.data.parentFolderId);
-            if(req.body.data.folderName != undefined){
-                currentFullPath = req.body.data.folderPath + '/' + req.body.data.folderName;
-                statement.push('fullPath = ?');
-                newData.push(currentFullPath);
-            }else{
-                currentFullPath = req.body.data.folderPath + '/' + oldData.folderName;
-                statement.push('fullPath = ?');
-                newData.push(currentFullPath);
-            }
-            newDataSample.fullPath = currentFullPath;
-            propagate = true;
-        }
-
-        // --------non-recursive actions-----------
-        if (req.body.data.permissions != undefined || req.body.data.priority != undefined ||
-            req.body.data.accesses != undefined){
-            if (statement.length > 0) {
-                callback(false, 'Folder permission can not be changed with Name and Location update!');
-                return;
-            }
-        }
-        if(req.body.data.permissions != undefined){
-            statement.push('permissions = ?');
-            newData.push(req.body.data.permissions);
-            propagate = false;
-        }
-        if (req.body.data.folderAccess != undefined) {
-            statement.push('accesses = ?');
-            newData.push(req.body.data.folderAccess);
-            propagate = false;
-        }
-        if(req.body.data.priority != undefined){
-            statement.push('priority = ?');
-            newData.push(req.body.data.priority);
-            propagate = false;
-        }
-
-
-        if(statement.length == 0){
+        if (Object.keys(req.body.data).length == 0){
             callback(false,'No valid changes menioned for this folder!');
             return;
         }
-        
-        newData.push(oldData.folderId);
-        newData.push(oldData.folderName);
-        newData.push(oldData.folderPath);
-        newData.push(oldData.owner);
-
-        if(propagate){
-            req.body.data.folderPath = newDataSample.folderPath;
+        if (oldData.fullPath == '/home') {
+            callback(false, 'Permission Denied! This is a read-only foder!');
+            return;
         }
-        if (req.body.data.folderPath != undefined || req.body.data.parentFolderId != undefined) {
-            this.getFolderByPath({ fullPath: oldData.fullPath, folderId: req.body.folderId, owner: oldData.owner } , (results)=>{
-                if(results.length > 1) {
-                    callback(false,'Duplicate Folder present in same dir!'); return;
+        //update which needs propagation
+        if(req.body.data.folderName != undefined || req.body.data.folderPath != undefined){
+            if(req.body.data.folderPath == req.body.folderPath){
+                callback(false,'New folder Location and Old folder Location is same!'); return;
+            }
+            if (req.body.data.permissions != undefined || req.body.data.priority != undefined ||
+                req.body.data.accesses != undefined) {
+                callback(false, 'Folder permission can not be changed with Name and Location update!'); return;
+            }
+            this.getFolderByPath({ fullPath: oldData.fullPath,folderPath:req.body.data.folderPath, parentFolderPath: req.body.folderPath, folderId: oldData.folderId, owner: oldData.owner }, (results) => {
+                let result = null , targetFolderPath = {};
+                for (let i = 0; i < results.length; i++) {
+                    if (results[i].fullPath == oldData.fullPath || results[i].folderId == oldData.folderId) {
+                        result = results[i]; if(req.body.data.folderPath == undefined) break;
+                    }
+                    if(results[i].fullPath == req.body.data.folderPath){
+                        targetFolderPath = results[i];
+                    }
                 }
-                let result = results[0];
-                if (result && req.body.data !=undefined && req.body.data.folderName == result.folderName) {
-                    callback(false, 'New folder name is similar to the old name!'); return;
+                // some more validation
+                if(result == undefined || result == null){
+                    callback(false, "Sourse folder is not valid!"); return;
                 }
-                if (result || req.body.data.folderPath == '/home'){
-                    if (req.body.data.folderPath == '/home'){
-                        result = {};
-                        result.fullPath = '/home';
-                        result.folderId = '0';
+                if (req.body.data.folderPath != undefined && targetFolderPath.folderPath == undefined && req.body.data.folderPath != '/home'){
+                    callback(false,"New folder location is not valid!"); return;
+                }
+                if (req.body.data.folderPath != undefined && targetFolderPath.folderPath == result.fullPath) {
+                    callback(false, "New folder location is inside the source folder"); return;
+                }
+                // check and prepare update statement
+                if(req.body.data.folderName != undefined){
+                    statement.push('folderName=?');
+                    dataset.push(req.body.data.folderName);
+                    newData.folderName = req.body.data.folderName;
+                }
+                if (req.body.data.folderPath != undefined) {
+                    statement.push('folderPath=?');
+                    dataset.push(req.body.data.folderPath);
+                    newData.folderPath = req.body.data.folderPath;
+                    if(req.body.data.folderPath == '/home'){
+                        statement.push('parentFolderId = ?');
+                        dataset.push("0");
+                    } else {
+                        statement.push('parentFolderId = ?');
+                        dataset.push(targetFolderPath.folderId);
                     }
-                    if(newData[indexFolderPath] != undefined && newData[indexFolderPath] != result.fullPath){
-                        callback(false, 'New folder Location and parent folderId is not matching!'); return;
+                }
+
+                newData.fullPath = (req.body.data.folderPath != undefined)?req.body.data.folderPath:result.folderPath
+                newData.fullPath +='/'
+                newData.fullPath +=(req.body.data.folderName!=undefined)?req.body.data.folderName:result.folderName;
+                statement.push('fullPath= ? ');
+                dataset.push(newData.fullPath);
+
+                if (newData.fullPath == result.fullPath){
+                    callback(false, 'Updated name and path is similar to the old details!'); return;
+                }
+                // check if any folder present with updated name in new or old path
+                for (let i = 0; i < results.length; i++) {
+                    if(results[i].fullPath == newData.fullPath){
+                        callback(false,'Duplicate Folder present in same dir!'); return;
                     }
-                    if (newData[indexParentId] != undefined && newData[indexParentId] != result.folderId) {
-                        callback(false, 'New folder Location and parent folderId is not matching!'); return;
-                    }
-                    if(newData[indexFolderPath] == oldData.folderPath){
-                        callback(false, 'New folder Location and Old folder Location is same!'); return;
-                    }
-                    newData[indexFolderPath] = result.fullPath;
-                    newData[indexParentId] = result.folderId;
-                    this.update(statement.join(','), newData, (status) => {
-                        if (status) {
-                            if(propagate){
-                                if(oldData.folderName == undefined){
-                                    oldData.fullPath = results[0].fullPath;
-                                }
-                                let oldPath = oldData.fullPath;
-                                let newPath = newDataSample.fullPath;
-                                this.updateFullPath(oldPath, newPath, oldData.owner,(status)=>{
-                                    // console.log(status,oldPath,newPath,oldData.owner);
-                                    if(status){
-                                        callback(true, 'updated');
-                                    } else {
-                                        callback(false, 'SubFolder details not updated!');
-                                    }
-                                });
-                            } else {
+                }
+                dataset.push(result.folderId);
+                dataset.push(result.fullPath);
+                dataset.push(result.owner);
+                this.update(statement.join(','), dataset, (status) => {
+                    if (status) {
+                        this.updateFullPath(result.fullPath, newData.fullPath, oldData.owner, (status) => {
+                            if (status) {
                                 callback(true, 'updated');
+                            } else {
+                                callback(false, 'SubFolder details not updated!');
                             }
-                        } else {
-                            callback(false, 'Updated Failed!');
-                        }
-                    });
-                } else {
-                    callback(false,'New folder location is not valid!');
-                }
+                        });
+                    } else {
+                        callback(false, 'Updated Failed!');
+                    }
+                });
             });
-        } else {
+        }else{
+            if (req.body.data.permissions != undefined) {
+                statement.push('permissions = ?');
+                newData.push(req.body.data.permissions);
+                propagate = false;
+            }
+            if (req.body.data.folderAccess != undefined) {
+                statement.push('accesses = ?');
+                newData.push(req.body.data.folderAccess);
+                propagate = false;
+            }
+            if (req.body.data.priority != undefined) {
+                statement.push('priority = ?');
+                newData.push(req.body.data.priority);
+                propagate = false;
+            }
+            dataset.push(oldData.folderId);
+            if(oldData.folderId != undefined){
+                dataset.push('');
+            } else {
+                dataset.push(oldData.fullPath);
+            }
+            dataset.push(oldData.owner);
             this.update(statement.join(','), newData, (status) => {
                 if (status) {
                     callback(true, 'updated');
@@ -428,8 +401,6 @@ class FolderService {
             });
         }
     }
-
-    
 }
 
 
