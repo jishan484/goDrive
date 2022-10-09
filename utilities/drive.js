@@ -1,77 +1,67 @@
 const fs = require('fs');
-const readline = require('readline');
-const { google } = require('googleapis');
+const stream = require('stream');
+let drive = require('../service/driveService');
 
-
-class Drive{
-    constructor(){
-        this.tokenLocation = __dirname+"/token.json";
-        this.scope = "https://www.googleapis.com/auth/drive.file";
-        this.credentials = __dirname+"/cred.json";
-        this.auth = null;
-    }
-    getNewToken(oAuth2Client) {
-        const authUrl = oAuth2Client.generateAuthUrl({
-            access_type: 'offline',
-            scope: this.scope,
-        });
-        console.log('Authorize this app by visiting this url:', authUrl);
-        const rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-        });
-        rl.question('Enter the code from that page here: ', (code) => {
-            rl.close();
-            oAuth2Client.getToken(code, (err, token) => {
-                if (err) return console.error('Error retrieving access token', err);
-                oAuth2Client.setCredentials(token);
-                // Store the token to disk for later program executions
-                fs.writeFile(this.tokenLocation, JSON.stringify(token), (err) => {
-                    if (err) return console.error(err);
-                    console.log('Token stored to', this.tokenLocation);
-                });
-                this.auth = oAuth2Client
-            });
-        });
-    }
-
-
-    getFile(fileId){
-        //
-    }
-
-    writeFile(fileName,mimeType,fileData,callback){
-        
-        let contentS = JSON.parse(fs.readFileSync(this.credentials));
-
-        const { client_secret, client_id, redirect_uris } = contentS.installed;
-        const auth = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0]);
-        
-        auth.setCredentials(JSON.parse(fs.readFileSync(this.tokenLocation)));
-
-        const driveService = google.drive({ version: 'v3', auth });
-        let fileMetadata = {
-            'name': fileName
-        };
-        
-        driveService.files.create({
-            resource: fileMetadata,
-            media:{
-            mimeType: mimeType,
-            body: fileData
-        },
-            fields: 'id,size,mimeType,name'
-        }).then(data => {
-            if(data.status === 200){
-                callback(data.data,null);
-            }
-            else{
-                callback(data.data,true);
-            }
-        }).catch(err => {
-            callback(null,err);
-        });
+class wpp extends stream.PassThrough{
+    constructor(nu) {
+        super({
+            objectMode: true,
+            highWaterMark: 1,
+            readableHighWaterMark: 1
+});
+        this.n = nu;
+        this.body = {
+            fileSize:15,
+            fileName:'a'+nu+'.txt',
+            mimetype:'text/plain'
+        }
+        this.headers = {
+            'content-length':200
+        }
     }
 }
 
-module.exports = Drive;
+class tpp extends stream.Transform {
+
+    constructor(sampleFormat) {
+        super({
+            objectMode: true,
+            highWaterMark: 1,
+            readableHighWaterMark:1
+        });
+        this.size = 0;
+        this.count = 0;
+    }
+
+    _transform(chunk, encoding, callback) {
+        if(this.size <= (8*19) && this.count > 0){
+            this.push(chunk);
+            callback();
+        }else{
+            if (this.streamW) {
+                this.streamW.end()
+            }
+            this.streamW = new wpp(this.count + '=');
+            this.pipe(this.streamW);
+            let res = drive.uploadFile(this.streamW,(status)=>{
+                console.log(status)
+            });
+            this.count++;
+            this.push(chunk);
+            this.size = chunk.length;
+            callback();
+        }
+        if(chunk) this.size+=chunk.length;        
+    }
+}
+let a = new tpp();
+setTimeout(()=>{
+    fs.createReadStream(__dirname + '/cred.json', { highWaterMark: 8 }).pipe(a);
+},6000);
+a.on('end',()=>{
+    console.log('end');
+});
+
+a.on('finish',()=>{
+    console.log('finish');
+})

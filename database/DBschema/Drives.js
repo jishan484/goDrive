@@ -13,6 +13,6 @@ module.exports = {
         driveToken TEXT,
         priority INTEGER,
         createdOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
-        )`
+    )`
 
 }

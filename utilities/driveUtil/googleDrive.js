@@ -92,6 +92,7 @@ module.exports = class GoogleDrive extends Storage{
         }).then(data => {
             this.displayName = data.data.user.emailAddress;
             this.freeSpace = (data.data.storageQuota.limit - data.data.storageQuota.usage);
+            // this.freeSpace = (this.displayName[0] == 'd') ? 10000000 : 1000; // for chunk upload test only
             this.storageInfo.image = data.data.user.photoLink;
             this.storageInfo.displayName = data.data.user.displayName;
             this._setup(callback);
@@ -143,8 +144,11 @@ module.exports = class GoogleDrive extends Storage{
                 callback(false,data.data);
             }
         }).catch(err => {
-            if(err.code == 408) log.log('info','user cancelled file upload! : '+fileName);
-            log.log('error',err);
+            if(err.code == 408) {
+                log.log('info','user cancelled file upload! : '+fileName);
+            } else {
+                log.log('error', err);
+            }
             callback(false, err);
         });
     }

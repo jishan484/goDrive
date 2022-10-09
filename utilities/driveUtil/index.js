@@ -48,6 +48,28 @@ drives = {
             }
         }
         return null;
+    },
+
+    getDrivesByFreeSpace: function (freeSpace) {
+        let totalFreeSpace = 0;
+        let drives = [];
+        let lookup = new Array(this.ActiveDrives.length).fill(false);
+        for (let i = 0; i < this.ActiveDrives.length; i++) {
+            let usableSpace = (this.ActiveDrives[i].freeSpace - this.ActiveDrives[i].inUseSpace);
+            if (usableSpace < 65536) continue;
+            totalFreeSpace += usableSpace - 65536;
+            lookup[i] = true;
+        }
+        if(freeSpace <= totalFreeSpace){
+            for (let j = 0; (j < this.ActiveDrives.length) && (freeSpace >= 0); j++) {
+                if(lookup[j] == false) continue;
+                freeSpace -= (this.ActiveDrives[j].freeSpace - this.ActiveDrives[j].inUseSpace - 65536);
+                drives.push(this.ActiveDrives[j]);
+            }
+            return drives;
+        }else{
+            return false;
+        }
     }
 
 }
@@ -125,8 +147,19 @@ module.exports = class Drive{
     // get drive based on free space
     getDrive(fileSize){
         let drive = this.drives.getByFreeSpace(fileSize);
-        if(drive != undefined || drive != null) drive.lastUsed = Date.now();
+        if(drive && drive != null) drive.lastUsed = Date.now();
         return drive;
+    }
+
+    // get multiple drives based on free space for chunk upload
+    getDrives(fileSize) {
+        let drives = this.drives.getDrivesByFreeSpace(fileSize);
+        if (drives && drives != null){
+            drives.forEach(drive => {
+                drive.lastUsed = Date.now();
+            });
+        }
+        return drives;
     }
 
     getDriveById(id){

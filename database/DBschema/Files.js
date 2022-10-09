@@ -21,6 +21,6 @@ module.exports = {
         star INTEGER,
         parentFolderId TEXT, 
         driveId TEXT
-        )`
+    )`
 
 }

@@ -48,7 +48,7 @@ async function reloadDBSchema(changes)
             if (!row) {
                 db.run(element.query, (err) => {
                     if (err) {
-                        log.log('error','[DBschema-ERROR]',err);
+                        log.log('error','[DBschema-ERROR]' + err);
                     }
                     else{
                         db.run("INSERT INTO DATABASECHANGES (QueryId, changeVersion) VALUES (?, ?)", element.QueryId, element.version, (err) => {
