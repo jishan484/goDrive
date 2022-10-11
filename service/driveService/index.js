@@ -5,6 +5,7 @@ const fileService = require('./../fileService');
 const driveInfo = require('./driveInfo.js');
 const log = require("./../logService");
 const ChunkUploader = require('./chunkUploader.js');
+const ChunkDownloader = require('./chunkDownloader.js');
 
 
 class DriveService{
@@ -160,12 +161,32 @@ class DriveService{
         } else{
             drive.drive.readFile(req.body.nodeId,(status,resp)=>{
                 if(status){
-                    callback(true,resp);
+                    callback(true, resp);
                 } else{
                     callback(false,'Failed to download this file! code : ERRDRV');
                 }
             });
         }
+    }
+
+    downloadChunkedFile(nodes, callback){
+        if(nodes.length < 2){
+            callback(false, 'Part of this file not present in system!');
+            log.error('Chunk length less than 2 \n'+JSON.stringify(nodes));
+            return;
+        }
+        for(let i=0;i<nodes.length;i++){
+            let driveInfo = this.driveUtil.getDriveById(nodes[i].driveId);
+            if (driveInfo == null) {
+                callback(false, 'The system cannot find the file specified');
+                return;
+            } else {
+                nodes[i].drive = driveInfo.drive;
+            }
+        }
+        let downloader = new ChunkDownloader(nodes,(status,data)=>{
+            callback(status, data);
+        })
     }
 
 

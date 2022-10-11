@@ -115,7 +115,7 @@ class FileService {
         });
     }
 
-    saveChunk(data, callback){
+    saveChunks(data, callback){
         let chunkId = "CP" + Date.now().toString(36);  // from random generator
         let nodeInfo = data.nodeInfo;
         let orders = data.driveIndex;
@@ -128,6 +128,19 @@ class FileService {
             }
             else {
                 callback(true);
+            }
+        });
+    }
+
+    getChunks(data,callback){
+        let nodeInfo = data.nodeId;
+        db.all('SELECT * FROM FileChunks where nodeInfo=?',[nodeInfo],(err,rows)=>{
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
+            else {
+                callback(rows);
             }
         });
     }
@@ -229,7 +242,7 @@ class FileService {
                         let callbackCount = 0, totalPartCount = req.body.nodesInfo.length;
                         req.body.nodesInfo.forEach(partInfo => {
                             partInfo.nodeInfo = req.body.nodeId;
-                            this.saveChunk(partInfo,(status)=>{
+                            this.saveChunks(partInfo,(status)=>{
                                 callbackCount++;
                                 if(callbackCount == totalPartCount){
                                     callback(true,data);
@@ -269,15 +282,29 @@ class FileService {
                 callback(false,'File Not Found');
                 return;
             }
+
             req.body.driveId = rows.driveId;
             req.body.nodeId = rows.nodeId;
             req.body.fileName = rows.fileName;
             req.body.fileSize = rows.fileSize;
             req.body.fileType = rows.fileType;
+
+            if (rows.driveId == 'CHUNKED'){
+                this.downloadChunked(rows,callback);
+                return;
+            }
             driveService.downloadFile(req,(status,data)=>{
                 callback(status, data);
             });
         }); 
+    }
+
+    downloadChunked(result,callback){
+        this.getChunks(result,(rows)=>{
+            driveService.downloadChunkedFile(rows,(status, data)=>{
+                callback(status, data);
+            })
+        });
     }
 
 

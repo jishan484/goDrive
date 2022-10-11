@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
 const fileService = require("./../../../service/fileService");
+const log = require('../../../service/logService/index.js');
 
 
 router.get('/', getFile);
@@ -57,8 +58,13 @@ function uploadFile(req, res) {
 }
 
 function downloadFile(req,res){
+    req.setTimeout(35000);
+    let timeout = setTimeout(()=>{
+        log.log("error", "File download timeout : " + req.query.fileId +" : fileName : " + req.query.fileName);
+    },34900);
     req.body = req.query;
     fileService.downloadFile(req,(status,data)=>{
+        clearTimeout(timeout);
         if (status) {
             res.set('Content-Disposition',' attachment; filename="'+req.body.fileName+'"');
             res.set('Content-Length', req.body.fileSize);

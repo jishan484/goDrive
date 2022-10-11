@@ -163,7 +163,10 @@ module.exports = class Drive{
     }
 
     getDriveById(id){
-        return this.drives.getById(id);
+        let drive = this.drives.getById(id);
+        drive.lastUsed = Date.now();
+        if (drive.status == 'Active') return drive;
+        else return null;
     }
 
     createDrive(type, redirectURL){
