@@ -172,7 +172,7 @@ class DriveService{
     downloadChunkedFile(nodes, callback){
         if(nodes.length < 2){
             callback(false, 'Part of this file not present in system!');
-            log.error('Chunk length less than 2 \n'+JSON.stringify(nodes));
+            log.log('error','Chunk length less than 2 \n'+JSON.stringify(nodes));
             return;
         }
         for(let i=0;i<nodes.length;i++){
