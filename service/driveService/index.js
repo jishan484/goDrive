@@ -170,11 +170,6 @@ class DriveService{
     }
 
     downloadChunkedFile(nodes, callback){
-        if(nodes.length < 2){
-            callback(false, 'Part of this file not present in system!');
-            log.log('error','Chunk length less than 2 \n'+JSON.stringify(nodes));
-            return;
-        }
         for(let i=0;i<nodes.length;i++){
             let driveInfo = this.driveUtil.getDriveById(nodes[i].driveId);
             if (driveInfo == null) {
@@ -202,9 +197,9 @@ class DriveService{
             drive.drive.deleteFile(req.body.nodeId, (status, resp) => {
                 if (status) {
                     drive.update((parseInt(req.body.fileSize) * -1));
-                    callback(true, resp);
+                    callback(true, 'File deleted from Drive!');
                 } else {
-                    callback(false, 'Failed to download this file! code : ERRDRV');
+                    callback(false, 'Failed to delete this file! code : ERRDRV');
                 }
             });
         }

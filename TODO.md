@@ -134,3 +134,19 @@ Rename , move and delete folder functionality
 
     drijishan9733
     dr0jishan9733
+
+
+
+Repair Failed faile operation:
+    -> There should be a job to look into this issue:
+    scope: Job will look into the particular drive:
+        if it is down -> send mail to admins
+        if drive is up but file not present there ->manual checkup required
+        ....
+    table details:
+        id, action, driveId, nodeId, type(full,chunk), otherInfo, status
+    if status is cleard -> record can be deleted from DB
+    if status is checked -> job will not pickup for 2nd time, manual checkup needed
+    for other status job can look into that...
+    job frequency -> 1 run in 24h
+

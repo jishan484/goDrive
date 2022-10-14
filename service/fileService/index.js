@@ -145,6 +145,14 @@ class FileService {
         });
     }
 
+    deleteChunks(data) {
+        let nodeInfo = data.nodeId;
+        db.all('DELETE FROM FileChunks where nodeInfo=?', [nodeInfo], (err) => {
+            if (err) {
+                log.log("error", err);
+            }
+        });
+    }
     // -------------------------------------UTILITY--------------------------------------------//
 
     getFiles(req, callback) {
@@ -301,6 +309,11 @@ class FileService {
 
     downloadChunked(result,callback){
         this.getChunks(result,(rows)=>{
+            if (rows.length < 2) {
+                callback(false, 'Part of this file not present in system!');
+                log.log('error', 'Chunk length less than 2 \n' + JSON.stringify(rows));
+                return;
+            }
             driveService.downloadChunkedFile(rows,(status, data)=>{
                 callback(status, data);
             })
@@ -309,17 +322,17 @@ class FileService {
 
 
     deleteFile(req, callback){
-        let data = {};
-        data.fileId = req.body.fileId;
-        data.owner = userService.getUserName(req.cookies.seid);
-        data.filePath = req.body.filePath;
-        data.fileName = req.body.fileName;
+        let requestedData = {};
+        requestedData.fileId = req.body.fileId;
+        requestedData.owner = userService.getUserName(req.cookies.seid);
+        requestedData.filePath = req.body.filePath;
+        requestedData.fileName = req.body.fileName;
 
-        if ((data.filePath == undefined && data.fileName == undefined) && data.fileId == undefined) {
+        if ((requestedData.filePath == undefined && requestedData.fileName == undefined) && requestedData.fileId == undefined) {
             callback(false, "Missing parameters: (filePath and fileName) or fileId");
             return;
         }
-        this.getById(data, (rows) => {
+        this.getById(requestedData, (rows) => {
             if (rows == undefined || rows.length == 0) {
                 callback(false, 'File Not Found');
                 return;
@@ -328,6 +341,20 @@ class FileService {
             req.body.nodeId = rows.nodeId;
             req.body.fileSize = rows.fileSize;
             req.body.owner = rows.owner;
+
+            if (rows.driveId == 'CHUNKED') {
+                this.deleteChunked(rows, (status, requestedData)=>{
+                    this.delete(req.body, (deleteStatus) => {
+                        if (deleteStatus == true)
+                            callback(deleteStatus, 'File deleted')
+                        else callback(deleteStatus, 'System failed to delete the file from DataBase!')
+                    });
+
+                    this.deleteChunks(requestedData);
+                });
+                return;
+            }
+
             driveService.deleteFile(req, (status, data) => {
                 if(status == true){
                     this.delete(req.body,(deleteStatus)=>{
@@ -342,6 +369,39 @@ class FileService {
                 }
             });
         });
+    }
+
+    deleteChunked(nodeInfo, callback){
+        let count = 0;
+        let isFailed = false;
+        let error = null;
+        this.getChunks(nodeInfo, (rows) => {
+            if (rows.length < 2) {
+                callback(false, 'Part of this file not present in system!');
+                log.log('error', 'Chunk length less than 2 \n' + JSON.stringify(rows));
+                return;
+            }
+            rows.forEach((node)=>{
+                node.body = {};
+                node.body.nodeId = node.nodeId;
+                node.body.driveId = node.driveId;
+                
+                driveService.deleteFile(node, (status, data) => {
+                    if(status == false) {
+                        isFailed = true;
+                        error = data;
+                    }
+                    if(count >= rows.length -1){
+                        callback(!isFailed, (error == null) ? data : error);
+                    }
+                    count++;
+                });
+            })
+        });
+    }
+
+    repairFileOparation(data){
+        
     }
 }
 
