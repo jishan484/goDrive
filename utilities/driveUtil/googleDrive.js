@@ -55,6 +55,7 @@ module.exports = class GoogleDrive extends Storage{
     init(){
         return this.auth.generateAuthUrl({
             access_type: 'offline',
+            prompt:'consent',
             scope: SCOPES,
         });
     }

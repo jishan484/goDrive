@@ -91,7 +91,7 @@ risk and mitigation
 
 
     --------------------problems / bugs----------------------
-    1. In multi node server, the free space of a drive could cause problem, if multiple client starts upload big file at a same time.
+    1. In multi node server, the free space of a drive could cause problem, if multiple clients start uploading big file at a same time.
     FIX: add a 2nd param [in-use-space] and put the size of currently uploading file sizes.
          Substract this value for thye next file upload process.
          if a upload gets cancelled, substact that value from [in-use-space].
@@ -149,4 +149,3 @@ Repair Failed faile operation:
     if status is checked -> job will not pickup for 2nd time, manual checkup needed
     for other status job can look into that...
     job frequency -> 1 run in 24h
-
