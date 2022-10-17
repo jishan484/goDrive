@@ -1,16 +1,24 @@
+const log = require("./../service/logService");
+const {DatabaseConfig} = require('../SystemConfig.js');
 const fs = require("fs");
 let dir = '.data';
-const dbFile = dir+"/sqlite.db";
-const log = require("./../service/logService");
+const dbFile = dir + "/sqlite.db";
 const exist = fs.existsSync(dbFile);
-checkDBFile();
-const sqlite3 = require("sqlite3").verbose();
-const db = new sqlite3.Database(dbFile);
+var db = null;
 
+if(DatabaseConfig.databaseType == 'mysql'){
+    db = require('./mysql.js');
+} else if(DatabaseConfig.databaseType == 'sqlite3') {
+    initSqlite();
+}
 
 init_database();
 
-
+function initSqlite(){
+    checkDBFile();
+    const sqlite3 = require("sqlite3").verbose();
+    db = new sqlite3.Database(dbFile);
+}
 function checkDBFile() {
     if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
@@ -26,10 +34,10 @@ function init_database() {
     db.serialize(() => {
         if (!exist) {
             db.status = false;
-            db.run("CREATE TABLE DATABASECHANGES (id INTEGER PRIMARY KEY AUTOINCREMENT,QueryId TEXT, changeVersion TEXT, updatedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL)");
         } else {
             db.status = true;
         }
+        db.run("CREATE TABLE IF NOT EXISTS DATABASECHANGES (id INTEGER PRIMARY KEY AUTOINCREMENT,QueryId TEXT, changeVersion TEXT, updatedOn TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
         let DBChanges = require("./DBschema");
         reloadDBSchema(DBChanges.changes.firstOrder);
         setTimeout(() => {
@@ -41,7 +49,7 @@ function init_database() {
 async function reloadDBSchema(changes)
 {
     changes.forEach(element => {
-        db.get("SELECT * FROM DATABASECHANGES WHERE QueryId = ?", element.QueryId, (err, row) => {
+        db.get("SELECT * FROM DATABASECHANGES WHERE QueryId = ?", [element.QueryId], (err, row) => {
             if (err) {
                 log.log('error',err);
             }
@@ -51,7 +59,7 @@ async function reloadDBSchema(changes)
                         log.log('error','[DBschema-ERROR]' + err);
                     }
                     else{
-                        db.run("INSERT INTO DATABASECHANGES (QueryId, changeVersion) VALUES (?, ?)", element.QueryId, element.version, (err) => {
+                        db.run("INSERT INTO DATABASECHANGES (QueryId, changeVersion) VALUES (?, ?)", [element.QueryId, element.version], (err) => {
                             if (err) {
                                 log.log('error',err);
                             } else {

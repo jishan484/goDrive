@@ -89,7 +89,7 @@ function renderFiles(files) {
 
 
 function renderTableFiles(files) {
-    if(files.length == 0) {setTimeout(()=>{$('#fileList').html('')},2000); return;}
+    if(files.length == 0) {setTimeout(()=>{$('#fileList').html('')},500); return;}
     let html = `<div class="table-responsive text-nowrap mh-px-150 mb-2" style="z-index: 2000;">
                     <table class="table table-sm table-bordered table-hover table-custom">
                         <thead>
@@ -335,11 +335,15 @@ basicModal.ondrop = function (evt) {
 };
 
 function uploadFiles() {
+    if(_currentUploadType == 'folder'){
+        uploadFolders();
+        return;
+    }
     if (formFileMultiple.files.length > 0) {
         renderUploadProgress();
         $("#UPname").html(formFileMultiple.files[0].name);
         $("#UPtsize").html(formatBytes(formFileMultiple.files[0].size, 3));
-        upload(formFileMultiple.files[0], (status, resp) => {
+        upload(formFileMultiple.files[0],_currentUploadFolder, (status, resp) => {
             if((!status && !resp) || resp.status == 'success'){
                 removeFile(0);
                 $('#UPBTN').click();
@@ -356,6 +360,68 @@ function uploadFiles() {
             }, 1000);
         });
     }
+}
+
+function uploadFolders(){
+    _currentUploadsNewFolderList = [];
+    uploadFolderHandler(0,10,(status)=>{
+        console.log('completed')
+    });
+}
+
+function uploadFolderHandler(startIndex, endIndex, callback){
+    let flen = formFolderMultiple.files.length;
+    let alen = flen - (flen % 10);
+    if(startIndex >= flen){
+        callback(true);
+        return;
+    }
+    if(endIndex <= alen){
+        for (let i = startIndex; i < endIndex; i++) {
+            uploadFilesWithFolder(formFolderMultiple.files[i], _currentUploadFolder, (status, resp, trackIndex) => {
+                console.log(status,resp);
+                // removeFile(trackIndex);
+            },i,false);
+        }
+        // uploadFilesWithFolder(endIndex, endIndex + 10, callback);
+    } else {
+        for (let i = startIndex; i < flen; i++) {
+            uploadFilesWithFolder(formFolderMultiple.files[i], _currentUploadFolder, (status, resp, trackIndex) => {
+                console.log(status,resp);
+                // removeFile(trackIndex);
+            },i,false);
+        }
+        uploadFolderHandler(endIndex, endIndex + 10, callback);
+    }
+}
+
+function uploadFilesWithFolder(file, path, callback, trackIndex, showProgress){
+    let fullDirectory = file.webkitRelativePath.split('/').slice(0,-1).join("/");
+    if(!_currentUploadsNewFolderList.includes(fullDirectory)){
+        let splitedDir = fullDirectory.split('/');
+        let joinedDir = '';
+        splitedDir.forEach((dir)=>{
+            let oldDir = joinedDir;
+            if(joinedDir != '') joinedDir+='/'+dir;
+            else joinedDir = dir;
+            if(!_currentUploadsNewFolderList.includes(joinedDir)){
+                _currentUploadsNewFolderList.push(joinedDir);
+                console.log(_current_folder_path+'/'+oldDir,dir,' : ',joinedDir);
+                // create dir here :: todo
+                createFolderDuringUpload(_currentUploadFolder+'/'+oldDir, dir,(status,resp)=>{
+                    if(status && resp == file.webkitRelativePath){
+                        console.log(1)
+                    }
+                }, joinedDir);
+                
+            }
+        });
+        // console.log(fullDirectory);
+    }
+    // upload(formFolderMultiple.files[i], _currentUploadFolder, (status, resp, trackIndex) => {
+    //     console.log(status, resp);
+        // removeFile(trackIndex);
+    // }, i, false);
 }
 
 function handelUploadError(statusCode,message){
@@ -376,7 +442,26 @@ function handelUploadError(statusCode,message){
 }
 
 $("#formFileMultiple").change(function () {
+    _currentUploadFolder = _current_folder_path;
+    _currentUploadType = 'file';
     renderTableFiles(formFileMultiple.files);
+    if($("#formFileMultiple")[0].files.length == 0){
+        $("#formFolderMultiple").show(500);
+    } else {
+        $("#formFolderMultiple").hide(500);
+    }
+});
+
+$("#formFolderMultiple").change(function () {
+    console.log('ooo')
+    _currentUploadFolder = _current_folder_path;
+    _currentUploadType = 'folder';
+    renderTableFiles(formFolderMultiple.files);
+    if ($("#formFolderMultiple")[0].files.length == 0) {
+        $("#formFileMultiple").show(500);
+    } else {
+        $("#formFileMultiple").hide(500);
+    }
 });
 
 setTimeout(function () {
@@ -389,6 +474,9 @@ setTimeout(function () {
 function removeFile(index) {
     let dt = new DataTransfer();
     let input = document.getElementById('formFileMultiple');
+    if(_currentUploadType == 'folder'){
+        input = document.getElementById('formFolderMultiple');
+    }
     let { files } = input;
     for (let i = 0; i < files.length; i++) {
         const file = files[i]
@@ -396,6 +484,11 @@ function removeFile(index) {
             dt.items.add(file);
     }
     input.files = dt.files ;
+    if(_currentUploadType == 'file' && input.files.length == 0){
+        $("#formFileMultiple").change();
+    } else if (_currentUploadType == 'folder' && input.files.length == 0) {
+        $("#formFolderMultiple").change();
+    }
     renderTableFiles(input.files);
 }
 

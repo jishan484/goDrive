@@ -176,8 +176,8 @@ module.exports = class GoogleDrive extends Storage{
         }).then(res => {
             callback(true, res.data);
         }).catch(err => {
-            log.log('error', err);
             callback(false, err);
+            log.log('error', err);
         });
     }
     

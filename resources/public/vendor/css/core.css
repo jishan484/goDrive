@@ -17129,6 +17129,29 @@ html:not(.layout-footer-fixed) .content-wrapper {
   z-index: 1090;
 }
 
+input::-webkit-file-upload-button {
+  width: 120px;
+  font-size: 15px;
+}
+
+.folderUpload::after {
+  float: left;
+  content: 'Choose Folder';
+  width: 90px !important;
+  font-size: 14px !important;
+}
+
+.folderUpload::-webkit-file-upload-button {
+  color: transparent !important;
+  width: 1px;
+  background-color: transparent !important;
+}
+
+.folderUpload::file-upload-button {
+  color: transparent !important;
+  width: 1px;
+  background-color: transparent !important;
+}
 
 
 

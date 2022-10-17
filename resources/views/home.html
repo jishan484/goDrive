@@ -264,7 +264,7 @@
                             <form onsubmit="return false;" id="formFileForm">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h4 class="modal-title" id="exampleModalLabel1">Create Folder </h4>
+                                        <h4 class="modal-title" id="exampleModalLabel1">Upload Files or Folder </h4>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
@@ -273,7 +273,14 @@
                                                 <center>
                                                     <input class="form-control after-input" type="file" id="formFileMultiple" multiple="true" />
                                                 </center>
-                                            </div>
+                                            </div>                                           
+                                        </div> 
+                                        <div class="row">
+                                          <div class="col mb-3">
+                                            <center>
+                                              <input class="form-control after-input folderUpload" type="file" id="formFolderMultiple" webkitDirectory directory multiple="true" />
+                                            </center>
+                                          </div>
                                         </div>
                                         <div class="col" id="fileList">
                                             

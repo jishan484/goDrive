@@ -17,6 +17,6 @@ module.exports = {
         modifiedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, 
         permissions TEXT NOT NULL, 
         accesses TEXT, 
-        priority INTEGER
+        priority TEXT
         )`,
 }

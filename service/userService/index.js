@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const db = require('../../database');
-const { UserConfig } = require('./../../SystemConfig.js');
+const { UserConfig, SyatemConfig } = require('./../../SystemConfig.js');
 const { keyValidator } = require('./../keyValidation');
 const log = require('./../logService');
 const crypto = require('crypto');
@@ -31,7 +31,7 @@ class UserService {
 
     save(data, callback) {
         let user = data.user;
-        let userRole = UserConfig.defaultRole;
+        let userRole = (UserConfig != undefined && UserConfig.defaultRole != undefined)?UserConfig.defaultRole:'user1';
         let profilePic = data.userProfilePic;
         let password = crypto.createHash('sha256').update(data.password + UserConfig.salt).digest('hex');
         db.run('INSERT INTO Users (userName,password,role,profile) VALUES (?,?,?,?)', [user, password, userRole, profilePic], (err) => {
@@ -138,7 +138,9 @@ class UserService {
         let token = jwt.sign({
             id: user,
             modKey: Math.random().toString(36).substr(2, 7)
-        }, "process.env.JWT_SECRET");
+        }, "process.env.JWT_SECRET", {
+            expiresIn: (SyatemConfig != undefined && SyatemConfig.cookieMaxAge != undefined) ? SyatemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
+        });
         return token;
     }
 
@@ -147,10 +149,10 @@ class UserService {
             if (status) {
                 let token = this.getUserToken(req.body);
                 res.cookie('seid', token, {
-                    httpOnly: true,
-                    maxAge: 1000 * 60 * 60,
+                    httpOnly: (SyatemConfig != undefined && SyatemConfig.onlyHTTPCookie != undefined) ? SyatemConfig.onlyHTTPCookie : true,
+                    maxAge: (SyatemConfig != undefined && SyatemConfig.cookieMaxAge != undefined) ? SyatemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
                     sameSite: true,
-                    secure: true
+                    secure: (SyatemConfig != undefined && SyatemConfig.secureCookie != undefined) ? SyatemConfig.secureCookie : true
                 });
                 callback(true);
             }
@@ -161,6 +163,10 @@ class UserService {
     }
 
     userRegister(req, res, callback) {
+        if (UserConfig != undefined && UserConfig.userRegisteration == false){
+            callback(false, 'New user signup is not allowed!');
+            return;
+        }
         req.body.userProfilePic = '';
         this.get(req.body,(result)=>{
             if(!result){
@@ -168,10 +174,10 @@ class UserService {
                     if (status) {
                         let token = this.getUserToken(req.body);
                         res.cookie('seid', token, {
-                            httpOnly: true,
-                            maxAge: 1000 * 60 * 60,
+                            httpOnly: (SyatemConfig != undefined && SyatemConfig.onlyHTTPCookie != undefined) ? SyatemConfig.onlyHTTPCookie : true,
+                            maxAge: (SyatemConfig != undefined && SyatemConfig.cookieMaxAge != undefined) ? SyatemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
                             sameSite: true,
-                            secure: true
+                            secure: (SyatemConfig != undefined && SyatemConfig.secureCookie != undefined) ? SyatemConfig.secureCookie : true
                         });
                         callback(true);
                     }
@@ -182,7 +188,7 @@ class UserService {
                 );
             }
             else{
-                callback(false, '503 USER_ALREADY_EXISTS');
+                callback(false, 'UserName not allowed / already exist!');
             }
         });
     }

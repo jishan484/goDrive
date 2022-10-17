@@ -30,14 +30,16 @@ function request(path, datas, method, callback,backgroundFetch=true) {
     });
 }
 
-function upload(file,callback) {
+function upload(file,path,callback,tracker,showProgress=true) {
+    if(path == undefined || path == '' || path == null)
     _uploaded = 0;
     _lastUpTime = (new Date()).getTime();
     _globalUPjax = $.ajax({
         xhr: function () {
             var xhr = new window.XMLHttpRequest(2);
             //Upload progress and event handling
-            xhr.upload.addEventListener("progress", uploadProgressHandler, false);
+            if (showProgress)
+                xhr.upload.addEventListener("progress", uploadProgressHandler, false);
             xhr.addEventListener("load", completeHandler, false);
             xhr.addEventListener("error", errorHandler, false);
             xhr.addEventListener("abort", abortHandler, false);
@@ -49,7 +51,7 @@ function upload(file,callback) {
         data: file,
         mimeType: 'multipart/form-data',
         cache: false,
-        headers: { 'm-filename': file.name, 'm-filepath': _current_folder_path,'m-mimetype': file.type },
+        headers: { 'm-filename': file.name, 'm-filepath': path,'m-mimetype': file.type },
         contentType: false,
         processData: false,
         success: (data, text) => {
@@ -58,12 +60,12 @@ function upload(file,callback) {
             } catch(e){
                 data = {status:'error',error:data};
             }
-            callback(true,data);
+            callback(true, data, tracker);
         },
         error: (request, status, error) => {
             processError(request, error);
             completeHandler(null);
-            callback(false,request.status);
+            callback(false, request.status, tracker);
         }
     });
     // _globalUPjaxB = _globalUPjax;
@@ -309,4 +311,15 @@ function deleteFile(fileId, callback, opt) {
         } else alert(response.data);
     }, opt
     );
+}
+
+function createFolderDuringUpload(path,newDirName,callback,tracker){
+    var payload = {
+        folderName: newDirName,
+        folderPath: path,
+        force: true
+    };
+    request("app/u/folder", payload, 'POST', (response) => {
+        callback(response,tracker);
+    });
 }

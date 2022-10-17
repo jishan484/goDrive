@@ -132,7 +132,7 @@ class DriveService{
                 reset = true;
                 if(iscancelled){
                     drive.drive.deleteFile(resp.id,(status,data)=>{
-                        if(!status) log.error(data);
+                        if(!status) log.log('error',data);
                     });
                     return;
                 }
