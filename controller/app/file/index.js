@@ -30,6 +30,7 @@ function getFile(req, res) {
 function uploadFile(req, res) {
     req.body.fileName = req.headers['m-filename'];
     req.body.filePath = req.headers['m-filepath'];
+    req.body.checkDuplicate = req.headers['m-chkdup'];
     req.body.fileType = (req.headers['m-mimetype']=='')?'application/octet-stream':req.headers['m-mimetype'];
     req.body.fileSize = parseInt(req.headers['content-length']);
 

@@ -100,7 +100,7 @@ function renderTableFiles(files) {
                             </tr>
                         </thead>
                         <tbody>`;
-    for (let i = 0; i < files.length; i++) {
+    for (let i = 0; i < files.length && i < 300; i++) {
         html += `<tr>
                     <td>${files[i].name}</td>
                     <td>${formatBytes(files[i].size,2)}</td>
@@ -111,9 +111,39 @@ function renderTableFiles(files) {
                 </table>
             </div>`;
     $('#fileList').html(html);
-
 }
 
+function renderUploadProgressFolder(){
+    let html =
+        `<div class="row mb-1">
+        <div class="col-md-12">
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%" id="uploadProgress"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row align-left">
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <span>Folder Name: </span><span id="UPname">${_currentUploadingFOlderPath}</span>
+        </div>
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <span>Target Folder: </span><span id="UPname">${_currentUploadFolder+'/'+_currentUploadingFOlderPath}</span>
+        </div>
+        <div class="col-md-6 col-lg-6 col-sm-6">
+            <span>Files Uploaded: </span><span id="UPspeed">${_totalUploadedFiles}</span>
+        </div>
+        <div class="col-md-6 col-lg-6 col-sm-6">
+            <span>Folders Completed: </span><span id="UPtsize">${_currentUploadedFolderList.size - 1}</span>
+        </div>
+        <div class="col-md-12 col-lg-12 col-sm-12">
+            <span>File name: </span><span id="UPname">${_currentUploadingFileName}</span>
+        </div>
+        <div class="col-md-6 col-lg-6 col-sm-6">
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="cancleAllUploads();"> Cancle All Uploads </button>
+        </div>
+    </div>`;
+    $('#fileList').html(html);
+}
 
 function renderUploadProgress()
 {
@@ -340,63 +370,147 @@ function uploadFiles() {
         return;
     }
     if (formFileMultiple.files.length > 0) {
+        $('#UPBTN').html('Cancle All');
+        $('#UPBTN').attr('onclick', 'cancleAllUploads()');
         renderUploadProgress();
         $("#UPname").html(formFileMultiple.files[0].name);
         $("#UPtsize").html(formatBytes(formFileMultiple.files[0].size, 3));
         upload(formFileMultiple.files[0],_currentUploadFolder, (status, resp) => {
-            if((!status && !resp) || resp.status == 'success'){
+            if(status && resp.status == 'success'){
                 removeFile(0);
                 $('#UPBTN').click();
+                if(_current_folder_path == _currentUploadFolder){
+                    setTimeout(() => {
+                        loadFiles();
+                    }, 10);
+                }
             }
             else{
-                handelUploadError(11, resp.error);
-                setTimeout(() => {
-                    removeFile(0);
-                    $('#UPBTN').click();
-                }, 10000);
+                let canContinue = handelUploadError(resp.status, resp.statusText, resp.readyState);
+                if(canContinue){
+                    let ltimeout = 5000;
+                    if (formFileMultiple.files.length <= 1){
+                        ltimeout = 10;
+                    }
+                    setTimeout(() => {
+                        $('#UPBTN').attr('onclick', 'uploadFiles()');
+                        removeFile(0);
+                        $('#UPBTN').click();
+                    }, ltimeout);
+                } else {
+                    $('#UPBTN').html('Resume');
+                    $('#UPBTN').attr('onclick', 'uploadFiles()');
+                }
             }
-            setTimeout(() => {
-                loadFiles();
-            }, 1000);
         });
     }
 }
 
 function uploadFolders(){
     _currentUploadsNewFolderList = [];
-    uploadFolderHandler(0,10,(status)=>{
-        console.log('completed')
-    });
+    _currentUploadsCounter = -1;
+    _currentUploadsCallbackCounter = 0;
+    _currentUploadingFOlderPath = '';
+    _currentUploadingFileName = '';
+    _checkDupCompleteCounter = 0;
+    $('#fileList').html('<center>Preparing files! Pleaese wait.</center>');
+    createFoldersForUpload();
+    setTimeout(()=>{
+        for (let i = 0; i < _consicutiveUploadsCounter; i++) {
+            _currentUploadsCounter++;
+            uploadFolderHandler(i);
+        }
+    },4000);
 }
 
-function uploadFolderHandler(startIndex, endIndex, callback){
-    let flen = formFolderMultiple.files.length;
-    let alen = flen - (flen % 10);
-    if(startIndex >= flen){
-        callback(true);
-        return;
-    }
-    if(endIndex <= alen){
-        for (let i = startIndex; i < endIndex; i++) {
-            uploadFilesWithFolder(formFolderMultiple.files[i], _currentUploadFolder, (status, resp, trackIndex) => {
-                console.log(status,resp);
-                // removeFile(trackIndex);
-            },i,false);
+function createFoldersForUpload(){
+    for(let i=0;i<formFolderMultiple.files.length;i++){
+        let fullDirectory = formFolderMultiple.files[i].webkitRelativePath.split('/').slice(0, -1).join("/");
+        if (!_currentUploadsNewFolderList.includes(fullDirectory)) {
+            let splitedDir = fullDirectory.split('/');
+            let joinedDir = '';
+            let delay = 200;
+            splitedDir.forEach((dir) => {
+                let oldDir = joinedDir;
+                if (joinedDir != '') joinedDir += '/' + dir;
+                else joinedDir = dir;
+                if (!_currentUploadsNewFolderList.includes(joinedDir)) {
+                    let destDir = _currentUploadFolder + ((oldDir == '') ? '' : '/' + oldDir);
+                    // create dir here
+                    _currentUploadsNewFolderList.push(joinedDir);
+                    console.log(joinedDir);
+                    setTimeout(()=>{
+                        createFolderDuringUpload(destDir, dir, (resp) => {
+                            if (resp.code == 111) {
+                                _checkForDuplicateUpload = true;
+                            }
+                        }, joinedDir);
+                    },delay);
+                    delay*=2;
+                }
+            });
         }
-        // uploadFilesWithFolder(endIndex, endIndex + 10, callback);
-    } else {
-        for (let i = startIndex; i < flen; i++) {
-            uploadFilesWithFolder(formFolderMultiple.files[i], _currentUploadFolder, (status, resp, trackIndex) => {
-                console.log(status,resp);
-                // removeFile(trackIndex);
-            },i,false);
-        }
-        uploadFolderHandler(endIndex, endIndex + 10, callback);
     }
 }
+
+function uploadFolderHandler(startIndex) {
+    let flen = formFolderMultiple.files.length;
+    if(_currentUploadsCounter >= flen){
+        _currentUploadsCallbackCounter++;
+        if (_currentUploadsCallbackCounter == _consicutiveUploadsCounter){
+            removeFile(0);
+        }
+    } else {
+        uploadFilesWithFolder(formFolderMultiple.files[startIndex], _currentUploadFolder, (status, resp, trackIndex) => {
+            if (status && resp.status == 'success') {
+                _totalUploadedFiles++;
+                if (_currentUploadsCounter >= formFolderMultiple.files.length) {
+                    _currentUploadingFileName = formFolderMultiple.files[0].name;
+                    removeFile(0);
+                    if(formFolderMultiple.files.length == 0 && _current_folder_path == _currentUploadFolder){
+                        setTimeout(() => {
+                            loadFolders('');
+                        }, 10);
+                    }
+                } else{
+                    _currentUploadingFileName = formFolderMultiple.files[trackIndex].name;
+                    removeFile(trackIndex);
+                }
+                if(_checkForDuplicateUpload == true){
+                    _checkDupCompleteCounter++;
+                    if(_checkDupCompleteCounter >= 10 && _uploadFaildWithError == true) {
+                        _checkForDuplicateUpload = false;
+                        _uploadFaildWithError = false;
+                        _checkDupCompleteCounter = 0;
+                    }
+                }
+                renderUploadProgressFolder();
+                let progressValue = _totalUploadedFiles / _totalUploadableFiles * 100;
+                $('#uploadProgress')[0].style.width = progressValue + '%';
+                uploadFolderHandler(_currentUploadsCounter);
+            }
+            else {
+                console.log(resp);
+                let status = handelUploadError(resp.status, resp.statusText, resp.readyState);
+                if(!status) {
+                    _checkForDuplicateUpload = true;
+                    _uploadFaildWithError = true;
+                }
+                // folder uploads not abortable:
+                // Only can be continued if fails!
+            }
+        }, startIndex, false);
+    }
+}
+
 
 function uploadFilesWithFolder(file, path, callback, trackIndex, showProgress){
+    // setTimeout(()=>{
+    //     callback(true, {status:'success'}, trackIndex);
+    // },Math.random()*6000);
+    // return;  // for testv only: will be cleared
     let fullDirectory = file.webkitRelativePath.split('/').slice(0,-1).join("/");
+    _currentUploadedFolderList.set(fullDirectory,1);
     if(!_currentUploadsNewFolderList.includes(fullDirectory)){
         let splitedDir = fullDirectory.split('/');
         let joinedDir = '';
@@ -405,40 +519,49 @@ function uploadFilesWithFolder(file, path, callback, trackIndex, showProgress){
             if(joinedDir != '') joinedDir+='/'+dir;
             else joinedDir = dir;
             if(!_currentUploadsNewFolderList.includes(joinedDir)){
-                _currentUploadsNewFolderList.push(joinedDir);
-                console.log(_current_folder_path+'/'+oldDir,dir,' : ',joinedDir);
+                let destDir = _currentUploadFolder + ((oldDir == '')?'':'/' + oldDir);
+                let uploadDir = destDir+'/'+dir;
+                let fullDir = ((oldDir == '') ? dir : oldDir + '/' + dir);
+                console.log(joinedDir,fullDir,fullDirectory);
                 // create dir here :: todo
-                createFolderDuringUpload(_currentUploadFolder+'/'+oldDir, dir,(status,resp)=>{
-                    if(status && resp == file.webkitRelativePath){
-                        console.log(1)
+                createFolderDuringUpload(destDir, dir,(resp)=>{
+                    _currentUploadsNewFolderList.push(joinedDir);
+                    if(resp.status == 'success' || resp.code == 111){
+                        _currentUploadingFOlderPath = dir;
+                        // upload file here
+                        if (fullDir == fullDirectory)
+                            upload(file,uploadDir,callback,trackIndex,showProgress,_checkForDuplicateUpload);
+                        else console.log('Folder created : '+fullDir);
                     }
                 }, joinedDir);
                 
+            } else {
+                console.error(joinedDir);
             }
         });
-        // console.log(fullDirectory);
+    } else{
+        let uploadDir = _currentUploadFolder + '/' + fullDirectory;
+        _currentUploadingFOlderPath = fullDirectory;
+        upload(file, uploadDir, callback, trackIndex, showProgress, _checkForDuplicateUpload);
     }
-    // upload(formFolderMultiple.files[i], _currentUploadFolder, (status, resp, trackIndex) => {
-    //     console.log(status, resp);
-        // removeFile(trackIndex);
-    // }, i, false);
 }
 
-function handelUploadError(statusCode,message){
-    switch(statusCode){
-        case 0:
-            $("#fileList").html("Upload Aborted. Next File upload process will start in 10sec");
-            break;
-        case 1:
-            $("#fileList").html("Upload failed!. Next File upload process will start in 10sec");
-            break;
-        case 11:
-            $("#fileList").html(message +'! Next File upload process will start in 10 seconds');
-            break;
-        default:
-            $("#fileList").html("ERROR: file upload process stopped");
-            break;        
+function handelUploadError(statusCode,message,readyState){
+    let canContinue = false;
+    if(statusCode == 0 && readyState ==0){
+        if(message == 'abort'){
+            $("#fileList").html("Upload cancelled! Next File upload process will start in 5 seconds.");
+            canContinue = true;
+        } else if(message == 'error'){
+            $("#fileList").html('You are currently offline! Please resume the uploads again.');
+        } else {
+            $("#fileList").html('Unknown error! Please manually resume the uploads!');
+            console.log(message);
+        }
+    } else {
+        console.log(statusCode,message,readyState);
     }
+    return canContinue;
 }
 
 $("#formFileMultiple").change(function () {
@@ -455,7 +578,12 @@ $("#formFileMultiple").change(function () {
 $("#formFolderMultiple").change(function () {
     console.log('ooo')
     _currentUploadFolder = _current_folder_path;
+    _totalUploadedFiles = 0;
+    _totalUploadableFiles = formFolderMultiple.files.length;
     _currentUploadType = 'folder';
+    _checkForDuplicateUpload = false;
+    _uploadFaildWithError = false;
+    _currentUploadedFolderList = new Map();
     renderTableFiles(formFolderMultiple.files);
     if ($("#formFolderMultiple")[0].files.length == 0) {
         $("#formFileMultiple").show(500);
@@ -468,7 +596,19 @@ setTimeout(function () {
     loadFolders('');
 },200);
 
-
+// cancle all uploads
+function cancleAllUploads(){
+    let consent = confirm('Do you really want to cancle all uploads!');
+    if(consent){
+        let dt = new DataTransfer();
+        let input = document.getElementById('formFileMultiple');
+        if (_currentUploadType == 'folder') {
+            input = document.getElementById('formFolderMultiple');
+        }
+        input.files = dt.files;
+        _globalUPjax.abort();
+    }
+}
 
 // remove file from the list
 function removeFile(index) {
@@ -483,7 +623,11 @@ function removeFile(index) {
         if (index !== i)
             dt.items.add(file);
     }
-    input.files = dt.files ;
+    input.files = dt.files;
+    if(input.files.length == 0){
+        $('#UPBTN').html('Upload Files');
+        $('#UPBTN').attr('onclick', 'uploadFiles()');
+    }
     if(_currentUploadType == 'file' && input.files.length == 0){
         $("#formFileMultiple").change();
     } else if (_currentUploadType == 'folder' && input.files.length == 0) {

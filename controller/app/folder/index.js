@@ -29,12 +29,12 @@ function getFolder(req, res) {
 
 
 function createFolder(req, res){
-    folderService.createFolder(req, (status,result) => {
+    folderService.createFolder(req, (status,result,code) => {
         if(status){
             res.status(201).send({ status: 'success', data: result, error: null, code: '200' });
         }
         else{
-            res.status(200).send({ status: 'error', data: "CREATION_FAILED", error: result, code: '204' });
+            res.status(200).send({ status: 'error', data: "CREATION_FAILED", error: result, code: code });
         }
     });
 }

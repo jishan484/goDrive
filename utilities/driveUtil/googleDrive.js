@@ -4,7 +4,7 @@ const { google } = require('googleapis');
 const fs = require('fs');
 const path = require('path');
 
-const credentials = {
+var credentials = {
     "installed": {
         "client_id": "362327116008-s84t091me56g2vb812ho3pl0mssfgagn.apps.googleusercontent.com",
         "project_id": "driveapp-359312",
@@ -25,11 +25,14 @@ const credentials = {
 function credentials_initialize(){
     let status = fs.existsSync(path.join('CREDENTIALS/google.json'));
     let cred = fs.readFileSync(path.join('CREDENTIALS/google.json'));
-    try{
-        cred = JSON.parse(cred);
-        credentials = cred;
-    }catch(e){
-        log.log('error','Google oAuth2 credential found! But there is a error in JSON format!');
+    if(status){
+        try {
+            cred = JSON.parse(cred);
+            credentials = cred;
+        } catch (e) {
+            console.log(e)
+            log.log('error', 'Google oAuth2 credential found! But there is a error in JSON format!');
+        }
     }
 }
 credentials_initialize();

@@ -18,7 +18,8 @@ const SyatemConfig = {
     // Making secureCookie false has massive security risk. Please avoid this
     // This option is only for local usages/testing and should be true in remote server
     secureCookie: false,  // make it false if site is running on http only 
-    cookieMaxAge: 3600 * 1 // in seconds
+    cookieMaxAge: 3600 * 1, // in seconds
+    SERVER_PORT:8080
 }
 
 const DatabaseConfig = {

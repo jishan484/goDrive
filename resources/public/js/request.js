@@ -30,7 +30,7 @@ function request(path, datas, method, callback,backgroundFetch=true) {
     });
 }
 
-function upload(file,path,callback,tracker,showProgress=true) {
+function upload(file,path,callback,tracker,showProgress=true,checkDuplicate=false) {
     if(path == undefined || path == '' || path == null)
     _uploaded = 0;
     _lastUpTime = (new Date()).getTime();
@@ -51,7 +51,7 @@ function upload(file,path,callback,tracker,showProgress=true) {
         data: file,
         mimeType: 'multipart/form-data',
         cache: false,
-        headers: { 'm-filename': file.name, 'm-filepath': path,'m-mimetype': file.type },
+        headers: { 'm-filename': file.name, 'm-filepath': path,'m-mimetype': file.type,'m-chkdup':checkDuplicate },
         contentType: false,
         processData: false,
         success: (data, text) => {
@@ -63,9 +63,9 @@ function upload(file,path,callback,tracker,showProgress=true) {
             callback(true, data, tracker);
         },
         error: (request, status, error) => {
-            processError(request, error);
+            processError(request, 0);
             completeHandler(null);
-            callback(false, request.status, tracker);
+            callback(false, request, tracker);
         }
     });
     // _globalUPjaxB = _globalUPjax;
@@ -111,10 +111,11 @@ function abortHandler(event) {
     errorToast('Upload Aborted', 'Upload has been aborted.');
 }
 
-function processError(request , error){
+function processError(request , code){
     switch (request.status) {
         case 0:
-            errorToast('Request Aborted', 'Request has been aborted.');
+            if(code != 0)
+                errorToast('Request Aborted', 'Request has been aborted.');
             break;
         case 401:
             errorToast('Unauthorized', 'You are not authorized to perform this action.');

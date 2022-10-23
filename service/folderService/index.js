@@ -205,12 +205,12 @@ class FolderService {
         }
 
         if(data.folderPath == undefined && data.parentFolderId == undefined){
-            callback(false,'Folder path or parentFolderId Not provided!');
+            callback(false,'Folder path or parentFolderId Not provided!',101);
             return;
         }
 
         if(data.folderName.match(/^[_.]*[a-zA-Z0-9]+[a-zA-Z0-9-_\\+\\. \\(){}"':\[\]]*$/)==null){
-            callback(false,"Folder name is invalid!");
+            callback(false,"Folder name is invalid!",102);
             return;
         }
 
@@ -221,22 +221,22 @@ class FolderService {
                     data.parentFolderId = result[i].folderId;
                 }
                 if(result[i].fullPath == data.fullPath){
-                    callback(false,"Folder already exists in the given path!");
+                    callback(false,"Folder already exists in the given path!",111);
                     return;
                 }
             }
             if(data.parentFolderId == "unknown"){
-                log.log("error","Parent folder not found! "+data.parentFolderId+" : "+data.owner);
-                callback(false,"Given parent path does not exist!");
+                log.log("error","Parent folder not found! "+data.fullPath+" : "+data.owner);
+                callback(false,"Given parent path does not exist!",103);
                 return;
             }
             else{
                 this.save(data, (result) => {
                     if(result){
-                        callback(true,"Folder created successfully!");
+                        callback(true,"Folder created successfully!",19);
                     }
                     else{
-                        callback(false,"Folder creation failed! Server error!");
+                        callback(false,"Folder creation failed! Server error!",122);
                     }
                 });
             }

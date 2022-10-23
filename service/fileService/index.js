@@ -43,6 +43,22 @@ class FileService {
         });
     }
 
+    getByName(data, callback) {
+        let fileName = data.fileName;
+        let filePath = data.filePath;
+        let owner = data.owner;
+
+        db.get('SELECT * FROM Files WHERE (filePath = ? or fileName = ?) and owner = ?', [filePath, fileName, owner], (err, row) => {
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
+            else {
+                callback(row);
+            }
+        });
+    }
+
     save(data, callback) {
         let fileId = data.fileId;
         let filePath = data.filePath;
@@ -202,7 +218,7 @@ class FileService {
         data.driveId = req.body.driveId;
         data.fileSize = req.body.fileSize; //from gd
         data.fileFormat = req.body.fileName.split('.').pop();
-        data.owner = userService.getUserName(req.cookies.seid);  //from cookie
+        data.owner = req.body.owner;
         data.parentFolderId = 0;  //from FolderService
         data.nodeId = req.body.nodeId; //from gd
         data.access = "RW"; 
@@ -231,45 +247,58 @@ class FileService {
 
     uploadFile(req, callback) {
         req.body.chunked = false;
-        driveService.uploadFile(req, (status, data) => {
-            if(status == true && req.body.chunked == false){
-                this.saveFile(req, (status, data) => {
-                    if (status) {
-                        callback(true, data);
-                    } else {
-                        callback(false, data);
-                    }
-                });
-            }
-            else if(status==true && req.body.chunked == true) {
-                //insert into Parts table and also inset the details to Files table
-                req.body.driveId = 'CHUNKED';
-                req.body.nodeId = "CH" + Date.now().toString(36);  // from random generator
-                this.saveFile(req, (status, data) => {
-                    if (status) {
-                        let callbackCount = 0, totalPartCount = req.body.nodesInfo.length;
-                        req.body.nodesInfo.forEach(partInfo => {
-                            partInfo.nodeInfo = req.body.nodeId;
-                            this.saveChunks(partInfo,(status)=>{
-                                callbackCount++;
-                                if(callbackCount == totalPartCount){
-                                    callback(true,data);
-                                }
-                                if(!status){
-                                    callback(false,'Failed to save in DB!');
-                                    callbackCount-=100;
-                                }
-                            })
-                        });
-                    } else {
-                        callback(false, data);
-                    }
-                });
-            }
-            else{
-                callback(false, data);
-            }
-        });
+        req.body.owner = userService.getUserName(req.cookies.seid);  //from cookie
+        // if previous upload errored, checks for already existed file
+        if (req.body.checkDuplicate != undefined && (req.body.checkDuplicate == 'true' || req.body.checkDuplicate == true)){
+            this.getByName(req.body, (result)=>{
+                if(result){
+                    callback(true, 'File already uploaded!');
+                } else {
+                    req.body.checkDuplicate = undefined;
+                    this.uploadFile(req,callback);
+                }
+            });
+        } else {
+            driveService.uploadFile(req, (status, data) => {
+                if (status == true && req.body.chunked == false) {
+                    this.saveFile(req, (status, data) => {
+                        if (status) {
+                            callback(true, data);
+                        } else {
+                            callback(false, data);
+                        }
+                    });
+                }
+                else if (status == true && req.body.chunked == true) {
+                    //insert into Parts table and also inset the details to Files table
+                    req.body.driveId = 'CHUNKED';
+                    req.body.nodeId = "CH" + Date.now().toString(36);  // from random generator
+                    this.saveFile(req, (status, data) => {
+                        if (status) {
+                            let callbackCount = 0, totalPartCount = req.body.nodesInfo.length;
+                            req.body.nodesInfo.forEach(partInfo => {
+                                partInfo.nodeInfo = req.body.nodeId;
+                                this.saveChunks(partInfo, (status) => {
+                                    callbackCount++;
+                                    if (callbackCount == totalPartCount) {
+                                        callback(true, data);
+                                    }
+                                    if (!status) {
+                                        callback(false, 'Failed to save in DB!');
+                                        callbackCount -= 100;
+                                    }
+                                })
+                            });
+                        } else {
+                            callback(false, data);
+                        }
+                    });
+                }
+                else {
+                    callback(false, data);
+                }
+            });
+        }
     }
 
 
