@@ -116,7 +116,6 @@ class UserService {
         if (token == undefined) return false;
         try {
             const decoded = jwt.verify(token, "process.env.JWT_SECRET");
-            console.log(decoded)
             if (modKey != null && status != null)
             {
                 if(keyValidator.validate(modKey,decoded))
