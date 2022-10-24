@@ -110,12 +110,13 @@ class UserService {
         }
     }
 
-    isLoggedIn(req , modKey,status) {
+    isLoggedIn(req, modKey, status, extendSession) {
         if (req.cookies == undefined) return false;
         const token = (req.cookies.seid);
         if (token == undefined) return false;
         try {
             const decoded = jwt.verify(token, "process.env.JWT_SECRET");
+            console.log(decoded)
             if (modKey != null && status != null)
             {
                 if(keyValidator.validate(modKey,decoded))
@@ -126,6 +127,16 @@ class UserService {
                     status.status = false;
                 }
             }
+            if (extendSession != undefined && extendSession.isSet && (decoded.exp-(Date.now())/1000)<=300000){
+                extendSession.res.cookie('seid', this.getUserToken({ user: decoded.id,modKey:decoded.modKey }), {
+                    httpOnly: (SyatemConfig != undefined && SyatemConfig.onlyHTTPCookie != undefined) ? SyatemConfig.onlyHTTPCookie : true,
+                    maxAge: (SyatemConfig != undefined && SyatemConfig.cookieMaxAge != undefined) ? SyatemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
+                    sameSite: true,
+                    overwrite: true,
+                    secure: (SyatemConfig != undefined && SyatemConfig.secureCookie != undefined) ? SyatemConfig.secureCookie : true
+                });
+                console.log('cookie refreshed')
+            }
             return true;
         } catch (err) {
             log.log("error",err);
@@ -135,9 +146,10 @@ class UserService {
 
     getUserToken(data) {
         let user = data.user;
+        let modKey = (data.modKey != undefined && data.modKey != null)?data.modKey:Math.random().toString(36).substr(2, 7);
         let token = jwt.sign({
             id: user,
-            modKey: Math.random().toString(36).substr(2, 7)
+            modKey: modKey,
         }, "process.env.JWT_SECRET", {
             expiresIn: (SyatemConfig != undefined && SyatemConfig.cookieMaxAge != undefined) ? SyatemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
         });

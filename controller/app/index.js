@@ -18,7 +18,13 @@ module.exports = router
 
 function checkAuth(req,res,next){
     let status = { status: false };
-    if (userService.isLoggedIn(req, req.headers.xauthtoken, status)) {
+    let extendSession = {
+        isSet:(req.method == 'POST' && req.baseUrl == '/app/u/file'),
+    };
+    if(extendSession.isSet){
+        extendSession.res = res;
+    }
+    if (userService.isLoggedIn(req, req.headers.xauthtoken, status, extendSession)) {
         if (status.status) {
             next();
         }
