@@ -23,7 +23,7 @@ pool.get = function (...arguments) {
             arguments[arguments.length - 1] = function (err, rows) {
                 connection.release();
                 if (rows != undefined && rows.constructor === Array) {
-                    if (rows.length == 0) rows = false;
+                    if (rows.length == 0) rows = undefined;
                     else rows = rows[0];
                 }
                 callback(err, rows);
