@@ -71,7 +71,7 @@ class UserService {
                 log.log("error", err);
             }
             else {
-                if (row == undefined) callback(false);
+                if (row == undefined && row != false) callback(false);
                 else callback(true);
             }
         });
