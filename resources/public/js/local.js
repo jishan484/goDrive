@@ -23,6 +23,7 @@ var _checkDupCompleteCounter = 0;
 var _uploadFaildWithError = false;
 var _a = "DEMOKEY";
 var _isToastActive = false;
+var _systemOnlineStatus = true;
 var _globalUPjaxB = {
     abort: function (e) {
         console.log("Nothing to abort");

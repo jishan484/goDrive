@@ -2,6 +2,9 @@ $.ajaxSetup({
     headers: { 'xauthtoken': _getToken() }
 });
 
+window.addEventListener('online', () => _systemOnlineStatus = true);
+window.addEventListener('offline', () => _systemOnlineStatus = false);
+
 function request(path, datas, method, callback,backgroundFetch=true) {
     if(backgroundFetch) $('#udprogress')[0].style.display = 'block';
     $.ajax({
@@ -41,7 +44,6 @@ function upload(file,path,callback,tracker,showProgress=true,checkDuplicate=fals
             if (showProgress)
                 xhr.upload.addEventListener("progress", uploadProgressHandler, false);
             xhr.addEventListener("load", completeHandler, false);
-            xhr.addEventListener("error", errorHandler, false);
             xhr.addEventListener("abort", abortHandler, false);
             return xhr;
         }
@@ -116,6 +118,9 @@ function processError(request , code){
         case 0:
             if(code != 0)
                 errorToast('Request Aborted', 'Request has been aborted.');
+            if (_systemOnlineStatus == true)
+                errorToast('Request Failed', 'File could not be uploaded.');
+            else errorToast('Network Error', 'It seems you are currently ofline!<br>Please check your network.');
             break;
         case 401:
             errorToast('Unauthorized', 'You are not authorized to perform this action.');
@@ -314,7 +319,7 @@ function deleteFile(fileId, callback, opt) {
     );
 }
 
-function createFolderDuringUpload(path,newDirName,callback,tracker){
+function createFolderDuringUpload(path,newDirName,callback,tracker,showProgress){
     var payload = {
         folderName: newDirName,
         folderPath: path,
@@ -322,5 +327,5 @@ function createFolderDuringUpload(path,newDirName,callback,tracker){
     };
     request("app/u/folder", payload, 'POST', (response) => {
         callback(response,tracker);
-    });
+    },showProgress);
 }

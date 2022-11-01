@@ -406,7 +406,7 @@ function uploadFiles() {
     }
 }
 
-function uploadFolders(){
+async function uploadFolders(){
     _currentUploadsNewFolderList = [];
     _currentUploadsCounter = -1;
     _currentUploadsCallbackCounter = 0;
@@ -414,41 +414,43 @@ function uploadFolders(){
     _currentUploadingFileName = '';
     _checkDupCompleteCounter = 0;
     $('#fileList').html('<center>Preparing files! Pleaese wait.</center>');
-    createFoldersForUpload();
-    setTimeout(()=>{
-        for (let i = 0; i < _consicutiveUploadsCounter; i++) {
-            _currentUploadsCounter++;
-            uploadFolderHandler(i);
-        }
-    },4000);
+    await createFoldersForUpload();
+    console.log('done');
+    await setTimeout(() => {}, 9000);
+    for (let i = 0; i < _consicutiveUploadsCounter; i++) {
+        _currentUploadsCounter++;
+        uploadFolderHandler(i);
+    }
 }
 
-function createFoldersForUpload(){
+async function createFoldersForUpload(){
     for(let i=0;i<formFolderMultiple.files.length;i++){
+        let done = ((i / formFolderMultiple.files.length) * 100).toFixed(2);
+        $('#fileList').html('<center>Preparing! Pleaese wait...  '+done+'% completed</center>');
         let fullDirectory = formFolderMultiple.files[i].webkitRelativePath.split('/').slice(0, -1).join("/");
         if (!_currentUploadsNewFolderList.includes(fullDirectory)) {
             let splitedDir = fullDirectory.split('/');
             let joinedDir = '';
-            let delay = 200;
-            splitedDir.forEach((dir) => {
+            for(let j=0;j<splitedDir.length;j++){
+                let dir = splitedDir[j];
                 let oldDir = joinedDir;
                 if (joinedDir != '') joinedDir += '/' + dir;
                 else joinedDir = dir;
                 if (!_currentUploadsNewFolderList.includes(joinedDir)) {
                     let destDir = _currentUploadFolder + ((oldDir == '') ? '' : '/' + oldDir);
                     // create dir here
-                    _currentUploadsNewFolderList.push(joinedDir);
                     console.log(joinedDir);
-                    setTimeout(()=>{
+                    _currentUploadsNewFolderList.push(joinedDir);
+                    await new Promise((resolve, reject) => {
                         createFolderDuringUpload(destDir, dir, (resp) => {
+                            resolve(true);
                             if (resp.code == 111) {
                                 _checkForDuplicateUpload = true;
                             }
-                        }, joinedDir);
-                    },delay);
-                    delay*=2;
+                        }, joinedDir,false);
+                    });
                 }
-            });
+            }
         }
     }
 }
@@ -552,8 +554,12 @@ function handelUploadError(statusCode,message,readyState){
         if(message == 'abort'){
             $("#fileList").html("Upload cancelled! Next File upload process will start in 5 seconds.");
             canContinue = true;
-        } else if(message == 'error'){
+        } else if (message == 'error' && statusCode == 1) { 
+            $("#fileList").html('File is not uploadable!');
+        } else if(message == 'error' && _systemOnlineStatus == false){
             $("#fileList").html('You are currently offline! Please resume the uploads again.');
+        } else if(message == 'error' && _systemOnlineStatus == true){
+            canContinue = true;
         } else {
             $("#fileList").html('Unknown error! Please manually resume the uploads!');
             console.log(message);
