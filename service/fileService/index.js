@@ -132,7 +132,7 @@ class FileService {
     }
 
     saveChunks(data, callback){
-        let chunkId = "CP" + Date.now().toString(36);  // from random generator
+        let chunkId = "CP" + Date.now().toString(36)+'-'+Math.floor(Math.random() * 100000000000).toString(36);  // from random generator
         let nodeInfo = data.nodeInfo;
         let orders = data.driveIndex;
         let nodeId = data.id;
@@ -211,7 +211,7 @@ class FileService {
 
     saveFile(req, callback) {
         let data = {};
-        data.fileId = "FL" + Date.now().toString(36);  // from random generator
+        data.fileId = "FL" + Date.now().toString(36)+'-'+Math.floor(Math.random() * 10000000).toString(36);  // from random generator // from random generator
         data.filePath = req.body.filePath;
         data.fileName = req.body.fileName;
         data.fileType = req.body.fileType;
@@ -272,7 +272,7 @@ class FileService {
                 else if (status == true && req.body.chunked == true) {
                     //insert into Parts table and also inset the details to Files table
                     req.body.driveId = 'CHUNKED';
-                    req.body.nodeId = "CH" + Date.now().toString(36);  // from random generator
+                    req.body.nodeId = "CH" + Date.now().toString(36)+'-'+Math.floor(Math.random() * 100000000).toString(36);  // from random generator  // from random generator
                     this.saveFile(req, (status, data) => {
                         if (status) {
                             let callbackCount = 0, totalPartCount = req.body.nodesInfo.length;

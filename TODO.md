@@ -149,3 +149,14 @@ Repair Failed faile operation:
     if status is checked -> job will not pickup for 2nd time, manual checkup needed
     for other status job can look into that...
     job frequency -> 1 run in 24h
+
+
+----------------next task------------------
+FEATURE: folder upload
+-> create all the folders and subfolders at once
+-> upload all the files one by one
+-> resumable upload , so recreate the session if it is expired, ask only password from user, and send a token to 
+   check the chalanges in client side.
+
+   ---bug ---
+   put onclick event on the folder/file input field, so that user can select the same file again and again in diffrent folder location.

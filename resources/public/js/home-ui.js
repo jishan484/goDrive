@@ -433,26 +433,23 @@ async function createFoldersForUpload(){
             let joinedDir = '';
             for(let j=0;j<splitedDir.length;j++){
                 let dir = splitedDir[j];
-                let oldDir = joinedDir;
                 if (joinedDir != '') joinedDir += '/' + dir;
                 else joinedDir = dir;
                 if (!_currentUploadsNewFolderList.includes(joinedDir)) {
-                    let destDir = _currentUploadFolder + ((oldDir == '') ? '' : '/' + oldDir);
-                    // create dir here
-                    console.log(joinedDir);
                     _currentUploadsNewFolderList.push(joinedDir);
-                    await new Promise((resolve, reject) => {
-                        createFolderDuringUpload(destDir, dir, (resp) => {
-                            resolve(true);
-                            if (resp.code == 111) {
-                                _checkForDuplicateUpload = true;
-                            }
-                        }, joinedDir,false);
-                    });
                 }
             }
         }
     }
+    // send request to create folders
+    await new Promise((resolve, reject) => {
+        createFolderDuringUpload(_currentUploadFolder, _currentUploadsNewFolderList, (resp) => {
+            resolve(true);
+            if (resp.code == 111) {
+                _checkForDuplicateUpload = true;
+            }
+        }, false);
+    });
 }
 
 function uploadFolderHandler(startIndex) {

@@ -319,13 +319,16 @@ function deleteFile(fileId, callback, opt) {
     );
 }
 
-function createFolderDuringUpload(path,newDirName,callback,tracker,showProgress){
+function createFolderDuringUpload(path,newDirsName,callback,showProgress){
     var payload = {
-        folderName: newDirName,
+        foldersFullPath: newDirsName,
         folderPath: path,
+        folderType: 'list',
+        multiple: true,
         force: true
     };
+    console.log(payload);
     request("app/u/folder", payload, 'POST', (response) => {
-        callback(response,tracker);
+        callback(response);
     },showProgress);
 }

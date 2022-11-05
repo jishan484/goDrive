@@ -44,6 +44,26 @@ class FolderService {
             });
     }
 
+    getsubFolderByPath(data, callback) {
+        let fullPath = data.fullPath;
+        let owner = data.owner;
+        let folderId = data.folderId;
+        let folderPathLike = data.folderPathLike;
+        let parentFolderPath = data.parentFolderPath;
+        // one fullPath for parentDri and another one for targeted dir
+        db.all("SELECT * FROM Folders where ( fullPath = ? or fullPath like ? or folderPath = ? or folderId = ? ) and owner = ?",
+            [fullPath, folderPathLike+'%', parentFolderPath, folderId, owner], (err, row) => {
+                if (err) {
+                    log.log("error", err);
+                    callback(false);
+                }
+                else {
+                    if (row == undefined) callback(false);
+                    else callback(row);
+                }
+            });
+    }
+
     getSubFolders(data, callback) {
         let parentFolderId = data.parentFolderId;
         let folderPath = data.folderPath;
@@ -78,6 +98,19 @@ class FolderService {
                 }
                 else callback(true);
             });
+    }
+
+    saveTree(data, callback) {
+        let records = data.reduce((acc, val) => {
+            return acc + `('${val[0]}','${val[1]}','${val[2]}','${val[3]}','${val[4]}','${val[5]}','${val[6]}','${val[7]}','${val[8]}'),`;
+        }, '').slice(0, -1);
+        db.run('INSERT INTO Folders (folderId,folderName,folderPath,owner,parentFolderId,fullPath,permissions,accesses,priority) VALUES '+records,(err) => {
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
+            else callback(true);
+        });
     }
 
     update(subquery, data, callback) {
@@ -193,7 +226,7 @@ class FolderService {
         data.folderPath = req.body.folderPath;
         data.fullPath = data.folderPath + '/' + data.folderName;
         //-----------------------------------------------------//
-        data.folderId = "F"+Date.now().toString(36);
+        data.folderId = "F"+Date.now().toString(36)+'-'+Math.floor(Math.random() * 10000000).toString(36);  // from random generator
         data.owner = userService.getUserName(req.cookies.seid);
         data.permissions = "RW";
         data.accesses = "FULL";
@@ -242,12 +275,83 @@ class FolderService {
             }
         });
     }
+
+    createFolderTree(req, callback) {
+        let foldersList = req.body.foldersFullPath;
+        // sort based on name and length
+        foldersList = foldersList.sort((a, b) => {
+            if (a.length === b.length) {
+                return a.localeCompare(b);
+            }
+            return a.length - b.length;
+        });
+        // remove duplicates and modify to full path
+        let targetedPath = req.body.folderPath;
+        foldersList = foldersList.filter((item, pos) => {
+            return foldersList.indexOf(item) == pos;
+        }).map((item) => {
+            return targetedPath+'/'+item;
+        });
+        let owner = userService.getUserName(req.cookies.seid);
+        let foldersId = new Map();
+        let folders = [];
+        let returnCode = 19;
+
+        this.getsubFolderByPath({ folderPathLike:foldersList[0], fullPath: targetedPath, owner: owner, folderId: req.body.parentFolderId }, (result) => {
+            for (let i = 0; i < result.length; i++) {
+                if (result[i].fullPath == targetedPath) {
+                    foldersId.set(targetedPath, result[i].folderId);
+                }
+                let folderIndex = foldersList.indexOf(result[i].fullPath);
+                if (folderIndex != -1) {
+                    foldersId.set(result[i].fullPath, result[i].folderId);
+                    foldersList.splice(folderIndex, 1);
+                    returnCode = 111;
+                }
+            }
+
+            //--------------------------------------------//
+
+            for (let i = 0; i < foldersList.length; i++) {
+                let folder = [];
+                let folderName = foldersList[i].split('/').pop();
+                let folderPath = foldersList[i].split('/').slice(0, -1).join('/');
+                let folderId = "F" + Date.now().toString(36) + '-' + Math.floor(Math.random() * 10000000000000).toString(36);
+                let fullPath = foldersList[i];
+                //-----------------------------------------------------//
+                folder.push(folderId);
+                folder.push(folderName);
+                folder.push(folderPath);
+                folder.push(owner);
+                folder.push(foldersId.get(folderPath));
+                folder.push(fullPath);
+                folder.push("RW");
+                folder.push("FULL");
+                folder.push("NORMAL");
+                folders.push(folder);
+                foldersId.set(fullPath, folderId);
+            }
+            if(folders.length == 0){
+                callback(true,"Folders already exists!",returnCode);
+                return;
+            }
+            this.saveTree(folders, (result) => {
+                if (result) {
+                    callback(true, "Folders created successfully!", returnCode);
+                }
+                else {
+                    callback(false, "Folders creation failed! Server error!", 122);
+                }
+            });
+        });
+    }
     
     deleteFolder(req, callback) {
         let data = {};
         data.folderName = req.body.folderName;
         data.fullPath = req.body.folderPath+'/'+data.folderName;
         data.folderId = req.body.folderId;
+        data.folderType = req.body.folderId;
         data.owner = userService.getUserName(req.cookies.seid);
 
         //check request params
