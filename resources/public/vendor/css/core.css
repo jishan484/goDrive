@@ -1893,8 +1893,12 @@ progress {
   text-align: center;
 }
 
-.table-custom td:nth-child(2) {
+.table-custom td:nth-child(1) {
   text-align: left;
+  max-width: 470px;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .table> :not(caption)>*>* {
@@ -1913,7 +1917,7 @@ progress {
 }
 
 .table> :not(:first-child) {
-  border-top: 2px solid #d9dee3;
+  border-top: 1px solid #d9dee3;
 }
 
 .caption-top {
@@ -17135,6 +17139,8 @@ input::-webkit-file-upload-button {
 }
 
 .folderUpload::after {
+  position: absolute;
+  left: 40px;
   float: left;
   content: 'Choose Folder';
   width: 90px !important;
@@ -17143,13 +17149,13 @@ input::-webkit-file-upload-button {
 
 .folderUpload::-webkit-file-upload-button {
   color: transparent !important;
-  width: 1px;
+  width: 120px;
   background-color: transparent !important;
 }
 
 .folderUpload::file-upload-button {
   color: transparent !important;
-  width: 1px;
+  width: 120px;
   background-color: transparent !important;
 }
 

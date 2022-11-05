@@ -77,11 +77,11 @@ flex: 0 0 auto;
 width: 33.33333333%;
 }}.table {--bs-table-bg: transparent;--bs-table-accent-bg: transparent;--bs-table-striped-color: #697a8d;--bs-table-striped-bg: #f9fafb;--bs-table-active-color: #697a8d;--bs-table-active-bg: rgba(67, 89, 113, 0.1);--bs-table-hover-color: #697a8d;--bs-table-hover-bg: rgba(67, 89, 113, 0.06);width: 100%;margin-bottom: 1rem;color: #697a8d;vertical-align: middle;border-color: #d9dee3;}
 .table-custom {text-align: center;}
-.table-custom td:nth-child(2) {text-align: left;}
+.table-custom td:nth-child(1) {text-align: left;max-width: 470px;white-space: nowrap !important;overflow: hidden !important;text-overflow: ellipsis !important;}
 .table> :not(caption)>*>* {padding: 0.425rem 0.4rem;background-color: var(--bs-table-bg);border-bottom-width: 1px;box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);}
 .table>tbody {vertical-align: inherit;}
 .table>thead {vertical-align: bottom;}
-.table> :not(:first-child) {border-top: 2px solid #d9dee3;}
+.table> :not(:first-child) {border-top: 1px solid #d9dee3;}
 .table-sm> :not(caption)>*>* {padding: 0.3125rem 0.625rem;}
 .table-bordered> :not(caption)>* {border-width: 1px 0;}
 .table-bordered> :not(caption)>*>* {border-width: 0 1px;}
@@ -771,7 +771,7 @@ width: 100%;
 width: 54px;
 }}.udprogress{position: fixed;top: 0; left: 0;width: 100% !important;height: 2px;z-index: 1090;}
 input::-webkit-file-upload-button {width: 120px;font-size: 15px;}
-.folderUpload::after {float: left;content: 'Choose Folder';width: 90px !important;font-size: 14px !important;}
-.folderUpload::-webkit-file-upload-button {color: transparent !important;width: 1px;background-color: transparent !important;}
-.folderUpload::file-upload-button {color: transparent !important;width: 1px;background-color: transparent !important;}
+.folderUpload::after {position: absolute;left: 40px;float: left;content: 'Choose Folder';width: 90px !important;font-size: 14px !important;}
+.folderUpload::-webkit-file-upload-button {color: transparent !important;width: 120px;background-color: transparent !important;}
+.folderUpload::file-upload-button {color: transparent !important;width: 120px;background-color: transparent !important;}
 
