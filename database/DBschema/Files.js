@@ -9,8 +9,8 @@ module.exports = {
         fileName TEXT, 
         fileId TEXT UNIQUE,
         fileType TEXT,
-        fileSize INTEGER, 
-        filePath TEXT, 
+        fileSize INTEGER(12), 
+        filePath TEXT,
         fileFormat TEXT, 
         uploadOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
         owner TEXT, 
@@ -20,7 +20,8 @@ module.exports = {
         accesses TEXT, 
         star INTEGER,
         parentFolderId TEXT, 
-        driveId TEXT
+        driveId TEXT,
+        isDeleted INTEGER(1) DEFAULT 0 NOT NULL
     )`
 
 }

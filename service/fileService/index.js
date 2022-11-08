@@ -17,7 +17,7 @@ class FileService {
         let filePath = data.filePath;
         let owner = data.owner;
 
-        db.all('SELECT * FROM Files WHERE (parentFolderId = ? or filePath = ?) and owner = ?', [folderId,filePath, owner], (err, row) => {
+        db.all('SELECT * FROM Files WHERE (parentFolderId = ? or filePath = ?) and owner = ? and isDeleted=0', [folderId,filePath, owner], (err, row) => {
             if (err) {
                 callback(false);
                 log.log("error", err);
@@ -32,7 +32,7 @@ class FileService {
         let fileId = data.fileId;
         let owner = data.owner;
 
-        db.get('SELECT * FROM Files WHERE fileId = ? and owner = ?', [fileId, owner], (err, row) => {
+        db.get('SELECT * FROM Files WHERE fileId = ? and owner = ? and isDeleted=0', [fileId, owner], (err, row) => {
             if (err) {
                 callback(false);
                 log.log("error", err);
@@ -48,7 +48,7 @@ class FileService {
         let filePath = data.filePath;
         let owner = data.owner;
 
-        db.get('SELECT * FROM Files WHERE (filePath = ? or fileName = ?) and owner = ?', [filePath, fileName, owner], (err, row) => {
+        db.get('SELECT * FROM Files WHERE (filePath = ? or fileName = ?) and owner = ? and isDeleted=0', [filePath, fileName, owner], (err, row) => {
             if (err) {
                 callback(false);
                 log.log("error", err);
