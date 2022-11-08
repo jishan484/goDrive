@@ -4,6 +4,7 @@ const userService = require('./../../service/userService');
 const { RouterConfig } = require('./../../SystemConfig');
 
 router.use("/auth", require("./auth.js"));
+router.use("/u/status", require("./status"));
 
 router.use("/u/*", checkAuth);
 

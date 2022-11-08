@@ -386,7 +386,7 @@ function uploadFiles() {
                 }
             }
             else{
-                let canContinue = handelUploadError(resp.status, resp.statusText, resp.readyState);
+                let canContinue = handelUploadError(resp.status, resp.statusText, resp.readyState,resp);
                 if(canContinue){
                     let ltimeout = 5000;
                     if (formFileMultiple.files.length <= 1){
@@ -490,7 +490,7 @@ function uploadFolderHandler(startIndex) {
             }
             else {
                 console.log(resp);
-                let status = handelUploadError(resp.status, resp.statusText, resp.readyState);
+                let status = handelUploadError(resp.status, resp.statusText, resp.readyState,resp);
                 if(!status) {
                     _checkForDuplicateUpload = true;
                     _uploadFaildWithError = true;
@@ -500,6 +500,7 @@ function uploadFolderHandler(startIndex) {
             }
         }, startIndex, false);
     }
+    console.log('No drive found!');
 }
 
 
@@ -545,7 +546,7 @@ function uploadFilesWithFolder(file, path, callback, trackIndex, showProgress){
     }
 }
 
-function handelUploadError(statusCode,message,readyState){
+function handelUploadError(statusCode,message,readyState,resp){
     let canContinue = false;
     if(statusCode == 0 && readyState ==0){
         if(message == 'abort'){
@@ -562,7 +563,7 @@ function handelUploadError(statusCode,message,readyState){
             console.log(message);
         }
     } else {
-        console.log(statusCode,message,readyState);
+        $('#fileList').html(resp.error);
     }
     return canContinue;
 }
