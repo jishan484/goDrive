@@ -202,5 +202,24 @@ function listConnectionNames(auth) {
     //     console.log(data.data.id);
     // })
 
+    // upload multiple files using multipart
+    driveService.files.create({
+        resource: fileMetadata,
+        media: {
+            mimeType: 'application/json',
+            body: fs.createReadStream('credential.json')
+        },
+        fields: 'id'
+    }).then(data=>{
+        switch (data.status) {
+            case 200:
+                let file = data.result;
+                console.log('Created File Id: ', data.data);
+                break;
+            default:
+                console.error(data);
+                break;
+        }
+    }
 }
 
