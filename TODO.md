@@ -125,19 +125,17 @@ mkdir -p cert && sudo certbot certonly --manual --config-dir ./cert --work-dir .
 
 ----------------next ticket-------------------
 
-put and owner = ? condition first.....
+put 'and owner = ?' condition first.....
 Rename , move and delete folder functionality
-    logics are same for all. It has to be done recursively...
+    logics are same for all. It has to be done recursively for all subfolders...
 
     during folder rename or move... all subfolders will be effected recursively, so the files of those sub folders. Fix: remove filePath params 
     and during fetch query get the folder id using (SELECT folderId FROM Folders where fullPath = ? and owner = ?) subquery. That way dont  have to update files location also.
 
-    drijishan9733
-    dr0jishan9733
 
 
 
-Repair Failed faile operation:
+Repair Failed faile operation: [TODO]
     -> There should be a job to look into this issue:
     scope: Job will look into the particular drive:
         if it is down -> send mail to admins
@@ -154,9 +152,9 @@ Repair Failed faile operation:
 ----------------next task------------------
 FEATURE: folder upload
 -> create all the folders and subfolders at once
--> upload all the files one by one
+-> upload all the files at once [ TODO ][ NF ]
 -> resumable upload , so recreate the session if it is expired, ask only password from user, and send a token to 
    check the chalanges in client side.
 
-   ---bug ---
+   ---bug UI---
    put onclick event on the folder/file input field, so that user can select the same file again and again in diffrent folder location.

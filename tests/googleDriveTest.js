@@ -4,6 +4,7 @@ module.exports.Test = ()=>{
     createDriveTest();
     getDriveTest();
     getDrivesTest();
+    getDrivesMultiPartTest();
 }
 
 function createDriveTest(){
@@ -35,4 +36,16 @@ function getDrivesTest(){
             if(res2.length != 2) console.log(res2);
         }
     },10000);
+}
+
+function getDrivesMultiPartTest() {
+    let Drive = require('../utilities/driveUtil/index')
+    let drive = new Drive();
+    drive.init();
+    setTimeout(() => {
+        let res = drive.getDrive(1, true);
+        assert.notNull(res);
+        assert.equals(res.length > 0, true);
+        assert.equals(res[0].supportMultiPart, true);
+    }, 10000);
 }

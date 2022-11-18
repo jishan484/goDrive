@@ -44,6 +44,7 @@ module.exports = class GoogleDrive extends Storage{
         super("googleDrive");
         this.token = token;
         this.parentFolderId = null;
+        this.supportMultiPart = true;
 
         if(redirectURL != undefined && redirectURL != null){
             credentials.installed.redirect_uris[0] = redirectURL +"/admin/u/drive/callback";
@@ -132,6 +133,7 @@ module.exports = class GoogleDrive extends Storage{
 
     writeFile(fileName,mimeType,fileData, callback)
     {
+        console.log(mimeType);
         let fileMetadata = { 'name': fileName, parents: [this.parentFolderId] };
         var a = this.driveService.files.create({
             resource: fileMetadata,

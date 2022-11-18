@@ -150,6 +150,47 @@ class DriveService{
         }
     }
 
+    uploadMultiPartFiles(req, callback) {
+        let drive = this.driveUtil.getDrive(req.body.fileSize, true);
+        let reset = false;
+        if (drive == null && this.driveUtil.drives.length() > 0) {
+            callback(false, 'Storage full! Files can not be saved!');
+        } else if (this.driveUtil.drives.length() == 0) {
+            callback(false, 'There is no active Drive found!');
+        } else {
+            let iscancelled = false;
+            drive.set(parseInt(req.headers['content-length']));
+            req.on('close', () => {
+                iscancelled = true;
+                if (!reset) drive.clear(parseInt(req.headers['content-length']));
+                reset = true;
+            });
+            req.body.mimetype = "multipart/related;"+req.headers['content-type'].split(';')[1];
+            console.log(req.body);
+            drive.drive.writeFile(req.body.fileName, req.body.mimetype, req, (status, resp) => {
+                if (!reset) drive.clear(parseInt(req.headers['content-length']));
+                reset = true;
+                if (iscancelled) {
+                    drive.drive.deleteFile(resp.id, (status, data) => {
+                        if (!status) log.log('error', data);
+                    });
+                    return;
+                }
+                if (status) {
+                    // req.body.chunked = false;
+                    // req.body.nodeId = resp.id;
+                    // req.body.fileSize = resp.size;
+                    // req.body.driveId = drive.id;
+                    // drive.update(parseInt(req.body.fileSize));
+                    // callback(true, 'File uploaded');
+                    console.log(resp);
+                } else {
+                    callback(false, 'Failed to save this file! code : ERRDRV');
+                }
+            });
+        }
+    }
+
     downloadFile(req, callback){
         let drive = this.driveUtil.getDriveById(req.body.driveId);
         if (drive == null && this.driveUtil.drives.length() > 0) {

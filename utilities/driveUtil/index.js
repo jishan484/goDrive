@@ -41,10 +41,18 @@ drives = {
         }
         return null;
     },
-    getByFreeSpace: function(freeSpace){
-        for(let i = 0; i < this.ActiveDrives.length; i++){
-            if((this.ActiveDrives[i].freeSpace + this.ActiveDrives[i].inUseSpace) > freeSpace && this.ActiveDrives[i].status == 'Active'){
-                return this.ActiveDrives[i];
+    getByFreeSpace: function(freeSpace, isMultiPartUpload){
+        if(!isMultiPartUpload){
+            for (let i = 0; i < this.ActiveDrives.length; i++) {
+                if ((this.ActiveDrives[i].freeSpace + this.ActiveDrives[i].inUseSpace) > freeSpace && this.ActiveDrives[i].status == 'Active') {
+                    return this.ActiveDrives[i];
+                }
+            }
+        }else{
+            for (let i = 0; i < this.ActiveDrives.length; i++) {
+                if ((this.ActiveDrives[i].freeSpace + this.ActiveDrives[i].inUseSpace) > freeSpace && this.ActiveDrives[i].status == 'Active' && this.ActiveDrives[i].supportMultiPart) {
+                    return this.ActiveDrives[i];
+                }
             }
         }
         return null;
@@ -91,6 +99,7 @@ function initDrives(){
                     status:'Uninitiated',
                     lastUsed:null,
                     inUseSpace: 0,
+                    supportMultiPart: false,
                     set: function(inUseSize){
                         this.inUseSpace+=inUseSize;
                     },
@@ -119,8 +128,9 @@ function initDrive(index=0){
             if (status) {
                 drive.drive = gdrive;
                 drive.freeSpace = gdrive.freeSpace;
-                drive.token = undefined;
+                delete drive.token;
                 drive.status = 'Active';
+                drive.supportMultiPart = gdrive.supportMultiPart;
                 initDrive(index+1);
             } else {
                 drive.status = 'Deactive';
@@ -145,8 +155,11 @@ module.exports = class Drive{
         }, 2100);
     }
     // get drive based on free space
-    getDrive(fileSize){
-        let drive = this.drives.getByFreeSpace(fileSize);
+    /*
+    * Option : isMultiPartUpload (boolean) - if true, get drive with supportMultiPart
+    */
+    getDrive(fileSize, isMultiPartUpload = false) {
+        let drive = this.drives.getByFreeSpace(fileSize, isMultiPartUpload);
         if(drive && drive != null) drive.lastUsed = Date.now();
         return drive;
     }

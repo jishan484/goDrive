@@ -73,6 +73,41 @@ function upload(file,path,callback,tracker,showProgress=true,checkDuplicate=fals
     // _globalUPjaxB = _globalUPjax;
 }
 
+
+function uploadMultiPart(file, callback, showProgress = true) {
+    _lastUpTime = (new Date()).getTime();
+    _globalUPjax = $.ajax({
+        xhr: function () {
+            var xhr = new window.XMLHttpRequest(2);
+            //Upload progress and event handling
+            if (showProgress)
+                xhr.upload.addEventListener("progress", uploadProgressHandler, false);
+            xhr.addEventListener("load", completeHandler, false);
+            xhr.addEventListener("abort", abortHandler, false);
+            return xhr;
+        },
+        url: 'app/u/file/multipart',
+        type: 'POST',
+        cache: false,
+        processData: false,
+        contentType: false,
+        data: file,
+        success: (data, text) => {
+            try {
+                data = JSON.parse(data);
+            } catch (e) {
+                data = { status: 'error', error: data };
+            }
+            callback(true, data);
+        },
+        error: (request, status, error) => {
+            processError(request, 0);
+            completeHandler(null);
+            callback(false, request);
+        }
+    });
+}
+
 function progressHandler(e) {
     if (e.lengthComputable) {
         // Append progress percentage.

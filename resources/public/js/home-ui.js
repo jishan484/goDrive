@@ -123,23 +123,21 @@ function renderUploadProgressFolder(){
         </div>
     </div>
     <div class="row align-left">
-        <div class="col-md-12 col-lg-12 col-sm-12">
-            <span>Folder Name: </span><span id="UPname">${_currentUploadingFOlderPath}</span>
-        </div>
-        <div class="col-md-12 col-lg-12 col-sm-12">
-            <span>Target Folder: </span><span id="UPname">${_currentUploadFolder+'/'+_currentUploadingFOlderPath}</span>
+        
+        <div class="col-md-6 col-lg-6 col-sm-6">
+            <span>Speed: </span><span id="UPspeed">20 Kbps</span>
         </div>
         <div class="col-md-6 col-lg-6 col-sm-6">
-            <span>Files Uploaded: </span><span id="UPspeed">${_totalUploadedFiles}</span>
+            <span>Folder Size: </span><span id="UPtsize">20 MB</span>
         </div>
         <div class="col-md-6 col-lg-6 col-sm-6">
-            <span>Folders Completed: </span><span id="UPtsize">${_currentUploadedFolderList.size - 1}</span>
-        </div>
-        <div class="col-md-12 col-lg-12 col-sm-12">
-            <span>File name: </span><span id="UPname">${_currentUploadingFileName}</span>
+            <span>Remain Time: </span><span id="UPtime">2min 30sec</span>
         </div>
         <div class="col-md-6 col-lg-6 col-sm-6">
-            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="cancleAllUploads();"> Cancle All Uploads </button>
+            <span>Uploaded: </span><span id="UPusize">12 MB</span>
+        </div>
+        <div class="col-md-6 col-lg-6 col-sm-6">
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="_globalUPjax.abort();"> Cancle this Upload </button> 
         </div>
     </div>`;
     $('#fileList').html(html);
@@ -417,10 +415,30 @@ async function uploadFolders(){
     await createFoldersForUpload();
     console.log('done');
     await setTimeout(() => {}, 9000);
-    for (let i = 0; i < _consicutiveUploadsCounter; i++) {
-        _currentUploadsCounter++;
-        uploadFolderHandler(i);
+    // for (let i = 0; i < _consicutiveUploadsCounter; i++) {
+    //     _currentUploadsCounter++;
+    //     uploadFolderHandler(i);
+    // }
+    uploadFolderFiles();
+}
+
+function uploadFolderFiles(){
+    let totalSize = 0;
+    let fd = new FormData();
+    // fd.append('folderPath', _currentUploadFolder);
+    // let fileDetails = new Map();
+    // for(let file of formFolderMultiple.files){
+    //     fileDetails.set(file.webkitRelativePath, file.size);
+    // }
+    // fd.append('fileDetails', JSON.stringify(Array.from(fileDetails.entries())));
+    for (const file of formFolderMultiple.files) {
+        fd.append('files', file) // appending every file to formdata
+        totalSize += file.size;
     }
+    uploadMultiPart(fd,(status, ) => {},true);
+    renderUploadProgressFolder();
+    $("#UPtsize").html(formatBytes(totalSize, 3));
+
 }
 
 async function createFoldersForUpload(){

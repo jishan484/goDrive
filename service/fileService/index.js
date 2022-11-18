@@ -2,6 +2,7 @@ const db = require("../../database");
 const userService = require("./../userService");
 const driveService = require("./../driveService");
 const log = require("./../logService");
+const MultiPartUploader = require("./multi-part-files");
 
 
 class FileService {
@@ -233,7 +234,6 @@ class FileService {
         else{
             data.FETCH_PARENT  = true;
         }
-
         this.save(data, (result) => {
             if (result == false) {
                 callback(false,"File not saved");
@@ -278,6 +278,8 @@ class FileService {
                             let callbackCount = 0, totalPartCount = req.body.nodesInfo.length;
                             req.body.nodesInfo.forEach(partInfo => {
                                 partInfo.nodeInfo = req.body.nodeId;
+                                // TODO: insert at once instead of looping
+                                // Need improvement
                                 this.saveChunks(partInfo, (status) => {
                                     callbackCount++;
                                     if (callbackCount == totalPartCount) {
@@ -299,6 +301,13 @@ class FileService {
                 }
             });
         }
+    }
+
+    uploadMaltiPartFiles(req, callback) {
+        driveService.uploadMultiPartFiles(req, (status, data) => {
+            console.log("uploadMaltiPartFiles", status, data);
+            callback(status, data);
+        });
     }
 
 
