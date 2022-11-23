@@ -9,7 +9,7 @@ module.exports = {
         fileName TEXT, 
         fileId TEXT UNIQUE,
         fileType TEXT,
-        fileSize INTEGER(12), 
+        fileSize BIGINT, 
         filePath TEXT,
         fileFormat TEXT, 
         uploadOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -25,3 +25,6 @@ module.exports = {
     )`
 
 }
+
+// FIX: 1.0.0
+// fileSize to BIGINT from INT (for large files support in mysql)
