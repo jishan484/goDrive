@@ -180,19 +180,23 @@ module.exports = class GoogleDrive extends Storage{
             callback(true, res.data);
         }).catch(err => {
             callback(false, err);
-            log.log('error', err);
+            if(option.noLog == undefined || !option.noLog){
+                log.log('error', err);
+            }
         });
     }
     
     
-    moveToTrash(nodeId , callback){
+    moveToTrash(nodeId , callback, option){
         this.driveService.files.update({
             "fileId": nodeId,
             "trashed": true
         }).then((res)=>{
             callback(true,'File moved to trash!')
         }).catch(err => {
-            log.log('error', err);
+            if(option.noLog == undefined || !option.noLog){
+                log.log('error', err);
+            }
             callback(false, err);
         });
     }
