@@ -180,7 +180,7 @@ module.exports = class GoogleDrive extends Storage{
             callback(true, res.data);
         }).catch(err => {
             callback(false, err);
-            if(option.noLog == undefined || !option.noLog){
+            if (option == undefined || option.noLog == undefined || !option.noLog){
                 log.log('error', err);
             }
         });
@@ -194,7 +194,7 @@ module.exports = class GoogleDrive extends Storage{
         }).then((res)=>{
             callback(true,'File moved to trash!')
         }).catch(err => {
-            if(option.noLog == undefined || !option.noLog){
+            if (option == undefined || option.noLog == undefined || !option.noLog){
                 log.log('error', err);
             }
             callback(false, err);
