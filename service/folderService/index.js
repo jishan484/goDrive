@@ -145,12 +145,20 @@ class FolderService {
         let folderId = data.folderId;
         let owner = data.owner;
 
-        db.run('DELETE FROM Folders WHERE ( folderId = ? or fullPath = ? ) and owner = ?', [folderId,fullPath,owner], (err) => {
+        db.run('DELETE FROM Folders WHERE ( folderId = ? or fullPath like ? ) and owner = ?', [folderId,fullPath+"%",owner], (err) => {
             if (err){
                 callback(false);
                 log.log("error",err);
             }
-            else callback(true);
+            else {
+                db.run('UPDATE Files SET isDeleted=1 WHERE filePath like ? and owner = ?', [fullPath + "%", owner], (err) => {
+                    if (err) {
+                        callback(false);
+                        log.log("error", err);
+                    }
+                    else callback(true);
+                });
+            }
         });
     }
 

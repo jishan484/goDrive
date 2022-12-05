@@ -13,6 +13,7 @@ DBChanges.changes.firstOrder.push(require('./Files.js'));   // FIles table creat
 DBChanges.changes.firstOrder.push(require('./Folders.js'));   // Folders table creation
 DBChanges.changes.firstOrder.push(require('./Drives.js'));   // Drives table creation
 DBChanges.changes.firstOrder.push(require('./FileChunks.js'));   // File Chunks table creation
+DBChanges.changes.firstOrder.push(require('./Tasks.js'));   // Tasks table creation
 DBChanges.changes.secondOrder.push(require('./defaultUser.js'));   // Default User creation
 
 

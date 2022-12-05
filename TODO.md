@@ -131,9 +131,7 @@ Rename , move and delete folder functionality
 
     during folder rename or move... all subfolders will be effected recursively, so the files of those sub folders. Fix: remove filePath params 
     and during fetch query get the folder id using (SELECT folderId FROM Folders where fullPath = ? and owner = ?) subquery. That way dont  have to update files location also.
-
-    drijishan9733
-    dr0jishan9733
+=> done
 
 
 
@@ -153,10 +151,11 @@ Repair Failed faile operation:
 
 ----------------next task------------------
 FEATURE: folder upload
--> create all the folders and subfolders at once
--> upload all the files one by one
--> resumable upload , so recreate the session if it is expired, ask only password from user, and send a token to 
-   check the chalanges in client side.
+-> create all the folders and subfolders at once -> done
+-> upload all the files one by one -> not possible [google api limitation]
+-> resumable upload , so recreate the session if it is expired, ask only password from user, and send a token to -> todo
+   check the chalanges in client side. -> todo
 
    ---bug ---
    put onclick event on the folder/file input field, so that user can select the same file again and again in diffrent folder location.
+   -> not prioritized
