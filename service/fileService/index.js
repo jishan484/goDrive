@@ -333,6 +333,7 @@ class FileService {
             driveService.downloadFile(req,(status,data)=>{
                 callback(status, data);
             });
+            // TODO: update lastAccessedOn
         }); 
     }
 
@@ -373,13 +374,15 @@ class FileService {
 
             if (rows.driveId == 'CHUNKED') {
                 this.deleteChunked(rows, (status, requestedData)=>{
-                    this.delete(req.body, (deleteStatus) => {
-                        if (deleteStatus == true)
-                            callback(deleteStatus, 'File deleted')
-                        else callback(deleteStatus, 'System failed to delete the file from DataBase!')
-                    });
+                    if(status){ //[todo] [redesign] : delete chunked file from drives
+                        this.delete(req.body, (deleteStatus) => {
+                            if (deleteStatus == true)
+                                callback(deleteStatus, 'File deleted')
+                            else callback(deleteStatus, 'System failed to delete the file from DataBase!')
+                        });
 
-                    this.deleteChunks(requestedData);
+                        this.deleteChunks(requestedData);
+                    }
                 });
                 return;
             }
