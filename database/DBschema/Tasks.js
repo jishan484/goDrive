@@ -1,6 +1,6 @@
 module.exports = {
     version: '1.0.1',
-    QueryId: 'TasksTable_01',  // Unique ID for every changes
+    QueryId: 'TasksTable_01.1',  // Unique ID for every changes
     comment: '[DBinit-LOG] Tasks table creation',
     query:
         `CREATE TABLE IF NOT EXISTS Tasks

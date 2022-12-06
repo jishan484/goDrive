@@ -131,7 +131,7 @@ class Scheduler {
                     if (index != -1) {
                         logger.log("info", "Task " + rows[i].taskName + " initiated!");
                         let task = require(__dirname + '/' + joblist[index]);
-                        this.jobs[rows[i].taskName] = new task("*/1 * * * *", JSON.parse(rows[i].param));
+                        this.jobs[rows[i].taskName] = new task(rows[i].schedule , JSON.parse(rows[i].param));
                         this.jobs[rows[i].taskName].status = rows[i].status;
                         this.jobs[rows[i].taskName].state = rows[i].state;
                         joblist.splice(index, 1);
