@@ -7,8 +7,8 @@ module.exports = {
     (   
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         taskName TEXT UNIQUE,
-        status BIT(1) DEFAULT 1,
-        state bit(1) DEFAULT 1, 
+        status INTEGER DEFAULT 1,
+        state INTEGER DEFAULT 1, 
         schedule TEXT, 
         param TEXT,
         failure INTEGER,

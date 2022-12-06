@@ -29,13 +29,13 @@ const db = require('../../database');
 const fs = require('fs');
 const logger = require('../../service/logService');
 
-class Scheduler{
-    constructor(){
+class Scheduler {
+    constructor() {
         logger.log("debug", "Scheduler initialized!");
         this.jobs = {};
     }
 
-    async start(){
+    async start() {
         setTimeout(() => {
             this.init();
         }, 3000);
@@ -44,9 +44,9 @@ class Scheduler{
 
 
     //------------------ runtime job controls------------------
-    getDetails(){
+    getDetails() {
         let details = [];
-        for(let job in this.jobs){
+        for (let job in this.jobs) {
             let detail = {};
             detail.name = job;
             detail.status = this.jobs[job].status;
@@ -57,39 +57,39 @@ class Scheduler{
             details.push(detail);
         }
     }
-    stopJob(jobName, callback){
+    stopJob(jobName, callback) {
         if (this.jobs[jobName] != null && this.jobs[jobName].state == 2) {
             this.jobs[jobName].stop();
             logger.log("debug", "Job stopped : " + jobName);
             this.jobs[jobName].state = 4;
             callback(true, "Job stopped : " + jobName);
-        } else if(this.jobs[jobName] != null){
+        } else if (this.jobs[jobName] != null) {
             callback(false, "Job " + jobName + " is not found or not valid!");
-        } else if(this.jobs[jobName].state < 2){
+        } else if (this.jobs[jobName].state < 2) {
             callback(false, "Job " + jobName + " is not running!");
         } else {
             callback(false, "Job " + jobName + " already stopped!");
         }
     }
-    startJob(jobName, callback){
-        if (this.jobs[jobName] != null && this.jobs[job].state != 2) {
+    startJob(jobName, callback) {
+        if (this.jobs[jobName] != null && this.jobs[jobName].state != 2) {
             this.jobs[jobName].start();
             logger.log("debug", "Job started : " + jobName);
             callback(true, "Job started : " + jobName);
-        } else if(this.jobs[jobName] != null){
+        } else if (this.jobs[jobName] != null) {
             callback(false, "Job " + jobName + " is not found or not valid!");
-        }else {
+        } else {
             callback(false, "Job " + jobName + " already started!");
         }
     }
-    updateJobStatus(jobName, status, frequency, callback){
+    updateJobStatus(jobName, status, frequency, callback) {
         if (this.jobs[jobName] != null) {
-            if(this.jobs[jobName].status == status && this.jobs[jobName].frequency == frequency){
+            if (this.jobs[jobName].status == status && this.jobs[jobName].frequency == frequency) {
                 callback(false, "Job " + jobName + " already has same status and frequency!");
                 return;
             }
-            status = (status == null)? this.jobs[jobName].status : status;
-            frequency = (frequency == null)? this.jobs[jobName].frequency : frequency;
+            status = (status == null) ? this.jobs[jobName].status : status;
+            frequency = (frequency == null) ? this.jobs[jobName].frequency : frequency;
             this.jobs[jobName].job.stop();
             delete this.jobs[jobName].job;
             this.jobs[jobName].state = 1;
@@ -97,11 +97,11 @@ class Scheduler{
             this.jobs[jobName].frequency = frequency;
             this.schedule();
             db.run('UPDATE Tasks SET status = ? WHERE taskName = ?', [status, jobName], (err) => {
-                if(err){
+                if (err) {
                     callback(false, "Failed to update job status in DB!");
                     logger.log("error", err);
                 }
-                else{
+                else {
                     callback(true, "Job status updated!");
                 }
             });
@@ -116,36 +116,36 @@ class Scheduler{
 
 
 
-    async init(){
+    async init() {
         let joblist = fs.readdirSync(__dirname).filter((elem) => {
             return elem != 'index.js';
         });
         db.all('SELECT * FROM Tasks', (err, rows) => {
-            if(err){
+            if (err) {
                 logger.log("error", "Error while fetching tasks from database!");
                 logger.log("error", err);
             } else {
-                for(let i=0;i<rows.length;i++){
+                for (let i = 0; i < rows.length; i++) {
                     // check if job already exist in joblist array
                     let index = joblist.indexOf(rows[i].taskName + '.js');
-                    if(index != -1){
+                    if (index != -1) {
                         logger.log("info", "Task " + rows[i].taskName + " initiated!");
-                        let task = require(__dirname+'/'+joblist[index]);
-                        this.jobs[rows[i].taskName] = new task(rows[i].schedule ,rows[i].param);
+                        let task = require(__dirname + '/' + joblist[index]);
+                        this.jobs[rows[i].taskName] = new task(rows[i].schedule, rows[i].param);
                         this.jobs[rows[i].taskName].status = rows[i].status;
                         this.jobs[rows[i].taskName].state = rows[i].state;
                         joblist.splice(index, 1);
                     }
                 }
-                for(let i=0;i<joblist.length;i++){
-                    logger.log("debug", "Task "+joblist[i]+" newly added to the system!");
+                for (let i = 0; i < joblist.length; i++) {
+                    logger.log("debug", "Task " + joblist[i] + " newly added to the system!");
                     let task = require(__dirname + '/' + joblist[i]);
                     let taskName = joblist[i].split('.')[0];
                     this.jobs[taskName] = new task(null);
                     this.jobs[taskName].status = 1;
                     this.jobs[taskName].state = 1;
                     db.run('INSERT INTO Tasks (taskName, schedule, param) VALUES (?,?,?)', [this.jobs[taskName].taskName, this.jobs[taskName].frequency, this.jobs[taskName].param], (err) => {
-                        if(err){
+                        if (err) {
                             logger.log("error", "Error while inserting new task in database!");
                             logger.log("error", err);
                         }
@@ -157,10 +157,10 @@ class Scheduler{
         });
     }
 
-    schedule(){
+    schedule() {
         // schedule all jobs
-        for(let job in this.jobs){
-            if(this.jobs[job].status == 1 && this.jobs[job].state <= 1){
+        for (let job in this.jobs) {
+            if (this.jobs[job].status == 1 && this.jobs[job].state <= 1) {
                 logger.log("info", "Task " + job + " scheduled!");
                 this.jobs[job].task = scheduler.schedule(this.jobs[job].frequency, async () => {
                     this.jobs[job].run();
