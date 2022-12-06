@@ -10,7 +10,7 @@ let async = require('async');
 class Task{
     constructor(frequency ,param){
         this.taskName = 'clearDeletedFiles';
-        let defaultJobParam = {}
+        let defaultJobParam = '{}';
         this.lastRun = new Date();
         this.executionTime = 0;
         // frequency can be changed from database
