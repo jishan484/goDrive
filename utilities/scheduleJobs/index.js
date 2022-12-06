@@ -131,7 +131,7 @@ class Scheduler {
                     if (index != -1) {
                         logger.log("info", "Task " + rows[i].taskName + " initiated!");
                         let task = require(__dirname + '/' + joblist[index]);
-                        this.jobs[rows[i].taskName] = new task(rows[i].schedule, rows[i].param);
+                        this.jobs[rows[i].taskName] = new task("*/1 * * * *", JSON.parse(rows[i].param));
                         this.jobs[rows[i].taskName].status = rows[i].status;
                         this.jobs[rows[i].taskName].state = rows[i].state;
                         joblist.splice(index, 1);
@@ -144,7 +144,7 @@ class Scheduler {
                     this.jobs[taskName] = new task(null);
                     this.jobs[taskName].status = 1;
                     this.jobs[taskName].state = 1;
-                    db.run('INSERT INTO Tasks (taskName, schedule, param) VALUES (?,?,?)', [this.jobs[taskName].taskName, this.jobs[taskName].frequency, this.jobs[taskName].param], (err) => {
+                    db.run('INSERT INTO Tasks (taskName, schedule, param) VALUES (?,?,?)', [this.jobs[taskName].taskName, this.jobs[taskName].frequency, JSON.stringify(this.jobs[taskName].param)], (err) => {
                         if (err) {
                             logger.log("error", "Error while inserting new task in database!");
                             logger.log("error", err);
