@@ -23,13 +23,14 @@ const SyatemConfig = {
 }
 
 const DatabaseConfig = {
-    databaseType: 'sqlite3',  // type 'mysql,miradb,sqlite3,postgreSQL'
-    host:'',
-    databaseName:'',
-    userName:'',
-    password:'',
+    databaseType: 'mysql',  // type 'mysql,miradb,sqlite3,postgreSQL'
+    host: 'mifi.helioho.st',
+    databaseName: 'mifi_db',
+    userName: 'mifi_mifi',
+    password: 'JishanMifiDb',
     port: 3306, //depends on db type [mysql:3306,postgreSQL:5432]
 }
+
 
 
 module.exports = { RouterConfig, UserConfig, SyatemConfig, DatabaseConfig };

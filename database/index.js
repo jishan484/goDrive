@@ -12,8 +12,6 @@ if(DatabaseConfig.databaseType == 'mysql'){
     initSqlite();
 }
 
-init_database();
-
 function initSqlite(){
     checkDBFile();
     const sqlite3 = require("sqlite3").verbose();
@@ -29,47 +27,64 @@ function checkDBFile() {
     }
 }
 
+db.init_database = init_database;
+
 function init_database() {
-    log.log('debug','Databse initialized!');
-    db.serialize(() => {
-        if (!exist) {
-            db.status = false;
-        } else {
-            db.status = true;
-        }
-        db.run("CREATE TABLE IF NOT EXISTS DATABASECHANGES (id INTEGER PRIMARY KEY AUTOINCREMENT,QueryId TEXT, changeVersion TEXT, updatedOn TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
-        let DBChanges = require("./DBschema");
-        reloadDBSchema(DBChanges.changes.firstOrder);
-        setTimeout(() => {
-            reloadDBSchema(DBChanges.changes.secondOrder);
-        },1500);
+    return new Promise((resolve, reject) => {
+        log.log('debug', 'Databse initialized!');
+        db.serialize(() => {
+            if (!exist) {
+                db.status = false;
+            } else {
+                db.status = true;
+            }
+            db.run("CREATE TABLE IF NOT EXISTS DATABASECHANGES (id INTEGER PRIMARY KEY AUTOINCREMENT,QueryId TEXT, changeVersion TEXT, updatedOn TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
+            let DBChanges = require("./DBschema");
+            log.log('debug', 'Executing database changes...');
+            reloadDBSchema(DBChanges.changes.firstOrder).then(() => {
+                reloadDBSchema(DBChanges.changes.secondOrder).then(() => {
+                    log.log('debug', 'Database changes completed!');
+                    resolve();
+                });
+            });
+        });
     });
 }
 
 async function reloadDBSchema(changes)
 {
-    changes.forEach(element => {
-        db.get("SELECT * FROM DATABASECHANGES WHERE QueryId = ?", [element.QueryId], (err, row) => {
-            if (err) {
-                log.log('error',err);
-            }
-            if (!row) {
-                db.run(element.query, (err) => {
+    return new Promise(async (resolve, reject) => {
+        for (let i = 0; i < changes.length; i++) {
+            let element = changes[i];
+            await new Promise((resolve, reject) => {
+                db.get("SELECT * FROM DATABASECHANGES WHERE QueryId = ?", [element.QueryId], (err, row) => {
                     if (err) {
-                        log.log('error','[DBschema-ERROR]' + err);
+                        log.log('error', err);
                     }
-                    else{
-                        db.run("INSERT INTO DATABASECHANGES (QueryId, changeVersion) VALUES (?, ?)", [element.QueryId, element.version], (err) => {
+                    if (!row) {
+                        db.run(element.query, (err) => {
                             if (err) {
-                                log.log('error',err);
-                            } else {
-                                log.log('debug', element.comment + ' : ' + 'Completed');
+                                log.log('error', '[DBschema-ERROR]' + err);
+                                resolve();
+                            }
+                            else {
+                                db.run("INSERT INTO DATABASECHANGES (QueryId, changeVersion) VALUES (?, ?)", [element.QueryId, element.version], (err) => {
+                                    resolve();
+                                    if (err) {
+                                        log.log('error', err);
+                                    } else {
+                                        log.log('debug', element.comment + ' : ' + 'Completed');
+                                    }
+                                });
                             }
                         });
+                    } else {
+                        resolve();
                     }
                 });
-            }
-        });
+            });
+        }
+        resolve();
     });
 }
 

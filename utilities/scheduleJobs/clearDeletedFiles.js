@@ -1,16 +1,17 @@
 // Task will remove all files which are marked as deleted from database
 // once deleted from drives, it will also remove the entry from the database
-let db = require('../../database');
-let logger = require('../../service/logService');
-let driveService = require('../../service/driveService');
-let async = require('async');
+const db = require('../../database');
+const logger = require('../../service/logService');
+const driveService = require('../../service/driveService');
+const async = require('async');
+const request = require('request');
 
 
 
 class Task{
     constructor(frequency ,param){
         this.taskName = 'clearDeletedFiles';
-        let defaultJobParam = '{}';
+        let defaultJobParam = {};
         this.lastRun = new Date();
         this.executionTime = 0;
         // frequency can be changed from database
@@ -49,6 +50,14 @@ class Task{
                 }
                 async.eachSeries(driveIds, function (driveId, callback) {
                     let drive = driveService.driveUtil.getDriveById(driveId);
+
+                    if(drive == null){
+                        logger.log("error", "[clearDeletedFiles] Drive not found for driveId: " + driveId);
+                        updateList = updateList.concat(filesMap.get(driveId).map((file) => { return file.id; }));
+                        callback();
+                        return;
+                    }
+
                     var authToken = drive.drive.auth.credentials.access_token;  //your OAuth2 token.
                     var boundary = "END_OF_PART";
                     var separation = "\n--" + boundary + "\n";
@@ -60,8 +69,7 @@ class Task{
                             "DELETE https://www.googleapis.com/drive/v3/files/" + current.nodeId +
                             "\nAuthorization: Bearer " + authToken;
                         return accum;
-                    }, "") + ending;
-                    var request = require('request');
+                    }, "") + ending;                    
                     request({
                         url: "https://www.googleapis.com/batch/drive/v3",
                         method: "POST",
@@ -86,18 +94,23 @@ class Task{
                         // delete all files from database
                         let deleteIds = deleteList.join(',');
                         let updateIds = updateList.join(',');
-                        db.run('DELETE FROM Files WHERE id in (' + deleteIds+')', (err) => {
-                            if (err) {
-                                logger.log("error", "[clearDeletedFiles] Error while deleting file from database!");
-                                logger.log("error", err);
-                            }
-                        });
-                        db.run('UPDATE Files SET isDeleted = 3 WHERE id in (' + updateIds+')', (err) => {
-                            if (err) {
-                                logger.log("error", "[clearDeletedFiles] Error while updating file in database!");
-                                logger.log("error", err);
-                            }
-                        });
+                        if(deleteList.length > 0){
+                            db.run('DELETE FROM Files WHERE id in (' + deleteIds + ')', (err) => {
+                                if (err) {
+                                    logger.log("error", "[clearDeletedFiles] Error while deleting file from database!");
+                                    logger.log("error", err);
+                                }
+                            });
+                        }
+                        if(updateList.length > 0){
+                            db.run('UPDATE Files SET isDeleted = 3 WHERE id in (' + updateIds + ')', (err) => {
+                                if (err) {
+                                    logger.log("error", "[clearDeletedFiles] Error while updating file in database!");
+                                    logger.log("error", err);
+                                }
+                                logger.log('info', "[clearDeletedFiles] : " + updateList.length + ' files updated to \'Ignore\' status: ' + new Date());
+                            });
+                        }
                         logger.log('info', "[clearDeletedFiles] : " + deleteList.length + ' files deleted : ' + new Date());
                         // clear memory
                         deleteList = null;

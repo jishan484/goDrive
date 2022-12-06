@@ -140,9 +140,7 @@ module.exports = class Drive{
     }
 
     init(){
-        setTimeout(() => {
-            initDrives();
-        }, 2100);
+        initDrives();
     }
     // get drive based on free space
     getDrive(fileSize){

@@ -20,11 +20,16 @@
   "dependencies": {
     "async": "^3.2.4",
     "cookie-parser": "1.4.6",
+    "crypto": "^1.0.1",
     "express": "4.17.1",
+    "fs": "0.0.1-security",
     "googleapis": "^105.0.0",
     "jsonwebtoken": "8.5.1",
     "mysql": "^2.18.1",
     "node-cron": "^3.0.2",
-    "sqlite3": "^5.0.3"
+    "path": "^0.12.7",
+    "request": "^2.88.2",
+    "sqlite3": "^5.0.3",
+    "stream": "0.0.2"
   }
 }
