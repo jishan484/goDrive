@@ -40,6 +40,14 @@
           </div>
           <div class="toast-body"></div>
         </div>
+        <!-- Success toast -->
+        <div class="bs-toast toast toast-placement-ex m-2 fade bottom-0 start-0 toast-90" role="alert"
+          aria-live="assertive" aria-atomic="true" data-delay="2000" id="successToast">
+          <div class="toast-body" style="padding: 1.05rem;">
+              <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+              <span id="successToastText">Paste the folder in new location</span>
+          </div>
+        </div>
         <!-- Menu -->
         <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
           <div class="app-brand demo">
@@ -351,7 +359,7 @@
                       <hr class="dropdown-divider" />
                     </li>
                     <li>
-                      <div class="dropdown-item disabled" id="itemPaste" onclick="folderRenme('${folders[i].folderId}')">Paste</div>
+                      <div class="dropdown-item disabled" id="itemPaste" onclick="pasteClipboard('${folders[i].folderId}')">Paste</div>
                     </li>
                     <li>
                       <hr class="dropdown-divider" />

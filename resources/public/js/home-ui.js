@@ -229,6 +229,7 @@ function folderOptions(elem,event) {
 function folderBodyOptions(elem,event) {
     $('#bodyOptions .folderBodyOption').addClass('show');
     // update folder body options position relative to the clicked element
+    $("#itemPaste").toggleClass('disabled', !_currentClipboard.active);
     let folderBodyOption = $('#bodyOptions .folderBodyOption');
     let folderBodyOptionWidth = folderBodyOption.width();
     let folderBodyOptionHeight = folderBodyOption.height();
@@ -256,26 +257,80 @@ function stopdblClick(e) {
 }
 
 function folderOpen(folderName) {
-    loadFolders(folderName,true);
+    loadFolders(folderName,true).then(()=>{
+        _folder_scroll_position_history.push($(document).scrollTop().valueOf());
+        $([document.documentElement, document.body]).animate({
+            scrollTop: 0
+        }, 200);
+    });
 }
 function folderBack()
 {
     _current_folder_path = _previous_folder_path;
-    loadFolders('',true);
+    loadFolders('', true).then(() => {
+        $([document.documentElement, document.body]).animate({
+            scrollTop: _folder_scroll_position_history.pop()
+        }, 200);
+    });
 }
 function folderHome() {
     _current_folder_path = _home_folder_path;
-    loadFolders('', true);
+    loadFolders('', true).then(() => {
+        $([document.documentElement, document.body]).animate({
+            scrollTop: _folder_scroll_position_history[0]
+        }, 200);
+        _folder_scroll_position_history = [];
+    });
 }
 
-function loadFolders(folderName,opt=false)
+async function loadFolders(folderName,opt=false)
 {
-    fetchFolder(folderName, (folders) => {
-        if (folders) {
-            renderFolders(folders);
-            loadFiles(folderName);
+    return new Promise((resolve, reject) => {
+        fetchFolder(folderName, (folders) => {
+            if (folders) {
+                resolve(); // before renderFolders save scroll position
+                renderFolders(folders);
+                loadFiles(folderName);
+            } else {
+                reject();
+            }
+        }, opt);
+    });
+}
+
+function folderCopyMove(folderId) {
+    _currentClipboard.active = true;
+    _currentClipboard.type = 'folder';
+    _currentClipboard.id = folderId;
+    _currentClipboard.path = _current_folder_path;
+    _currentClipboard.name = _current_folder_name;
+    successToast("Paste the folder in new location");
+    // hide the folder options
+    setTimeout(() => { 
+        $('.folderOption').removeClass('show');
+    }, 250);
+}
+
+function pasteClipboard() {
+    if (!_currentClipboard.active) return;
+
+    updateFolder('location', _currentClipboard, null, null, (response) => {
+        if (response.status != 'error') {
+            successToast("Folder moved successfully");
+            $('.folderBodyOption').removeClass('show');
+            _currentClipboard.active = false;
+            _currentClipboard.type = null;
+            _currentClipboard.id = null;
+            _currentClipboard.path = null;
+            fetchFolder('', (folders) => {
+                if (folders) {
+                    renderFolders(folders);
+                }
+            }, false);
+        } else {
+            successToast(response.error);
         }
-    },opt);
+    });
 }
 
 function loadFiles(folderName)
@@ -287,11 +342,15 @@ function loadFiles(folderName)
 
 function folderDelete(folderName)
 {
-    removeFolder(folderName, (status) => {
-        if (status) {
-            loadFolders('',false);
-        }
-    });
+    let status = confirm("Are you sure you want to delete this folder?");
+    if (status) {
+        removeFolder(folderName, (status) => {
+            if (status) {
+                loadFolders('', false);
+                successToast("Folder deleted successfully");
+            }
+        });
+    }
 }
 
 function contentSortBy(sortBy) {
@@ -378,6 +437,7 @@ function uploadFiles() {
         upload(formFileMultiple.files[0],_currentUploadFolder, (status, resp) => {
             if(status && resp.status == 'success'){
                 removeFile(0);
+                $('#UPBTN').attr('onclick', 'uploadFiles()');
                 $('#UPBTN').click();
                 if(_current_folder_path == _currentUploadFolder){
                     setTimeout(() => {
@@ -505,10 +565,6 @@ function uploadFolderHandler(startIndex) {
 
 
 function uploadFilesWithFolder(file, path, callback, trackIndex, showProgress){
-    // setTimeout(()=>{
-    //     callback(true, {status:'success'}, trackIndex);
-    // },Math.random()*6000);
-    // return;  // for testv only: will be cleared
     let fullDirectory = file.webkitRelativePath.split('/').slice(0,-1).join("/");
     _currentUploadedFolderList.set(fullDirectory,1);
     if(!_currentUploadsNewFolderList.includes(fullDirectory)){
@@ -519,24 +575,7 @@ function uploadFilesWithFolder(file, path, callback, trackIndex, showProgress){
             if(joinedDir != '') joinedDir+='/'+dir;
             else joinedDir = dir;
             if(!_currentUploadsNewFolderList.includes(joinedDir)){
-                let destDir = _currentUploadFolder + ((oldDir == '')?'':'/' + oldDir);
-                let uploadDir = destDir+'/'+dir;
-                let fullDir = ((oldDir == '') ? dir : oldDir + '/' + dir);
-                console.log(joinedDir,fullDir,fullDirectory);
-                // create dir here :: todo
-                createFolderDuringUpload(destDir, dir,(resp)=>{
-                    _currentUploadsNewFolderList.push(joinedDir);
-                    if(resp.status == 'success' || resp.code == 111){
-                        _currentUploadingFOlderPath = dir;
-                        // upload file here
-                        if (fullDir == fullDirectory)
-                            upload(file,uploadDir,callback,trackIndex,showProgress,_checkForDuplicateUpload);
-                        else console.log('Folder created : '+fullDir);
-                    }
-                }, joinedDir);
-                
-            } else {
-                console.error(joinedDir);
+                console.error(joinedDir,"Not found! skipping current folder");
             }
         });
     } else{
@@ -611,6 +650,9 @@ function cancleAllUploads(){
         }
         input.files = dt.files;
         _globalUPjax.abort();
+        setTimeout(() => {
+            loadFiles();
+        }, 10);
     }
 }
 

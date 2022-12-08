@@ -58,6 +58,18 @@ class Task{
                         return;
                     }
 
+                    if (drive.drive == null) {
+                        logger.log("error", "[clearDeletedFiles] Drive not initialized: " + driveId);
+                        callback();
+                        return;
+                    }
+
+                    if (drive.drive.storageType != 'googleDrive') {
+                        logger.log("error", "[clearDeletedFiles] Drive type not supported: " + driveId);
+                        callback();
+                        return;
+                    }
+
                     var authToken = drive.drive.auth.credentials.access_token;  //your OAuth2 token.
                     var boundary = "END_OF_PART";
                     var separation = "\n--" + boundary + "\n";
@@ -66,12 +78,12 @@ class Task{
                     var requestBody = filesMap.get(driveId).reduce((accum, current) => {
                         accum += separation +
                             "Content-Type: application/http\n\n" +
-                            "DELETE https://www.googleapis.com/drive/v3/files/" + current.nodeId +
+                            "DELETE https://www.googleapis.com/drive/v2/files/" + current.nodeId +
                             "\nAuthorization: Bearer " + authToken;
                         return accum;
                     }, "") + ending;                    
                     request({
-                        url: "https://www.googleapis.com/batch/drive/v3",
+                        url: "https://www.googleapis.com/batch/drive/v2",
                         method: "POST",
                         headers: {
                             "Content-Type": "multipart/mixed; boundary=" + boundary,

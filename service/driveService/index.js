@@ -131,9 +131,11 @@ class DriveService{
                 if(!reset) drive.clear(parseInt(req.headers['content-length']));
                 reset = true;
                 if(iscancelled){
-                    drive.drive.deleteFile(resp.id,(status,data)=>{
-                        if(!status) log.log('error',data);
-                    });
+                    if (resp.id != undefined && resp.id != null){
+                        drive.drive.deleteFile(resp.id, (status, data) => {
+                            if (!status) log.log('error', data);
+                        });
+                    }
                     return;
                 }
                 if (status) {

@@ -456,7 +456,7 @@ class FolderService {
                 dataset.push(newData.fullPath);
 
                 if (newData.fullPath == result.fullPath){
-                    callback(false, 'Updated name and path is similar to the old details!'); return;
+                    callback(false, 'Folder with same name already present in same location!'); return;
                 }
                 // check if any folder present with updated name in new or old path
                 for (let i = 0; i < results.length; i++) {

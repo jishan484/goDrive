@@ -159,3 +159,15 @@ FEATURE: folder upload
    ---bug ---
    put onclick event on the folder/file input field, so that user can select the same file again and again in diffrent folder location.
    -> not prioritized
+
+
+   ----bug-----
+   reducde google drive error log : it is exposing the API auth key
+    -> not prioritized
+    -> security risk is high
+
+   multi-node scenario bug: drive available space is not syncronized between nodes
+    -> not prioritized
+    -> priority: low
+    -> ETA: 30 days
+    

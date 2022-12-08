@@ -157,6 +157,14 @@ function errorToast(type , msg)
     $('#udprogress')[0].style.display = 'none';
 }
 
+function successToast(msg) {
+    $('#successToastText').html(msg);
+    $('#successToast').addClass('show');
+    setTimeout(function () {
+        $('#successToast').removeClass('show');
+    }, 2000);
+}
+
 // calculation functions
 
 function formatBytes(bytes, decimals) {
@@ -242,6 +250,7 @@ function fetchFolder(folderName,callback,opt) {
                 _current_folder_path = response.data.fullPath;
                 _previous_folder_path = response.data.folderPath;
                 _current_folder_id = response.data.folderId;
+                _current_folder_name = response.data.folderName;
             }
             _last_requested_folder_response = response.data;
             callback(response.data.subFolders);
@@ -266,6 +275,11 @@ function removeFolder(folderName,callback) {
 // :UPDATE:FOLDER:
 function updateFolder(type,data,folderId,folderName,callback){
     let payload = {}; payload.data = {};
+
+    payload.folderPath = _current_folder_path;
+    payload.folderName = folderName;
+    payload.folderId = folderId;
+
     if(type == 'name'){
         payload.data.folderName = data;
         if (payload.data.folderName == null || payload.data.folderName == '') {
@@ -281,12 +295,13 @@ function updateFolder(type,data,folderId,folderName,callback){
             callback(false,{error:'Folder name Must contain atleast one letter or number'}); return;
         }
     } else if(type == 'location'){
-        payload.data.folderPath = data;
+        payload.data.folderPath = _current_folder_path;
+        payload.data.folderId = _current_folder_id;
+        payload.folderPath = data.path;
+        payload.folderId = data.id;
+        payload.folderName = data.name;
     } else{ callback(false,'Not a valid update type'); return; }
 
-    payload.folderPath = _current_folder_path;
-    payload.folderName = folderName;
-    payload.folderId = folderId;
     request('/app/u/folder',payload,'PATCH',(response)=>{
         callback(response);
     });
@@ -314,7 +329,7 @@ function deleteFile(fileId, callback, opt) {
     request("app/u/file", payload, 'DELETE', (response) => {
         if (response.status == 'success') {
             callback();
-        } else alert(response.data);
+        } else errorToast('Request Aborted', 'Error occured while deleting file');
     }, opt
     );
 }
@@ -327,7 +342,6 @@ function createFolderDuringUpload(path,newDirsName,callback,showProgress){
         multiple: true,
         force: true
     };
-    console.log(payload);
     request("app/u/folder", payload, 'POST', (response) => {
         callback(response);
     },showProgress);
