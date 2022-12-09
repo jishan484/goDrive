@@ -249,7 +249,7 @@ function fetchFolder(folderName,callback,opt) {
             if(response.data.fullPath != undefined){
                 _current_folder_path = response.data.fullPath;
                 _previous_folder_path = response.data.folderPath;
-                _current_folder_id = response.data.folderId;
+                _current_folder_id = response.data.id;
                 _current_folder_name = response.data.folderName;
             }
             _last_requested_folder_response = response.data;

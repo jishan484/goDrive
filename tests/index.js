@@ -2,6 +2,7 @@ const fs = require('fs');
 const db = require('../database');
 
 async function runAllTests(){
+    await db.init_database();
     let testFiles = fs.readdirSync(__dirname);
     testFiles = testFiles.filter((elem)=>{
         return elem != 'assert.js' && elem != 'index.js';
@@ -12,15 +13,7 @@ async function runAllTests(){
     }
 }
 
-if(db.status){
-    setTimeout(() => {
-        runAllTests();
-    }, 100);
-} else {
-    setTimeout(()=>{
-        runAllTests();
-    },1800);
-}
+runAllTests();
 
 
 async function wait() {

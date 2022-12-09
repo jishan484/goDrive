@@ -475,7 +475,6 @@ async function uploadFolders(){
     _checkDupCompleteCounter = 0;
     $('#fileList').html('<center>Preparing files! Pleaese wait.</center>');
     await createFoldersForUpload();
-    console.log('done');
     await setTimeout(() => {}, 9000);
     for (let i = 0; i < _consicutiveUploadsCounter; i++) {
         _currentUploadsCounter++;
@@ -549,7 +548,6 @@ function uploadFolderHandler(startIndex) {
                 uploadFolderHandler(_currentUploadsCounter);
             }
             else {
-                console.log(resp);
                 let status = handelUploadError(resp.status, resp.statusText, resp.readyState,resp);
                 if(!status) {
                     _checkForDuplicateUpload = true;
@@ -560,7 +558,6 @@ function uploadFolderHandler(startIndex) {
             }
         }, startIndex, false);
     }
-    console.log('No drive found!');
 }
 
 
@@ -619,7 +616,6 @@ $("#formFileMultiple").change(function () {
 });
 
 $("#formFolderMultiple").change(function () {
-    console.log('ooo')
     _currentUploadFolder = _current_folder_path;
     _totalUploadedFiles = 0;
     _totalUploadableFiles = formFolderMultiple.files.length;

@@ -170,4 +170,11 @@ FEATURE: folder upload
     -> not prioritized
     -> priority: low
     -> ETA: 30 days
+
+   folder upload bug:
+    -> retry logic is not implemented
+    -> upload progress not completes if upload is failed for any reason
+    -> retry failed upload 2 times then give up [show error message optional]
+    -> priority: high
+    -> ETA: 3 days
     

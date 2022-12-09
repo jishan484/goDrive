@@ -75,7 +75,7 @@ drives = {
 }
 
 
-function initDrives(){
+function initDrives(resolve){
     driveInfo.getAll((storages)=>{
         if(storages){
             for(let i=0;i<storages.length;i++) {
@@ -103,13 +103,14 @@ function initDrives(){
                 };
                 drives.push(driveObj);
             }
-            initDrive(0);
+            initDrive(0, resolve);
         }
     });
 }
 
-function initDrive(index=0){
+function initDrive(index=0, resolve){
     if(index >= drives.length()) {
+        resolve();
         return;
     }
     let drive = drives.get(index);
@@ -121,14 +122,14 @@ function initDrive(index=0){
                 drive.freeSpace = gdrive.freeSpace;
                 drive.token = undefined;
                 drive.status = 'Active';
-                initDrive(index+1);
+                initDrive(index+1, resolve);
             } else {
                 drive.status = 'Deactive';
                 log.log('error', 'Drive intializantion failed!');
             }
         });
     } else {
-        initDrive(index + 1);
+        initDrive(index + 1, resolve);
     }
 }
 
@@ -140,7 +141,9 @@ module.exports = class Drive{
     }
 
     init(){
-        initDrives();
+        return new Promise((resolve, reject) => {
+            initDrives(resolve);
+        });
     }
     // get drive based on free space
     getDrive(fileSize){

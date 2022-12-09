@@ -134,7 +134,6 @@ class UserService {
                     overwrite: true,
                     secure: (SyatemConfig != undefined && SyatemConfig.secureCookie != undefined) ? SyatemConfig.secureCookie : true
                 });
-                console.log('cookie refreshed')
             }
             return true;
         } catch (err) {

@@ -78,6 +78,7 @@ async function updateFolderPathTest() {
 
         let folderService = require('../service/folderService');
         folderService.updateFolder(data,async (status, message) => {
+            console.log(status,message);
             assert.equals(status, true);
             db.all('SELECT * FROM Folders where owner="test" and folderName="Test38"',(err,rows)=>{
                 assert.equals(rows[0].fullPath,'/home/Test378/testMaster/Test38');

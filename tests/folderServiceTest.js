@@ -101,13 +101,14 @@ async function updateFolderTest2() {
         data.body.folderName = 'Test';
         data.body.folderPath = '/home';
         data.body.data.folderName = 'test';
-        data.body.data.folderPath = '/home/demo';
+        data.body.data.folderPath = '/home/demor';
 
         let userService = require('../service/userService');
         data.cookies.seid = userService.getUserToken({ user: 'test' });
 
         let folderService = require('../service/folderService');
         folderService.updateFolder(data,async (status, message) => {
+            console.log(status, message);
             assert.equals(status, false);
             assert.equals(message, 'New folder location is not valid!');
             resolve(true);

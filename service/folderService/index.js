@@ -30,9 +30,10 @@ class FolderService {
         let folderId = data.folderId;
         let folderPath = data.folderPath;
         let parentFolderPath = data.parentFolderPath;
+        let parentFolderId = data.parentFolderId;
         // one fullPath for parentDri and another one for targeted dir
-        db.all("SELECT * FROM Folders where ( fullPath = ? or fullPath = ? or folderPath= ? or folderId = ? ) and owner = ?",
-            [fullPath, folderPath, parentFolderPath, folderId, owner], (err, row) => {
+        db.all("SELECT * FROM Folders where ( fullPath = ? or fullPath = ? or folderPath= ? or folderId = ? or folderId = ? ) and owner = ?",
+            [fullPath, folderPath, parentFolderPath, folderId, parentFolderId, owner], (err, row) => {
                 if (err) {
                     log.log("error",err);
                     callback(false);
@@ -194,7 +195,7 @@ class FolderService {
                     return;
                 }
                 if(isRoot){
-                    folders.folderId = "0";
+                    folders.id = "0";
                     folders.folderPath = "/home";
                     folders.fullPath = "/home";
                     folders.folderName = "home";
@@ -398,7 +399,7 @@ class FolderService {
             return;
         }
         if (oldData.fullPath == '/home') {
-            callback(false, 'Permission Denied! This is a read-only foder!');
+            callback(false, 'Permission Denied! This is a read-only folder!');
             return;
         }
         //update which needs propagation
@@ -409,12 +410,15 @@ class FolderService {
             if (req.body.data.permissions != undefined || req.body.data.priority != undefined ||
                 req.body.data.accesses != undefined) {
                 callback(false, 'Folder permission can not be changed with Name and Location update!'); return;
-            }
-            this.getFolderByPath({ fullPath: oldData.fullPath,folderPath:req.body.data.folderPath, parentFolderPath: req.body.folderPath, folderId: oldData.folderId, owner: oldData.owner }, (results) => {
+            }            
+            this.getFolderByPath({ fullPath: oldData.fullPath, folderPath: req.body.data.folderPath, parentFolderPath: req.body.data.folderPath, parentFolderId: req.body.data.folderId, folderId: oldData.folderId, owner: oldData.owner }, (results) => {
                 let result = null , targetFolderPath = {};
+                if(req.body.data.folderPath == '/home' || req.body.data.folderId == '0'){
+                    targetFolderPath = { id: '0', folderName: 'home', folderPath: '/', fullPath: '/home' };
+                }
                 for (let i = 0; i < results.length; i++) {
                     if (results[i].fullPath == oldData.fullPath || results[i].folderId == oldData.folderId) {
-                        result = results[i]; if(req.body.data.folderPath == undefined) break;
+                        result = results[i]; if(req.body.data.folderPath == undefined) continue;
                     }
                     if(results[i].fullPath == req.body.data.folderPath){
                         targetFolderPath = results[i];
@@ -427,9 +431,12 @@ class FolderService {
                 if (req.body.data.folderPath != undefined && targetFolderPath.folderPath == undefined && req.body.data.folderPath != '/home'){
                     callback(false,"New folder location is not valid!"); return;
                 }
-                if (req.body.data.folderPath != undefined && targetFolderPath.folderPath == result.fullPath) {
+                if ((req.body.data.folderPath != undefined || req.body.data.folderId != undefined) 
+                    && (targetFolderPath.fullPath.search(result.fullPath+"/") != -1)
+                    || (targetFolderPath.fullPath == result.fullPath)) {
                     callback(false, "New folder location is inside the source folder"); return;
                 }
+
                 // check and prepare update statement
                 if(req.body.data.folderName != undefined){
                     statement.push('folderName=?');

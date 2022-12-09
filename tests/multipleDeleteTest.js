@@ -1,23 +1,27 @@
-let Drive = require('../utilities/driveUtil/index');
-let async = require('async');
-let driveutil = new Drive();
-driveutil.init();
-let drive = null;
+// let Drive = require('../utilities/driveUtil/index');
+// let async = require('async');
+// let driveutil = new Drive();
+// driveutil.init();
+// let drive = null;
 
-setTimeout(() => {
-    // all tests sequentially
-    drive = driveutil.getDrive(100).drive;
-    // console.log(drive);
-    // print access token
-    let res1,res2;
-    uploadFileTest().then((res)=>{
-        res1 = res;
-        uploadFileTest().then((res)=>{
-            res2 = res;
-            deleteFileTest(res1,res2);
-        });
-    });
-}, 8000);
+module.exports.Test = () => {
+    // nothing to test here 
+}
+
+// setTimeout(() => {
+//     // all tests sequentially
+//     drive = driveutil.getDrive(100).drive;
+//     // console.log(drive);
+//     // print access token
+//     let res1,res2;
+//     uploadFileTest().then((res)=>{
+//         res1 = res;
+//         uploadFileTest().then((res)=>{
+//             res2 = res;
+//             deleteFileTest(res1,res2);
+//         });
+//     });
+// }, 8000);
 
 
 function uploadFileTest(){
