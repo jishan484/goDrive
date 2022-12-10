@@ -67,7 +67,17 @@ function upload(file,path,callback,tracker,showProgress=true,checkDuplicate=fals
         error: (request, status, error) => {
             processError(request, 0);
             completeHandler(null);
-            callback(false, request, tracker);
+            if (request.responseText != undefined && request.responseText != null){
+                let data = null;
+                try{
+                    data = JSON.parse(request.responseText);
+                    callback(true, data, tracker);
+                } catch(e){
+                    callback(false, request, tracker);
+                }
+            } else {
+                callback(false, request, tracker);
+            }
         }
     });
     // _globalUPjaxB = _globalUPjax;
@@ -136,6 +146,16 @@ function processError(request , code){
             break;
         case 500:
             errorToast('Internal Server Error', 'Something went wrong on the server. Please try again later.');
+            break;
+        case 503:
+            errorToast('Service Unavailable', 'The server is currently unable to handle the request!');
+            break;
+        case 507:
+            break;
+        case 502:
+            break;
+        case 504:
+            errorToast('Gateway Timeout', 'The server is currently unable to handle the request!');
             break;
         default:
             errorToast('Network Error', 'It seems you are currently ofline! Please check your network.');

@@ -49,11 +49,12 @@ function uploadFile(req, res) {
     req.on('close',()=>{
         req.unpipe();
     });
-    fileService.uploadFile(req, (status, data) => {
+    fileService.uploadFile(req, (status, data,code=502) => {
         if (status) {
             res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
         } else {
-            res.status(200).json({ status: 'error', data: null, error: data, code: '204' }).end();
+            res.set("connection", "close");
+            res.status(code).json({ status: 'error', data: null, error: data, code: '204' }).end();
         }
     });
 }

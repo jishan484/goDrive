@@ -259,13 +259,13 @@ class FileService {
                 }
             });
         } else {
-            driveService.uploadFile(req, (status, data) => {
+            driveService.uploadFile(req, (status, data, code = 507) => {
                 if (status == true && req.body.chunked == false) {
-                    this.saveFile(req, (status, data) => {
+                    this.saveFile(req, (status, data , code = 500) => {
                         if (status) {
                             callback(true, data);
                         } else {
-                            callback(false, data);
+                            callback(false, data, code);
                         }
                     });
                 }
@@ -273,7 +273,7 @@ class FileService {
                     //insert into Parts table and also inset the details to Files table
                     req.body.driveId = 'CHUNKED';
                     req.body.nodeId = "CH" + Date.now().toString(36)+'-'+Math.floor(Math.random() * 100000000).toString(36);  // from random generator  // from random generator
-                    this.saveFile(req, (status, data) => {
+                    this.saveFile(req, (status, data, code = 500) => {
                         if (status) {
                             let callbackCount = 0, totalPartCount = req.body.nodesInfo.length;
                             req.body.nodesInfo.forEach(partInfo => {
@@ -284,18 +284,18 @@ class FileService {
                                         callback(true, data);
                                     }
                                     if (!status) {
-                                        callback(false, 'Failed to save in DB!');
+                                        callback(false, 'Failed to save a chunk in DB!', 500);
                                         callbackCount -= 100;
                                     }
                                 })
                             });
                         } else {
-                            callback(false, data);
+                            callback(false, data, code);
                         }
                     });
                 }
                 else {
-                    callback(false, data);
+                    callback(false, data, code);
                 }
             });
         }

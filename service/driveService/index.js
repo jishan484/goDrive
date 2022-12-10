@@ -115,10 +115,10 @@ class DriveService{
                     uploader.clearUploads();
                 });
             } else {
-                callback(false, 'Storage full! File can not be saved!');
+                callback(false, 'Storage full! File can not be saved!', 507);
             }
         } else if (this.driveUtil.drives.length() == 0){
-            callback(false, 'There is no active Drive found!');
+            callback(false, 'There is no active Drive found!', 503);
         }else{
             let iscancelled = false;
             drive.set(parseInt(req.headers['content-length']));
@@ -146,7 +146,7 @@ class DriveService{
                     drive.update(parseInt(req.body.fileSize));
                     callback(true,'File uploaded');
                 } else{
-                    callback(false,'Failed to save this file! code : ERRDRV');
+                    callback(false,'Failed to save this file in Drive!', 502);
                 }
             });
         }

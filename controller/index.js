@@ -5,8 +5,9 @@ const app = express();
 const port = process.env.PORT || 8000;
 const parser = express.json();
 
+
+app.use((req,res,next)=> ignoreParsing(req) ? next() : parser(req, res, next))
 app.use(express.urlencoded({ extended: true }));
-app.use((req,res,next)=> ignoreParsing(req) ? next() : parser(req, res, next));
 app.use(cookieParser());
 
 app.use((req, res, next) => {

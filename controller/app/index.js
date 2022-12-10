@@ -38,21 +38,35 @@ function checkAuth(req,res,next){
             }
 
             req.on('data', (data) => {
-                req.socket.destroy();
+                setTimeout(()=>{
+                    req.unpipe();
+                    req.socket.destroy();
+                },100);
             });
-            res.status(401).send({ status: 'failed', error: "Unauthorized", code: '401' });
+            res.set("connection", "close");
+            res.status(403).send({
+                uri: RouterConfig.force_login_redirect_uris,
+                error: "You are not logged in!",
+                code: "403",
+                data: null
+            }).end();
         }
     }
     else {
         req.on('data', (data) => {
-            req.socket.destroy();
+            setTimeout(()=>{
+                req.unpip
+                req.socket.destroy();
+            },100);
         });
+        res.set("connection", "close");
         res.status(403).send({
             uri: RouterConfig.force_login_redirect_uris,
             error: "You are not logged in!",
             code: "403",
             data: null
-        });
+        }).end();
+        
         return;
     }
 }
