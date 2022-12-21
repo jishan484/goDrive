@@ -108,7 +108,6 @@ async function updateFolderTest2() {
 
         let folderService = require('../service/folderService');
         folderService.updateFolder(data,async (status, message) => {
-            console.log(status, message);
             assert.equals(status, false);
             assert.equals(message, 'New folder location is not valid!');
             resolve(true);

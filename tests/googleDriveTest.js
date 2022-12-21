@@ -29,7 +29,7 @@ async function getDrivesTest(){
         assert.notNull(res);
         assert.equals(res.length>0,true);
         if (drive.drives.ActiveDrives.length == 1){
-            console.log('skiping getDrivesTest');
+            console.log(' [TLOG]   Skiping getDrivesTest (total drives: 1)');
             return;
         }
         if(res.length == 1){

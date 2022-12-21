@@ -12,6 +12,25 @@ class FileService {
 
     // -------------------------------------ENTITIES--------------------------------------------//
 
+    get(data, callback) {
+        let fileId = data.fileId;
+        let owner = data.owner;
+        let filePath = data.filePath;
+        let fileName = data.fileName;
+        let parentFolderId = data.parentFolderId;
+        let driveId = data.driveId;
+        
+        db.all('SELECT * FROM Files WHERE (fileId = ? or filePath = ? or fileName = ? or parentFolderId = ? or driveId = ?) and owner = ?', [fileId, filePath, fileName, parentFolderId, driveId, owner], (err, row) => {
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
+            else {
+                callback(row);
+            }
+        });
+    }
+
     getByFolder(data, callback) {
         let folderId = data.folderId;
         let filePath = data.filePath;
@@ -96,17 +115,8 @@ class FileService {
         }
     }
 
-    update(data, callback) {
-        let folderId = data.folderId;
-        let folderName = data.folderName;
-        let owner = data.owner;
-        let parentFolderId = data.parentFolderId;
-        let filePath = data.filePath;
-        let permissions = data.permissions;
-        let accesses = data.accesses;
-        let priority = data.priority;
-        let folderPath = data.folderPath;
-        db.run('UPDATE Folders SET folderName = ?, parentFolderId = ?, filePath = ?, permissions = ?, accesses = ?, priority = ?, folderPath = ? WHERE folderId = ? and owner = ?', [folderName, parentFolderId, filePath, permissions, accesses, priority, folderPath, folderId, owner], (err) => {
+    update(statement, datas, callback) {
+        db.run('UPDATE Files SET ' + statement + ' WHERE fileId = ?', datas, (err) => {
             if (err) {
                 callback(false);
                 log.log("error", err);
@@ -429,6 +439,72 @@ class FileService {
                     count++;
                 });
             })
+        });
+    }
+
+    // {fileId, owner, filePath, fileName, updates}
+    // updates = {fileName, filePath, fileFormat, access, star} | access = {RW,W,R} | star = {true,false}
+    // Currently only one file can be updated at a time if similar name is found in same directory
+    // TODO: requirement analysis for multiple files update
+
+    updateFile(req, callback){
+        let requestedData = {};
+        requestedData.fileId = req.body.fileId;
+        requestedData.owner = userService.getUserName(req.cookies.seid);
+        requestedData.filePath = req.body.filePath;
+        requestedData.fileName = req.body.fileName;
+        
+        if ((requestedData.filePath == undefined && requestedData.fileName == undefined) && requestedData.fileId == undefined) {
+            callback(false, "Missing parameters: (filePath and fileName) or fileId");
+            return;
+        }
+        if(req.body.updates == undefined || req.body.updates == null){
+            callback(false, "Missing parameters: updates");
+            return;
+        }
+        this.get(requestedData, (rows) => {
+            if (rows == undefined || rows.length == 0) {
+                callback(false, 'File Not Found!');
+                return;
+            } else{
+                let statement = [];
+                let dataset = [];
+                if(req.body.updates.fileName != undefined && req.body.updates.fileName != rows[0].fileName){
+                    statement.push('fileName = ?');
+                    dataset.push(req.body.updates.fileName);
+                }
+                if(req.body.updates.filePath != undefined && req.body.updates.filePath != rows[0].filePath){
+                    statement.push('filePath = ?');
+                    dataset.push(req.body.updates.filePath);
+                }
+                if(req.body.updates.fileFormat != undefined && req.body.updates.fileFormat != rows[0].fileFormat){
+                    statement.push('fileFormat = ?');
+                    dataset.push(req.body.updates.fileFormat);
+                }
+                if(req.body.updates.access != undefined && req.body.updates.access != rows[0].access){
+                    statement.push('access = ?');
+                    dataset.push(req.body.updates.access);
+                }
+                if(req.body.updates.star != undefined && req.body.updates.star != rows[0].star){
+                    statement.push('star = ?');
+                    dataset.push(req.body.updates.star);
+                }
+
+                if(statement.length == 0){
+                    callback(false, 'No updates found!');
+                    return;
+                }
+
+                statement.push('modifiedOn = CURRENT_TIMESTAMP');
+                dataset.push(rows[0].fileId);
+                this.update(statement, dataset, (status)=>{
+                    if(status == true){
+                        callback(true, 'File details updated');
+                    }else{
+                        callback(false, 'System failed to update the file!');
+                    }
+                });
+            }
         });
     }
 

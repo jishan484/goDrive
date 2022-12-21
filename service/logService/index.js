@@ -16,7 +16,7 @@ module.exports = logs={
                 console.log("\x1b[41m", this.logLevelMap[logLevel],"\x1b[0m", "\x1b[35m", message, "\x1b[0m");
             }
             else if(logLevel == 'warn'){
-                console.log("\x1b[46m", this.logLevelMap[logLevel],"\x1b[0m", message);
+                console.log("\x1b[46m", this.logLevelMap[logLevel],"\x1b[0m ", message);
             }
             else if(logLevel == 'fatal'){
                 console.log("\x1b[41m", this.logLevelMap[logLevel],"\x1b[0m", "\x1b[31m", message, "\x1b[0m");

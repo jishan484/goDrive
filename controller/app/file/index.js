@@ -7,6 +7,7 @@ const log = require('../../../service/logService/index.js');
 router.get('/', getFile);
 router.get('/download', downloadFile); //download file/s by id or (filename and folder name)
 router.post('/', uploadFile);
+router.patch('/', updateFile);
 router.delete('/',deleteFile);
 
 module.exports = router;
@@ -80,6 +81,16 @@ function downloadFile(req,res){
 
 function deleteFile(req , res){
     fileService.deleteFile(req, (status, data) => {
+        if (status) {
+            res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
+        } else {
+            res.status(200).json({ status: 'error', data: null, error: data, code: '204' }).end();
+        }
+    });
+}
+
+function updateFile(req, res) {
+    fileService.updateFile(req, (status, data) => {
         if (status) {
             res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
         } else {
