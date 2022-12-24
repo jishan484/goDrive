@@ -30,8 +30,8 @@ function credentials_initialize(){
             cred = JSON.parse(cred);
             credentials = cred;
         } catch (e) {
-            console.log(e)
-            log.log('error', 'Google oAuth2 credential found! But there is a error in JSON format!');
+            log.log('error', 'Google oAuth2 credential found! But there is an error in JSON format!');
+            log.log('error', e);
         }
     }
 }
