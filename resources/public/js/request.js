@@ -294,29 +294,29 @@ function removeFolder(folderName,callback) {
 
 // :UPDATE:FOLDER:
 function updateFolder(type,data,folderId,folderName,callback){
-    let payload = {}; payload.data = {};
+    let payload = {}; payload.updates = {};
 
     payload.folderPath = _current_folder_path;
     payload.folderName = folderName;
     payload.folderId = folderId;
 
     if(type == 'name'){
-        payload.data.folderName = data;
-        if (payload.data.folderName == null || payload.data.folderName == '') {
+        payload.updates.folderName = data;
+        if (payload.updates.folderName == null || payload.updates.folderName == '') {
             callback(false,{error:'Folder name cannot be empty'}); return;
         }
-        else if (!payload.data.folderName.match(/^[a-zA-Z0-9_.]+.+/)) {
+        else if (!payload.updates.folderName.match(/^[a-zA-Z0-9_.]+.+/)) {
             callback(false,{error:'Folder name cannot start with special characters'}); return;
         }
-        else if (payload.data.folderName.match(/[^a-zA-Z0-9-_\\+\\. \\(){}"':\[\]]/)) {
+        else if (payload.updates.folderName.match(/[^a-zA-Z0-9-_\\+\\. \\(){}"':\[\]]/)) {
             callback(false,{error:'Folder name contains invalid characters'}); return;
         }
-        else if (payload.data.folderName.match(/^[._]+$/)) {
+        else if (payload.updates.folderName.match(/^[._]+$/)) {
             callback(false,{error:'Folder name Must contain atleast one letter or number'}); return;
         }
     } else if(type == 'location'){
-        payload.data.folderPath = _current_folder_path;
-        payload.data.folderId = _current_folder_id;
+        payload.updates.folderPath = _current_folder_path;
+        payload.updates.folderId = _current_folder_id;
         payload.folderPath = data.path;
         payload.folderId = data.id;
         payload.folderName = data.name;
@@ -352,6 +352,33 @@ function deleteFile(fileId, callback, opt) {
         } else errorToast('Request Aborted', 'Error occured while deleting file');
     }, opt
     );
+}
+
+// :UPDATE:FILE:
+function updateFile(type, update, fileId, fileName, callback) {
+
+    let payload = {}; payload.updates = {};
+
+    payload.filePath = _current_folder_path;
+    payload.fileName = fileName;
+    payload.fileId = fileId;
+
+    if (type == 'name') {
+        payload.updates.fileName = update;
+        if (payload.updates.fileName == null || payload.updates.fileName == '') {
+            callback(false, { error: 'File name cannot be empty' }); return;
+        }
+    } else if (type == 'location') {
+        payload.updates.filePath = _current_folder_path;
+        payload.updates.parentFolderId = _current_folder_id;
+        payload.fileId = update.id;
+        payload.filePath = update.path;
+        payload.fileName = update.name;
+    } else { callback(false, 'Not a valid update type'); return; }
+
+    request('/app/u/file', payload, 'PATCH', (response) => {
+        callback(response);
+    });
 }
 
 function createFolderDuringUpload(path,newDirsName,callback,showProgress){

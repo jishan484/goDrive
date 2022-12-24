@@ -25,7 +25,7 @@ function renderFolders(folders) {
                                     <li><div class="dropdown-item" onclick="folderOpen('${folders[i].folderName}')">Open</div></li>
                                     <li><div class="dropdown-item" onclick="folderOpen('${folders[i].folderName}')">Share</div></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><div class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editModel" onclick="renderFolderRenameModel('${folders[i].folderId}')">Rename</div></li>
+                                    <li><div class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editModel" onclick="renderFolderRenameModel('${folders[i].folderId}','${folders[i].folderName}')">Rename</div></li>
                                     <li><div class="dropdown-item" onclick="folderCopyMove('${folders[i].folderId}')">Move</div></li>
                                     <li><div class="dropdown-item" onclick="folderDelete('${folders[i].folderName}')">Delete</div></li>
                                     <li><hr class="dropdown-divider"></li>
@@ -66,13 +66,13 @@ function renderFiles(files) {
                        </div>
                        <ul class="dropdown-menu folderOption" data-popper-placement="bottom-start">
                             <li><div class="dropdown-item" onclick="fileDownload('${files[i].fileId}')">Download</div></li>
-                            <li><div class="dropdown-item" onclick="folderOpen('${files[i].fileId}')">Share</div></li>
+                            <li><div class="dropdown-item" onclick="fileShare('${files[i].fileId}')">Share</div></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><div class="dropdown-item" onclick="folderRenme('${files[i].fileId}')">Rename</div></li>
-                            <li><div class="dropdown-item" onclick="folderCopyMove('${files[i].fileId}')">Move</div></li>
+                            <li><div class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editModel" onclick="renderFileUpdateModel('${files[i].fileId}','${files[i].fileName}','rename')">Rename</div></li>
+                            <li><div class="dropdown-item" onclick="fileCopyMove('${files[i].fileId}')">Move</div></li>
                             <li><div class="dropdown-item" onclick="fileDelete('${files[i].fileId}')">Delete</div></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><div class="dropdown-item" onclick="folderUpdatePermission('${files[i].fileId}')">Update permissions</div></li>
+                            <li><div class="dropdown-item" onclick="fileUpdatePermission('${files[i].fileId}')">Update permissions</div></li>
                        </ul>
                    </div>
                    <div class="small file-name">${files[i].fileName}</div>
@@ -178,12 +178,12 @@ function renderUploadProgress()
     $('#fileList').html(html);
 }
 
-function renderFolderRenameModel(folderId){
+function renderFolderRenameModel(folderId, folderName){
     let html = 
     `<div class="row">
      <div class="col mb-3">
        <label for="nameWithTitle" class="form-label"> Folder Name</label>
-       <input type="text" id="editModelInput1" class="form-control" placeholder="Enter New Folder Name">
+       <input type="text" id="editModelInput1" class="form-control" placeholder="Enter New Name" value="${folderName}">
      </div>
    </div>
    <div class="row g-2">
@@ -191,15 +191,52 @@ function renderFolderRenameModel(folderId){
    </div>`;
     $('#modelEditBody').html(html);
     html = `<button type="button" class="btn btn-outline-secondary" id='editModelClose' data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" onclick="folderRename('${folderId}')">Update Name</button>`;
+            <button type="button" class="btn btn-primary" onclick="folderRename('${folderId}')">Rename</button>`;
     $('#modelEditActions').html(html);
-    $('#modalEditCenterTitle').html('Edit Folder Name');
+    $('#modalEditCenterTitle').html('Edit <span style="color:#696cff;">'+folderName+'</span>');
     setTimeout(() => { $('#editModelInput1').focus(); },500);
 }
 
 function folderRename(folderId){
     folderName = $("#editModelInput1").val();
     updateFolderName(folderName , folderId);
+}
+
+function renderFileUpdateModel(fileId, fileName, updateType) {
+    let html =
+        `<div class="row">
+     <div class="col mb-3">`;
+       if(updateType == 'rename'){
+           html += 
+        `<label for="nameWithTitle" class="form-label"> File Name</label>
+         <input type="text" id="editModelInput1" class="form-control" placeholder="Enter New Name" value="${fileName}">`;
+         }else {
+            html+=
+        `<label for="nameWithTitle" class="form-label"> File Permission</label>
+         <input type="radio" id="editModelInput2" class="form-control" placeholder="Enter New Title">`;
+         }
+   html+=
+     `</div>
+   </div>
+   <div class="row g-2">
+     <div class="col mb-0 small" id="editModelError"></div>
+   </div>`;
+
+    $('#modelEditBody').html(html);
+    html = `<button type="button" class="btn btn-outline-secondary" id='editModelClose' data-bs-dismiss="modal">Close</button>`;
+    if(updateType == 'rename'){
+           html += `<button type="button" class="btn btn-primary" onclick="fileRename('${fileId}')">Rename</button>`;
+    }else {
+           html += `<button type="button" class="btn btn-primary" onclick="folderRename('${fileId}')">Update</button>`;
+    }
+    $('#modelEditActions').html(html);
+    $('#modalEditCenterTitle').html('Edit <span style="color:#696cff;">' + fileName + '</span>');
+    setTimeout(() => { $('#editModelInput1').focus(); }, 500);
+}
+
+function fileRename(fileId) {
+    fileName = $("#editModelInput1").val();
+    updateFileName(fileName, fileId);
 }
 
 
@@ -311,26 +348,51 @@ function folderCopyMove(folderId) {
     }, 250);
 }
 
+function fileCopyMove(fileId) {
+    _currentClipboard.active = true;
+    _currentClipboard.type = 'file';
+    _currentClipboard.id = fileId;
+    _currentClipboard.path = _current_folder_path;
+    successToast("Paste the file in new location");
+    // hide the folder options
+    setTimeout(() => {
+        $('.folderOption').removeClass('show');
+    }, 250);
+}
+
 function pasteClipboard() {
     if (!_currentClipboard.active) return;
+    if(_currentClipboard.type == 'folder'){
+       updateFolder('location', _currentClipboard, null, null, pasteClipboardCallback);
+    }else if(_currentClipboard.type == 'file'){
+       updateFile('location', _currentClipboard, _currentClipboard.id, null, pasteClipboardCallback);
+    }
+}
 
-    updateFolder('location', _currentClipboard, null, null, (response) => {
-        if (response.status != 'error') {
-            successToast("Folder moved successfully");
-            $('.folderBodyOption').removeClass('show');
-            _currentClipboard.active = false;
-            _currentClipboard.type = null;
-            _currentClipboard.id = null;
-            _currentClipboard.path = null;
+function pasteClipboardCallback(response){
+    if (response.status != 'error') {
+        successToast(_currentClipboard.type.charAt(0).toUpperCase()+_currentClipboard.type.substring(1)+" moved successfully");
+        $('.folderBodyOption').removeClass('show');
+        if(_currentClipboard.type == 'folder') {
             fetchFolder('', (folders) => {
                 if (folders) {
                     renderFolders(folders);
                 }
             }, false);
         } else {
-            successToast(response.error);
+            loadFiles('', (files) => {  //ioio
+                if (files) {
+                    renderFiles(files);
+                }
+            });
         }
-    });
+        _currentClipboard.active = false;
+        _currentClipboard.type = null;
+        _currentClipboard.id = null;
+        _currentClipboard.path = null;
+    } else {
+        successToast(response.error);
+    }
 }
 
 function loadFiles(folderName)
@@ -695,6 +757,17 @@ function fileDelete(fileId){
     deleteFile(fileId,()=>{
         loadFiles();
     },true);
+}
+
+function updateFileName(name, fileId) {
+    updateFile('name', name, fileId, null, (response) => {
+        if (response.status != 'error') {
+            $("#editModelClose").click();
+            loadFiles();
+        } else {
+            $("#editModelError").html(response.error);
+        }
+    });
 }
 
 function updateFolderName(name , folderId , folderName){

@@ -76,11 +76,11 @@ async function deleteFolderTest(){
 async function updateFolderTest(){
     return new Promise((resolve) => {
         let data = {};
-        data.body = {}; data.body.data = {}; data.cookies = {};
+        data.body = {}; data.body.updates = {}; data.cookies = {};
         data.body.folderName = 'Test';
         data.body.folderPath = '/home';
-        data.body.data.folderName = 'test';
-        data.body.data.folderPath = '/home';
+        data.body.updates.folderName = 'test';
+        data.body.updates.folderPath = '/home';
 
         let userService = require('../service/userService');
         data.cookies.seid = userService.getUserToken({ user: 'test' });
@@ -97,11 +97,11 @@ async function updateFolderTest(){
 async function updateFolderTest2() {
     return new Promise((resolve) => {
         let data = {};
-        data.body = {}; data.body.data = {}; data.cookies = {};
+        data.body = {}; data.body.updates = {}; data.cookies = {};
         data.body.folderName = 'Test';
         data.body.folderPath = '/home';
-        data.body.data.folderName = 'test';
-        data.body.data.folderPath = '/home/demor';
+        data.body.updates.folderName = 'test';
+        data.body.updates.folderPath = '/home/demor';
 
         let userService = require('../service/userService');
         data.cookies.seid = userService.getUserToken({ user: 'test' });
@@ -119,11 +119,11 @@ async function updateFolderTest2() {
 async function updateFolderTest3() {
     return new Promise((resolve) => {
         let data = {};
-        data.body = {}; data.body.data = {}; data.cookies = {};
+        data.body = {}; data.body.updates = {}; data.cookies = {};
         data.body.folderName = 'Test33';
         data.body.folderPath = '/home/Test';
-        data.body.data.folderName = 'Test2';
-        data.body.data.folderPath = '/home';
+        data.body.updates.folderName = 'Test2';
+        data.body.updates.folderPath = '/home';
 
         let userService = require('../service/userService');
         data.cookies.seid = userService.getUserToken({ user: 'test' });
@@ -152,10 +152,10 @@ async function updateFolderTest3() {
 async function updateFolderTest3a() {
     return new Promise((resolve) => {
         let data = {};
-        data.body = {}; data.body.data = {}; data.cookies = {};
+        data.body = {}; data.body.updates = {}; data.cookies = {};
         data.body.folderName = 'Test4';
         data.body.folderPath = '/home';
-        data.body.data.folderPath = '/home/Test2';
+        data.body.updates.folderPath = '/home/Test2';
 
         let userService = require('../service/userService');
         data.cookies.seid = userService.getUserToken({ user: 'test' });
@@ -184,11 +184,11 @@ async function updateFolderTest3a() {
 async function updateFolderTest3b() {
     return new Promise((resolve) => {
         let data = {};
-        data.body = {}; data.body.data = {}; data.cookies = {};
+        data.body = {}; data.body.updates = {}; data.cookies = {};
         data.body.folderName = 'Test4';
         data.body.folderPath = '/home/Test2/Test4';
-        data.body.data.folderName = 'Test454';
-        data.body.data.folderPath = '/home/Test2';
+        data.body.updates.folderName = 'Test454';
+        data.body.updates.folderPath = '/home/Test2';
 
         let userService = require('../service/userService');
         data.cookies.seid = userService.getUserToken({ user: 'test' });
@@ -217,12 +217,12 @@ async function updateFolderTest3b() {
 async function updateFolderTest4() {
     return new Promise((resolve) => {
         let data = {};
-        data.body = {}; data.body.data = {}; data.cookies = {};
+        data.body = {}; data.body.updates = {}; data.cookies = {};
         data.body.folderName = 'Test';
         data.body.folderPath = '/home';
-        data.body.data.folderName = 'test';
-        data.body.data.folderPath = '/home/Test';
-        data.body.data.permissions = 'RW';
+        data.body.updates.folderName = 'test';
+        data.body.updates.folderPath = '/home/Test';
+        data.body.updates.permissions = 'RW';
 
         let userService = require('../service/userService');
         data.cookies.seid = userService.getUserToken({ user: 'test' });
@@ -239,7 +239,7 @@ async function updateFolderTest4() {
 async function updateFolderTest5() {
     return new Promise((resolve) => {
         let data = {};
-        data.body = {}; data.body.data = {}; data.cookies = {};
+        data.body = {}; data.body.updates = {}; data.cookies = {};
         data.body.folderName = 'Test';
         data.body.folderPath = '/home';
 

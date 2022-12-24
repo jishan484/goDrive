@@ -146,13 +146,13 @@ class FolderService {
         let folderId = data.folderId;
         let owner = data.owner;
 
-        db.run('DELETE FROM Folders WHERE ( folderId = ? or fullPath like ? ) and owner = ?', [folderId,fullPath+"%",owner], (err) => {
+        db.run('DELETE FROM Folders WHERE ( folderId = ? or fullPath = ? or fullPath like ? ) and owner = ?', [folderId, fullPath,fullPath+"/%",owner], (err) => {
             if (err){
                 callback(false);
                 log.log("error",err);
             }
             else {
-                db.run('UPDATE Files SET isDeleted=1 WHERE filePath like ? and owner = ?', [fullPath + "%", owner], (err) => {
+                db.run('UPDATE Files SET isDeleted=1 WHERE (filePath= ? or filePath like ?) and owner = ?', [fullPath, fullPath + "/%", owner], (err) => {
                     if (err) {
                         callback(false);
                         log.log("error", err);
@@ -362,8 +362,8 @@ class FolderService {
         data.folderId = req.body.folderId;
         data.folderType = req.body.folderId;
         data.owner = userService.getUserName(req.cookies.seid);
-
-        //check request params
+        //[BUG FIXED] : if folderId is not provided then it will delete all folders with same name
+        //[TODO] : delete folder by folderId : [for external API]
         this.delete(data, (result) => {
             if(result){
                 callback(true,"Folder deleted successfully!");
@@ -390,11 +390,11 @@ class FolderService {
             return;
         }
         // few validation before checking updated data
-        if (req.body.data == undefined) {
+        if (req.body.updates == undefined) {
             callback(false, 'Updates are not mentioned!');
             return;
         }
-        if (Object.keys(req.body.data).length == 0){
+        if (Object.keys(req.body.updates).length == 0){
             callback(false,'No valid changes menioned for this folder!');
             return;
         }
@@ -403,24 +403,30 @@ class FolderService {
             return;
         }
         //update which needs propagation
-        if(req.body.data.folderName != undefined || req.body.data.folderPath != undefined){
-            if(req.body.data.folderPath == req.body.folderPath){
+        if(req.body.updates.folderName != undefined || req.body.updates.folderPath != undefined){
+            if(req.body.updates.folderPath == req.body.folderPath){
                 callback(false,'New folder Location and Old folder Location is same!'); return;
             }
-            if (req.body.data.permissions != undefined || req.body.data.priority != undefined ||
-                req.body.data.accesses != undefined) {
+            if (req.body.updates.permissions != undefined || req.body.updates.priority != undefined ||
+                req.body.updates.accesses != undefined) {
                 callback(false, 'Folder permission can not be changed with Name and Location update!'); return;
-            }            
-            this.getFolderByPath({ fullPath: oldData.fullPath, folderPath: req.body.data.folderPath, parentFolderPath: req.body.data.folderPath, parentFolderId: req.body.data.folderId, folderId: oldData.folderId, owner: oldData.owner }, (results) => {
+            }
+            if (req.body.updates.folderPath == undefined) {
+                req.body.updates.folderPath = req.body.folderPath;
+            }
+            if (req.body.updates.folderId == undefined) {
+                req.body.updates.folderId = req.body.folderId;
+            }
+            this.getFolderByPath({ fullPath: oldData.fullPath, folderPath: req.body.updates.folderPath, parentFolderPath: req.body.updates.folderPath, parentFolderId: req.body.updates.folderId, folderId: oldData.folderId, owner: oldData.owner }, (results) => {
                 let result = null , targetFolderPath = {};
-                if(req.body.data.folderPath == '/home' || req.body.data.folderId == '0'){
+                if(req.body.updates.folderPath == '/home' || req.body.updates.folderId == '0'){
                     targetFolderPath = { id: '0', folderName: 'home', folderPath: '/', fullPath: '/home' };
                 }
                 for (let i = 0; i < results.length; i++) {
                     if (results[i].fullPath == oldData.fullPath || results[i].folderId == oldData.folderId) {
-                        result = results[i]; if(req.body.data.folderPath == undefined) continue;
+                        result = results[i]; if(req.body.updates.folderPath == undefined) continue;
                     }
-                    if(results[i].fullPath == req.body.data.folderPath){
+                    if(results[i].fullPath == req.body.updates.folderPath){
                         targetFolderPath = results[i];
                     }
                 }
@@ -428,26 +434,26 @@ class FolderService {
                 if(result == undefined || result == null){
                     callback(false, "Sourse folder is not valid!"); return;
                 }
-                if (req.body.data.folderPath != undefined && targetFolderPath.folderPath == undefined && req.body.data.folderPath != '/home'){
+                if (req.body.updates.folderPath != undefined && targetFolderPath.folderPath == undefined && req.body.updates.folderPath != '/home'){
                     callback(false,"New folder location is not valid!"); return;
                 }
-                if ((req.body.data.folderPath != undefined || req.body.data.folderId != undefined) 
+                if ((req.body.updates.folderPath != undefined || req.body.updates.folderId != undefined) 
                     && (targetFolderPath.fullPath.search(result.fullPath+"/") != -1)
                     || (targetFolderPath.fullPath == result.fullPath)) {
                     callback(false, "New folder location is inside the source folder"); return;
                 }
 
                 // check and prepare update statement
-                if(req.body.data.folderName != undefined){
+                if(req.body.updates.folderName != undefined){
                     statement.push('folderName=?');
-                    dataset.push(req.body.data.folderName);
-                    newData.folderName = req.body.data.folderName;
+                    dataset.push(req.body.updates.folderName);
+                    newData.folderName = req.body.updates.folderName;
                 }
-                if (req.body.data.folderPath != undefined) {
+                if (req.body.updates.folderPath != undefined) {
                     statement.push('folderPath=?');
-                    dataset.push(req.body.data.folderPath);
-                    newData.folderPath = req.body.data.folderPath;
-                    if(req.body.data.folderPath == '/home'){
+                    dataset.push(req.body.updates.folderPath);
+                    newData.folderPath = req.body.updates.folderPath;
+                    if(req.body.updates.folderPath == '/home'){
                         statement.push('parentFolderId = ?');
                         dataset.push("0");
                     } else {
@@ -456,9 +462,9 @@ class FolderService {
                     }
                 }
 
-                newData.fullPath = (req.body.data.folderPath != undefined)?req.body.data.folderPath:result.folderPath
+                newData.fullPath = (req.body.updates.folderPath != undefined)?req.body.updates.folderPath:result.folderPath
                 newData.fullPath +='/'
-                newData.fullPath +=(req.body.data.folderName!=undefined)?req.body.data.folderName:result.folderName;
+                newData.fullPath +=(req.body.updates.folderName!=undefined)?req.body.updates.folderName:result.folderName;
                 statement.push('fullPath= ? ');
                 dataset.push(newData.fullPath);
 
@@ -489,19 +495,19 @@ class FolderService {
                 });
             });
         }else{
-            if (req.body.data.permissions != undefined) {
+            if (req.body.updates.permissions != undefined) {
                 statement.push('permissions = ?');
-                newData.push(req.body.data.permissions);
+                newData.push(req.body.updates.permissions);
                 propagate = false;
             }
-            if (req.body.data.folderAccess != undefined) {
+            if (req.body.updates.folderAccess != undefined) {
                 statement.push('accesses = ?');
-                newData.push(req.body.data.folderAccess);
+                newData.push(req.body.updates.folderAccess);
                 propagate = false;
             }
-            if (req.body.data.priority != undefined) {
+            if (req.body.updates.priority != undefined) {
                 statement.push('priority = ?');
-                newData.push(req.body.data.priority);
+                newData.push(req.body.updates.priority);
                 propagate = false;
             }
             dataset.push(oldData.folderId);

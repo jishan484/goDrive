@@ -85,9 +85,10 @@ async function updateFileTest() {
         let data = {};
         data.body = {}; data.body.updates = {}; data.cookies = {};
         data.body.fileName = 'Test.txt';
-        data.body.folderPath = '/home';
+        data.body.filePath = '/home';
         data.body.updates.fileName = 'test.txt';
         data.body.updates.filePath = '/home/test';
+        data.body.updates.parentFolderId = 'DV088';
 
         let userService = require('../service/userService');
         data.cookies.seid = userService.getUserToken({ user: 'test' });
@@ -96,6 +97,9 @@ async function updateFileTest() {
         fileService.updateFile(data, async (status, message) => {
             assert.equals(status, true);
             assert.equals(message == 'File details updated', true);
+            if (!status) {
+                console.log(message);
+            }
             resolve(true);
         });
     });
@@ -106,7 +110,7 @@ async function updateFileTest2() {
         let data = {};
         data.body = {}; data.body.updates = {}; data.cookies = {};
         data.body.fileName = 'test.txt';
-        data.body.folderPath = '/home/test';
+        data.body.filePath = '/home/test';
         data.body.updates.fileName = 'test.txt';
         data.body.updates.filePath = '/home/test';
 
@@ -127,7 +131,7 @@ async function updateFileTest3() {
         let data = {};
         data.body = {}; data.body.updates = {}; data.cookies = {};
         data.body.fileName = 'Test.txt';
-        data.body.folderPath = '/home';
+        data.body.filePath = '/home';
         data.body.updates.fileName = 'test.txt';
         data.body.updates.filePath = '/home/test';
 
@@ -148,7 +152,7 @@ async function updateFileTest4() {
         let data = {};
         data.body = {}; data.body.updates = {}; data.cookies = {};
         data.body.fileName = 'test.txt';
-        data.body.folderPath = '/home/test';
+        data.body.filePath = '/home/test';
         data.body.updates.fileName = 'Test.txt';
 
         let userService = require('../service/userService');

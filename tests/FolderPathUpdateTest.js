@@ -67,11 +67,11 @@ async function createFolderTest3() {
 async function updateFolderPathTest() {
     return new Promise((resolve) => {
         let data = {};
-        data.body = {}; data.body.data = {}; data.cookies = {};
+        data.body = {}; data.body.updates = {}; data.cookies = {};
         data.body.folderName = 'Test37';
         data.body.folderPath = '/home';
-        data.body.data.folderName = 'testMaster';
-        data.body.data.folderPath = '/home/Test378';
+        data.body.updates.folderName = 'testMaster';
+        data.body.updates.folderPath = '/home/Test378';
 
         let userService = require('../service/userService');
         data.cookies.seid = userService.getUserToken({ user: 'test' });
@@ -81,6 +81,29 @@ async function updateFolderPathTest() {
             assert.equals(status, true);
             db.all('SELECT * FROM Folders where owner="test" and folderName="Test38"',(err,rows)=>{
                 assert.equals(rows[0].fullPath,'/home/Test378/testMaster/Test38');
+                resolve(true);
+            });
+        });
+    });
+}
+
+async function updateFolderPathTest2() {
+    return new Promise((resolve) => {
+        let data = {};
+        data.body = {}; data.body.updates = {}; data.cookies = {};
+        data.body.folderName = 'Test37';
+        data.body.folderPath = '/home';
+        data.body.updates.folderName = 'testMaster';
+        data.body.updates.folderPath = '/home/Test378';
+
+        let userService = require('../service/userService');
+        data.cookies.seid = userService.getUserToken({ user: 'test' });
+
+        let folderService = require('../service/folderService');
+        folderService.updateFolder(data, async (status, message) => {
+            assert.equals(status, false);
+            db.all('SELECT * FROM Folders where owner="test" and folderName="Test38"', (err, rows) => {
+                assert.equals(rows[0].fullPath, '/home/Test378/testMaster/Test38');
                 resolve(true);
             });
         });

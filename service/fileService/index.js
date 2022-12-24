@@ -20,7 +20,7 @@ class FileService {
         let parentFolderId = data.parentFolderId;
         let driveId = data.driveId;
         
-        db.all('SELECT * FROM Files WHERE (fileId = ? or filePath = ? or fileName = ? or parentFolderId = ? or driveId = ?) and owner = ?', [fileId, filePath, fileName, parentFolderId, driveId, owner], (err, row) => {
+        db.all('SELECT * FROM Files WHERE (fileId = ? or (filePath = ? and fileName = ?))and owner = ?', [fileId, filePath, fileName, owner], (err, row) => {
             if (err) {
                 callback(false);
                 log.log("error", err);
@@ -130,7 +130,7 @@ class FileService {
     delete(data, callback){
         let fileId = data.fileId;
         let owner = data.owner;
-        db.run('DELETE FROM Files WHERE fileId = ? and owner = ?', [fileId, owner], (err, row) => {
+        db.run('DELETE FROM Files WHERE fileId = ? and owner = ?', [fileId, owner], (err) => {
             if (err) {
                 callback(false);
                 log.log("error", err);
@@ -472,10 +472,25 @@ class FileService {
                 if(req.body.updates.fileName != undefined && req.body.updates.fileName != rows[0].fileName){
                     statement.push('fileName = ?');
                     dataset.push(req.body.updates.fileName);
+                    // checking if format is changed
+                    if(req.body.updates.fileName.split('.').length > 1){
+                        statement.push('fileFormat = ?');
+                        dataset.push(req.body.updates.fileName.split('.').pop());
+                    }
                 }
                 if(req.body.updates.filePath != undefined && req.body.updates.filePath != rows[0].filePath){
                     statement.push('filePath = ?');
                     dataset.push(req.body.updates.filePath);
+                    if(req.body.updates.filePath != '/home' && (req.body.updates.parentFolderId == undefined || req.body.updates.parentFolderId == null) ) {
+                        statement.push('parentFolderId = (SELECT folderId FROM Folders where fullPath= ? and owner= ? )')
+                        dataset.push(req.body.updates.filePath);
+                        dataset.push(requestedData.owner);
+                    } else if(req.body.updates.parentFolderId != undefined && req.body.updates.parentFolderId != null){
+                        statement.push('parentFolderId = ?');
+                        dataset.push(req.body.updates.parentFolderId);
+                    } else {
+                        statement.push('parentFolderId = 0');
+                    }
                 }
                 if(req.body.updates.fileFormat != undefined && req.body.updates.fileFormat != rows[0].fileFormat){
                     statement.push('fileFormat = ?');
@@ -496,7 +511,7 @@ class FileService {
                 }
 
                 statement.push('modifiedOn = CURRENT_TIMESTAMP');
-                dataset.push(rows[0].fileId);
+                dataset.push(rows[0].fileId); // for where clause
                 this.update(statement, dataset, (status)=>{
                     if(status == true){
                         callback(true, 'File details updated');
