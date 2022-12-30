@@ -8,9 +8,14 @@ module.exports.keyValidator = {
     },
     getToken(seed, key) {
         // hash the seed with the key without using extra libraries
-        var hash = 0, i, chr, len, key_char;
+        var hash = 0, i, chr, len, key_char,tmp="";
+        var dateSign = Date.now().toString(36).substring(0, 5);
         var auth = "";
         if (seed.length == 0) return hash;
+        for (i = 0, len = seed.length; i < len; i++) {
+            tmp += seed.charAt(i) ^ dateSign.charAt(i % dateSign.length);
+        }
+        seed = tmp;
         for (i = 0, len = seed.length; i < len; i++) {
             chr = seed.charCodeAt(i);
             key_char = key.charCodeAt(i % key.length);

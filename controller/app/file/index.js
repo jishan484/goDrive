@@ -66,12 +66,29 @@ function downloadFile(req,res){
         log.log("error", "File download timeout : " + req.query.fileId +" : fileName : " + req.query.fileName);
     },34900);
     req.body = req.query;
+    req.connection.setNoDelay(true);
+    res.connection.setNoDelay(true);
     fileService.downloadFile(req,(status,data)=>{
         clearTimeout(timeout);
         if (status) {
             res.set('Content-Disposition',' attachment; filename="'+req.body.fileName+'"');
             res.set('Content-Length', req.body.fileSize);
+            data._readableState.highWaterMark = 320000;
+            data._writableState.highWaterMark = 320000;
+            res.socket._readableState.highWaterMark = 320000;
+            res.connection._readableState.highWaterMark = 320000;
+            res.socket._writableState.highWaterMark = 320000;
+            res.connection._writableState.highWaterMark = 320000;
+            
             data.pipe(res);
+            res.on('close',()=>{
+                data.unpipe();
+                data.end();
+            });
+            res.on('finish',()=>{
+                data.unpipe();
+                data.end();
+            });
         } else {
             res.status(200).json({ status: 'error', data: null, error: data, code: '204' }).end();
         }

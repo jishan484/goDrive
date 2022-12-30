@@ -1,5 +1,7 @@
 $.ajaxSetup({
-    headers: { 'xauthtoken': _getToken() }
+    beforeSend: function (xhr) {
+        xhr.setRequestHeader('xauthtoken', _getToken());
+    }
 });
 
 window.addEventListener('online', () => _systemOnlineStatus = true);
