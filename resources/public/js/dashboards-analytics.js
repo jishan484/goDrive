@@ -12,8 +12,7 @@ function renderStorageStatus(){
   data.colors = []
   getStorageStatus((result) => {
     result.totalSizeCalc = formatBytes(result.totalSize);
-    let fileTypes = result.fileTypes
-
+    let fileTypes = result.fileTypes;
     for(let i = 0; i < fileTypes.length; i++){
       data.labels.push(fileTypes[i].fileType);
       data.values.push(fileTypes[i].count);
