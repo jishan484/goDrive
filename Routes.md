@@ -3,14 +3,14 @@
 
 | API | GET | POST | PUT  | DELETE | DEVELOPED | TESTED |
 | :----- | :-: | :-: | :-: | :-: | :-: | :-: |
-| /app/auth | Yes | Yes | Yes | Yes | Yes | No |
+| /app/auth | Yes | Yes | Yes | Yes | Yes | Yes |
 | /app/u/user/:id | Yes | No | No | No | No | No |
 | /app/u/profile | Yes | No | Yes | No | No | No |
 | /app/u/user/config | Yes | Yes | Yes | No | No | No |
-| /app/u/folder | Yes | Yes | Yes | Yes | No | No |
-| /app/u/file | Yes | Yes | Yes | Yes | No | No |
+| /app/u/folder | Yes | Yes | Yes | Yes | Yes | Yes |
+| /app/u/file | Yes | Yes | Yes | Yes | Yes | Pending |
 | /app/u/file/share | Yes | Yes | Yes | Yes | No | No |
-| /app/u/statistic | Yes | Yes | No | No | No | No |
+| /app/u/status | Yes | TBD | No | No | No | No |
 | /app/u/ftp | Yes | No | Yes | No | No | No |
 | /common/config | Yes | No | Yes | No | No | No |
 | /common/content | Yes | No | Yes | No | No | No |
@@ -62,3 +62,8 @@ please refer to the `UI-element.md` file for more details.
 User-story: #5
 []: # File share process
 -> Users with `USER_L2` permission can share files with other users. Users can also unshare files with other users. Users can also view the shared files.
+
+user-story: #6
+[]: # User stats process
+-> Users with `USER_L1` permission can view the user stats. User stats include the total number of files uploaded by the user , total number of files shared by the user , total number of files downloaded by the user, total file size grouped by fileType
+-> Users with `USER_L2` permission can view all the user stats as mentioned above, and also the total number of files shared with other users.

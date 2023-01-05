@@ -31,7 +31,7 @@ function userLogin(req, res) {
 
 function userLogout(req, res) {
     userService.userLogout(res);
-    res.redirect(RouterConfig.force_login_redirect_uris);
+    res.redirect(RouterConfig.force_login_redirect_urn);
 }
 
 

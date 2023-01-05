@@ -4,10 +4,10 @@ const userService = require('./../../service/userService');
 const { RouterConfig } = require('./../../SystemConfig');
 
 router.use("/auth", require("./auth.js"));
-router.use("/u/status", require("./status"));
 
 router.use("/u/*", checkAuth);
 
+router.use("/u/status", require("./status"));
 router.use("/u/folder", require("./folder"));
 router.use("/u/file", require("./file"));
 
@@ -45,7 +45,7 @@ function checkAuth(req,res,next){
             });
             res.set("connection", "close");
             res.status(403).send({
-                uri: RouterConfig.force_login_redirect_uris,
+                uri: RouterConfig.force_login_redirect_urn,
                 error: "You are not logged in!",
                 code: "403",
                 data: null
@@ -61,7 +61,7 @@ function checkAuth(req,res,next){
         });
         res.set("connection", "close");
         res.status(403).send({
-            uri: RouterConfig.force_login_redirect_uris,
+            urn: RouterConfig.force_login_redirect_urn,
             error: "You are not logged in!",
             code: "403",
             data: null
