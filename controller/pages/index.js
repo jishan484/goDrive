@@ -30,7 +30,7 @@ router.get('/home', (req, res) => {
     if (userService.isLoggedIn(req)) {
         res.sendFile(path.resolve('resources/views/home.html'));
     } else {
-        res.redirect(RouterConfig.force_login_redirect_uris);
+        res.redirect(RouterConfig.force_login_redirect_urn);
     }
 });
 

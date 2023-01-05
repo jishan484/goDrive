@@ -59,6 +59,8 @@ function upload(file,path,callback,tracker,showProgress=true,checkDuplicate=fals
         contentType: false,
         processData: false,
         success: (data, text) => {
+            if (onSuccessUpload != undefined && onSuccessUpload != null)
+                onSuccessUpload(file,data);
             try{
                 data = JSON.parse(data);
             } catch(e){
@@ -394,4 +396,13 @@ function createFolderDuringUpload(path,newDirsName,callback,showProgress){
     request("app/u/folder", payload, 'POST', (response) => {
         callback(response);
     },showProgress);
+}
+
+// :STATUS:STORAGE:
+function getStorageStatus(callback) {
+    request("app/u/status/storage", {}, 'GET', (response) => {
+        if (response.status == 'success') {
+            callback(response.data);
+        }
+    });
 }
