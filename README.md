@@ -16,7 +16,7 @@ Admin account :
 Demo User :
     username : demo
     password : Mifi@User
-(please do change password of Admin and delete demo user after testing)
+(Please change admin password and delete demo user after testing)
 (TODO: give a option during installation for that)
 ````
 
