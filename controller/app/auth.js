@@ -15,7 +15,7 @@ module.exports = router;
 
 function userLogin(req, res) {
     if (userService.isLoggedIn(req)) {
-        res.redirect(RouterConfig.home_page_uri);
+        res.redirect(RouterConfig.home_page_urn);
     }
     else {
         userService.userLogin(req, res , (status)=>{

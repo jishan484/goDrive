@@ -3,6 +3,8 @@ const RouterConfig = {
     force_login_redirect_urn : "/"
     // uri for home page for MiFi file storage
    ,home_page_urn : '/home',
+    // uri for admin home page
+    admin_home_page_urn : '/admin/home',
     // port to listen if not provided in command line/ env variable
     // priority : command line > env variable > default_port
     default_port : 8080,

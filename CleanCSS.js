@@ -12,6 +12,9 @@ loadClassAndTags('resources/views/home.html');
 loadClassAndTags('resources/views/login.html');
 loadClassAndTags('resources/views/register.html');
 loadClassAndTags('resources/views/demo.html');
+// loadClassAndTags('resources/views/404.html');
+// loadClassAndTags('resources/views/500.html');
+loadClassAndTags('resources/views/deniedAccess.html');
 
 //setting some default classes / tags / css properties[dont delete]
 setDefaultCSSBlocks();

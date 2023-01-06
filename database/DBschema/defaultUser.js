@@ -1,3 +1,6 @@
+// username : DemoUser
+// password : Mifi@User
+
 module.exports = {
     version: '1.0.0',
     QueryId: 'Default_user_001',  // Unique ID for every changes
@@ -5,5 +8,5 @@ module.exports = {
     query:
         `INSERT INTO Users 
         (userName, password, accessToken, role, createdOn, profile)
-        VALUES ('jishan', '753e1a97603fabbbfeaa00274c7e6fc6459580b52560e6b06aa68870744b4c4b', 'admin', 'admin', CURRENT_TIMESTAMP, '')`,
+        VALUES ('DemoUser', '7fd6597564869248ab50f5f24a6002bb39861d6a343e543024338d3c33f5bed9', 'user', 'user1', CURRENT_TIMESTAMP, '')`,
 }

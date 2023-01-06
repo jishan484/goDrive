@@ -122,6 +122,9 @@ function initDrive(index=0, resolve){
                 drive.freeSpace = gdrive.freeSpace;
                 drive.token = undefined;
                 drive.status = 'Active';
+                if(resolve == undefined || resolve == null){
+                    resolve = function(){};
+                }
                 initDrive(index+1, resolve);
             } else {
                 drive.status = 'Deactive';

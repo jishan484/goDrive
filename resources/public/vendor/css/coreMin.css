@@ -454,6 +454,7 @@ box-shadow: 0 2px 20px 0 rgba(67, 89, 113, 0.45);
 .order-0 {order: 0 !important;}
 .m-0 {margin: 0 !important;}
 .m-2 {margin: 0.5rem !important;}
+.mx-2 {margin-right: 0.5rem !important;margin-left: 0.5rem !important;}
 .mt-3 {margin-top: 1rem !important;}
 .mb-0 {margin-bottom: 0 !important;}
 .mb-1 {margin-bottom: 0.25rem !important;}

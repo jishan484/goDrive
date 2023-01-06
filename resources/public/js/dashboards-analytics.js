@@ -81,8 +81,8 @@ function renderStorageStatus(){
                 fontFamily: 'Public Sans',
                 color: config.colors.headingColor,
                 offsetY: -15,
-                formatter: function (val) {
-                  return Math.round(val / result.totalFileCount * 100) + '%';
+                formatter: function (val, w) {
+                  return Math.round(val / w.globals.totalValue * 100) + '%';
                 }
               },
               name: {
@@ -95,8 +95,8 @@ function renderStorageStatus(){
                 color: config.colors.axisColor,
                 label: 'Total Files',
                 formatter: function (w) {
-                  if(w.globals.totalValue == undefined)
-                    w.globals.totalValue = result.totalFileCount;
+                  if(w.globals.totalValue == undefined || w.globals.totalValue == 0)
+                      w.globals.totalValue = (result.totalFileCount == undefined) ? 0 : result.totalFileCount;
                   return w.globals.totalValue;
                 }
               }
@@ -107,6 +107,9 @@ function renderStorageStatus(){
     };
 
     chart = new ApexCharts(document.querySelector("#orderStatisticsChart"), options);
+    if (chart.w.globals.totalValue == undefined){
+      chart.w.globals.totalValue = 0;
+    }
     chart.render();
   });
 }
@@ -129,7 +132,6 @@ onSuccessUpload = function (file){
     data.push(1);
     labels.push(fileType);
   }
-  console.log(data, labels);
   chart.w.globals.totalValue += 1;
   global_storage_status.totalSize += fileSizes;
   $('#totalUsedSpaceValue').html(formatBytes(global_storage_status.totalSize));
