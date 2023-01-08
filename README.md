@@ -1,4 +1,6 @@
 # gofile
+
+## This project is currently in development phase. Please start with a new database if you are pull new version. Otherwise it could break. After 1 week of feb 2023, you dont have to do this as the initial development will be completed by then.
 a nodejs cloud drive [connect multiple google drive / ftp]
 
 example site : https://mifi.glitch.me <br>
@@ -19,4 +21,7 @@ Demo User :
 (Please change admin password and delete demo user after testing)
 (TODO: give a option during installation for that)
 ````
+
+# Documentation
+Will be available after mid Feb 2023.
 
