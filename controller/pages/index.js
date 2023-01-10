@@ -58,7 +58,7 @@ router.get('/admin/home',(req,res)=>{
     }else if(userService.isLoggedIn(req) && !userService.isAdmin(req)){
         res.sendFile(path.resolve('resources/views/deniedAccess.html'));
     }else{
-        res.redirect(RouterConfig.force_login_redirect_urn);
+        res.redirect(RouterConfig.force_login_redirect_urn_admin);
     }
 });
 

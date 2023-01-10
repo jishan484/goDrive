@@ -30,8 +30,16 @@ function userLogin(req, res) {
 }
 
 function userLogout(req, res) {
+    if(!userService.isLoggedIn(req)){
+        res.redirect(RouterConfig.force_login_redirect_urn);
+        return;
+    }
     userService.userLogout(res);
-    res.redirect(RouterConfig.force_login_redirect_urn);
+    if (userService.isUser(req)){
+        res.redirect(RouterConfig.force_login_redirect_urn);
+    } else {
+        res.redirect(RouterConfig.force_login_redirect_urn_admin);
+    }
 }
 
 

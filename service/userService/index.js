@@ -65,7 +65,22 @@ class UserService {
     verifyUser(data, callback) {
         let user = data.user;
         let password = crypto.createHash('sha256').update(data.password + UserConfig.salt).digest('hex');
-        db.get('SELECT * FROM Users WHERE userName = ? AND password = ?', [user, password], (err, row) => {
+        db.get('SELECT * FROM Users WHERE userName = ? AND password = ? and role in ("user1","user2","user_vip")', [user, password], (err, row) => {
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
+            else {
+                if (row == undefined && row != false) callback(false);
+                else callback(true, row);
+            }
+        });
+    }
+
+    verifyAdmin(data, callback) {
+        let user = data.user;
+        let password = crypto.createHash('sha256').update(data.password + UserConfig.salt).digest('hex');
+        db.get('SELECT * FROM Users WHERE userName = ? AND password = ? and role in ("super_admin","admin")', [user, password], (err, row) => {
             if (err) {
                 callback(false);
                 log.log("error", err);
@@ -173,26 +188,44 @@ class UserService {
     }
 
     userLogin(req, res, callback) {
-        this.verifyUser(req.body, (status, userInfo) => {
-            if (status) {
-                let token = this.getUserToken(req.body, userInfo.role);
-                res.cookie('seid', token, {
-                    httpOnly: (SyatemConfig != undefined && SyatemConfig.onlyHTTPCookie != undefined) ? SyatemConfig.onlyHTTPCookie : true,
-                    maxAge: (SyatemConfig != undefined && SyatemConfig.cookieMaxAge != undefined) ? SyatemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
-                    sameSite: true,
-                    secure: (SyatemConfig != undefined && SyatemConfig.secureCookie != undefined) ? SyatemConfig.secureCookie : true
-                });
-                callback(true);
-            }
-            else {
-                callback(false);
-            }
-        });
+        if(req.body.accountType != undefined && req.body.accountType == 'admin'){
+            this.verifyAdmin(req.body, (status, userInfo) => {
+                if (status) {
+                    let token = this.getUserToken(req.body, userInfo.role);
+                    res.cookie('seid', token, {
+                        httpOnly: (SyatemConfig != undefined && SyatemConfig.onlyHTTPCookie != undefined) ? SyatemConfig.onlyHTTPCookie : true,
+                        maxAge: (SyatemConfig != undefined && SyatemConfig.cookieMaxAge != undefined) ? SyatemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
+                        sameSite: true,
+                        secure: (SyatemConfig != undefined && SyatemConfig.secureCookie != undefined) ? SyatemConfig.secureCookie : true
+                    });
+                    callback(true);
+                }
+                else {
+                    callback(false);
+                }
+            });
+        } else {
+            this.verifyUser(req.body, (status, userInfo) => {
+                if (status) {
+                    let token = this.getUserToken(req.body, userInfo.role);
+                    res.cookie('seid', token, {
+                        httpOnly: (SyatemConfig != undefined && SyatemConfig.onlyHTTPCookie != undefined) ? SyatemConfig.onlyHTTPCookie : true,
+                        maxAge: (SyatemConfig != undefined && SyatemConfig.cookieMaxAge != undefined) ? SyatemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
+                        sameSite: true,
+                        secure: (SyatemConfig != undefined && SyatemConfig.secureCookie != undefined) ? SyatemConfig.secureCookie : true
+                    });
+                    callback(true);
+                }
+                else {
+                    callback(false);
+                }
+            });
+        }
     }
 
     userRegister(req, res, callback) {
         if (UserConfig != undefined && UserConfig.userRegisteration == false){
-            callback(false, 'New user signup is not allowed!');
+            callback(false, 'New user signup is not allowed! please contact admin('+UserConfig.adminEmail+').');
             return;
         }
         req.body.userProfilePic = '';
@@ -216,7 +249,7 @@ class UserService {
                 );
             }
             else{
-                callback(false, 'UserName not allowed / already exist!');
+                callback(false, 'UserName not allowed or already exist! Please choose another username.');
             }
         });
     }
