@@ -15,8 +15,12 @@ class DriveService{
         this.driveUtil.init();
         log.log('debug','Drive Manager service initialized!');
     }
+    // getter for driveUtil object
+    getDriveUtil(){
+        return this.driveUtil;
+    }
 
-    getAllDrive(callback){
+    getAllDrives(callback){
         if (this.driveUtil.drives.ActiveDrives.length == 0){
             callback(false,'No Drive available!')
         }

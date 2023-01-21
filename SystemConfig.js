@@ -3,7 +3,7 @@ const RouterConfig = {
     force_login_redirect_urn : "/",
     force_login_redirect_urn_admin : "/admin",
     // uri for home page for MiFi file storage
-   home_page_urn : '/home',
+    home_page_urn : '/home',
     // uri for admin home page
     admin_home_page_urn : '/admin/home',
     // port to listen if not provided in command line/ env variable

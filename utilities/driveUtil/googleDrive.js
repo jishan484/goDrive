@@ -96,11 +96,18 @@ module.exports = class GoogleDrive extends Storage{
         }).then(data => {
             this.displayName = data.data.user.emailAddress;
             this.freeSpace = (data.data.storageQuota.limit - data.data.storageQuota.usage);
-            // this.freeSpace = (this.displayName[0] == 'd') ? 10000000 : 1000; // for chunk upload test only
             this.storageInfo.image = data.data.user.photoLink;
             this.storageInfo.displayName = data.data.user.displayName;
             this._setup(callback);
         }).catch(err => log.log("error",err));
+    }
+
+    refresh(){
+        this.driveService.about.get({
+            fields: 'storageQuota'
+        }).then(data => {
+            this.freeSpace = (data.data.storageQuota.limit - data.data.storageQuota.usage);
+        }).catch(err => log.log("error", err));
     }
 
     _setup(callback){

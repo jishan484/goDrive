@@ -1,6 +1,6 @@
 # gofile
 
-## This project is currently in development phase. Please start with a new database if you are pulling new version. Otherwise it could break. After 1 week of feb 2023, you dont have to do this as the initial development will be completed by then.
+## This project is currently in development phase. Please start with a new database if you are pulling new version. Otherwise it can break. After 3nd week of feb 2023, you dont have to do this as the initial development will be completed by then.
 a nodejs cloud drive [connect multiple google drive / ftp]
 
 example site : https://mifi.glitch.me <br>
@@ -14,6 +14,8 @@ and then run ````npm start````
 Admin account :
     username : admin
     password : Mifi@Admin
+    url : http or https://sitename/admin (eg: http://localhost/admin )
+    [can be modified. Check SystemConfig.js -> RouterConfig]
 
 Demo User :
     username : demo

@@ -127,7 +127,7 @@ function initDrive(index=0, resolve){
                 }
                 initDrive(index+1, resolve);
             } else {
-                drive.status = 'Deactive';
+                drive.status = 'Inactive';
                 log.log('error', 'Drive intializantion failed!');
             }
         });

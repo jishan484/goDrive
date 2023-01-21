@@ -4,7 +4,7 @@ const driveService = require("./../../../service/driveService");
 
 router.post('/', addDrive);
 router.get('/callback', addDriveCallback);
-router.get('/',getAllDrive);
+router.get('/',getAllDrives);
 
 module.exports = router;
 
@@ -36,8 +36,8 @@ function addDriveCallback(req,res){
     })
 }
 
-function getAllDrive(req,res){
-    driveService.getAllDrive((status,data)=>{
+function getAllDrives(req,res){
+    driveService.getAllDrives((status,data)=>{
         if (status) {
             res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
         } else {

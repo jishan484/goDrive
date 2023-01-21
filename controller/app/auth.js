@@ -23,7 +23,7 @@ function userLogin(req, res) {
                 res.status(200).send({ status: 'success', error: null, code: '200' });
             }
             else {
-                res.status(200).send({ status: 'failed', error: "Username and Password not matched", code: '204' });
+                res.status(200).send({ status: 'failed', error: "Incorrect username or password entered! Please try again.", code: '204' });
             }
         });
     }
