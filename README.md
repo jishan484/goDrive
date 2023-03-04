@@ -18,7 +18,7 @@ Admin account :
     [can be modified. Check SystemConfig.js -> RouterConfig]
 
 Demo User :
-    username : demo
+    username : DemoUser
     password : Mifi@User
 (Please change admin password and delete demo user after testing)
 (TODO: give a option during installation for that)

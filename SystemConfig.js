@@ -44,5 +44,13 @@ const DatabaseConfig = {
     port: 3306, //depends on db type [mysql:3306,postgreSQL:5432]
 }
 
+const appConfig = {
+    userLogin: true,
+    userSignup: true,
+    logging: true,
+    tasks: true,
+    maintenance: false
+}
 
-module.exports = { RouterConfig, UserConfig, SyatemConfig, DatabaseConfig };
+
+module.exports = { RouterConfig, UserConfig, SyatemConfig, DatabaseConfig, appConfig };

@@ -1,0 +1,60 @@
+<div class="content-wrapper">
+  <!-- Content -->
+  <div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+      <div class="col-md-6 col-12 mb-md-0 mb-4" id="connectedDrives">
+        <div class="card">
+          <h5 class="card-header">Connected Drives</h5>
+          <div class="card-body">
+            <p>Loading connected drives...</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-12">
+        <div class="card">
+          <h5 class="card-header">Add new</h5>
+          <div class="card-body">
+            <!-- Google Drive -->
+            <div class="d-flex mb-3">
+              <div class="flex-shrink-0">
+                <img src="../img/icons/brands/google.png" alt="google drive" class="me-3" height="30">
+              </div>
+              <div class="flex-grow-1 row">
+                <div class="col-8 col-sm-7 mb-sm-0 mb-2">
+                  <h6 class="mb-0">Google Drive</h6>
+                  <small class="text-muted">Add a new google drive</small>
+                </div>
+                <div class="col-4 col-sm-5 text-end">
+                  <button type="button" class="btn btn-icon btn-outline-secondary" onclick="AddNewGDrive()">
+                    <i class="bx bx-link-alt"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- google drive end -->
+            <!-- FTP drive -->
+            <div class="d-flex mb-3">
+              <div class="flex-shrink-0">
+                <img src="../img/icons/brands/ftp.png" alt="twitter" class="me-3" height="30">
+              </div>
+              <div class="flex-grow-1 row">
+                <div class="col-8 col-sm-7 mb-sm-0 mb-2">
+                  <h6 class="mb-0">FTP Drive</h6>
+                  <small class="text-muted">Connect FTP/SFTP drive</small>
+                </div>
+                <div class="col-4 col-sm-5 text-end">
+                  <button type="button" class="btn btn-icon btn-outline-secondary">
+                    <i class="bx bx-link-alt"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- ftp drive end -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>loadDrives();</script>

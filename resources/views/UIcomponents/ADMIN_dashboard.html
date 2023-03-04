@@ -1,0 +1,116 @@
+<div class="container-xxl flex-grow-1 container-p-y" id="dashboard">
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-6 mb-md-0 mb-4">
+            <div class="card">
+                <div class="card-body" style="padding: 1.5rem 1.5rem 0.5rem;">
+                    <div class="card-title d-flex align-items-start justify-content-between">
+                        <div class="avatar flex-shrink-0">
+                            <img src="../img/icons/unicons/user.png" alt="chart success" class="rounded">
+                        </div>
+                    </div>
+                    <span class="fw-semibold d-block mb-1">Total Users</span>
+                    <h6 class="text-success fw-semibold" id="usersCount">...</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-6 mb-md-0 mb-4">
+            <div class="card">
+                <div class="card-body" style="padding: 1.5rem 1.5rem 0.5rem;">
+                    <div class="card-title d-flex align-items-start justify-content-between">
+                        <div class="avatar flex-shrink-0">
+                            <img src="../img/icons/unicons/database.png" alt="chart success" class="rounded">
+                        </div>
+                    </div>
+                    <span class="fw-semibold d-block mb-1">Total Drives</span>
+                    <h6 class="text-primary fw-semibold" id="drivesCount">...</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-6 mb-md-0 mb-4">
+            <div class="card">
+                <div class="card-body" style="padding: 1.5rem 1.5rem 0.5rem;">
+                    <div class="card-title d-flex align-items-start justify-content-between">
+                        <div class="avatar flex-shrink-0">
+                            <img src="../img/icons/unicons/error.png" alt="chart success" class="rounded">
+                        </div>
+                    </div>
+                    <span class="fw-semibold d-block mb-1">Total Errors</span>
+                    <h6 class="text-danger fw-semibold" id="logsCount">...</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-6 mb-md-0 mb-4">
+            <div class="card">
+                <div class="card-body" style="padding: 1.5rem 1.5rem 0.5rem;">
+                    <div class="card-title d-flex align-items-start justify-content-between">
+                        <div class="avatar flex-shrink-0">
+                            <img src="../img/icons/unicons/request.png" alt="chart success" class="rounded">
+                        </div>
+                    </div>
+                    <span class="fw-semibold d-block mb-1">Messages</span>
+                    <h6 class="text-warning fw-semibold" id="messagesCount">...</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Admin dashboard Actions -->
+<div class="content-wrapper">
+    <!-- Content -->
+
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="card">
+            <h5 class="card-header">Server Actions</h5>
+            <div class="table-responsive text-nowrap">
+                <table class="table table-dark">
+                    <tbody class="table-border-bottom-0">
+                        <tr>
+                            <td><i class="bx bx-timer"></i> <strong>Task Scheduler</strong></td>
+                            <td><span class="badge bg-label-secondary me-1" id="tasks">Loading</span></td>
+                            <td>
+                                <button type="button" class="btn btn-xs btn-outline-primary"
+                                    onclick="updateServerConfig('tasks')">Update</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><i class='bx bx-credit-card-front'></i> <strong>Maintenance Page</strong></td>
+                            <td><span class="badge bg-label-secondary me-1" id="maintenance">Loading</span></td>
+                            <td>
+                                <button type="button" class="btn btn-xs btn-outline-primary"
+                                    onclick="updateServerConfig('maintenance')">Update</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><i class='bx bx-user-plus'></i> <strong>User Signup</strong></td>
+                            <td><span class="badge bg-label-secondary me-1" id="userSignup">Loading</span></td>
+                            <td>
+                                <button type="button" class="btn btn-xs btn-outline-primary"
+                                    onclick="updateServerConfig('userSignup')">Update</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><i class='bx bx-user'></i><strong>User Signin</strong></td>
+                            <td><span class="badge bg-label-secondary me-1" id="userLogin">Loading</span></td>
+                            <td>
+                                <button type="button" class="btn btn-xs btn-outline-primary"
+                                    onclick="updateServerConfig('userLogin')">Update</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><i class='bx bx-message-square-edit'></i> <strong>Logging</strong></td>
+                            <td><span class="badge bg-label-secondary me-1" id="logging">Loading</span></td>
+                            <td>
+                                <button type="button" class="btn btn-xs btn-outline-primary"
+                                    onclick="updateServerConfig('logging')">Update</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>loadDashboardStats();</script>
