@@ -8,5 +8,5 @@ module.exports = {
     query:
         `INSERT INTO Users 
         (userName, password, accessToken, role, createdOn, profile)
-        VALUES ('DemoUser', '7fd6597564869248ab50f5f24a6002bb39861d6a343e543024338d3c33f5bed9', 'user', 'user1', CURRENT_TIMESTAMP, '')`,
+        VALUES ('DemoUser', '7fd6597564869248ab50f5f24a6002bb39861d6a343e543024338d3c33f5bed9', 'user', 'user2', CURRENT_TIMESTAMP, '')`,
 }

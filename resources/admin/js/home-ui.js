@@ -65,6 +65,50 @@ function renderDashboardStats(data){
 }
 
 
+function renderTasks(tasks){
+    if($('#tasks-list').length > 0){
+        let data = '';
+        for (let i = 0; i < tasks.length; i++) {
+            data += `<tr>
+                        <td><i class="bx bx-task"></i> <strong>${tasks[i].name}</strong></td>
+                        <td><span class="badge bg-label-secondary">${tasks[i].frequency}</span></td>
+                        <td><span class="badge bg-label-success">${tasks[i].lastRun}</span></td>
+                        <td>
+                          <button type="button" class="btn btn-xs btn-outline-warning" onclick="editTasks('${tasks[i].name}','${tasks[i].frequency}')">Edit</button>                        
+                          <button type="button" class="mx-1 btn btn-xs btn-outline-primary" onclick="runTasks(this,'${tasks[i].name}')">Run</button>`;
+            if(tasks[i].status == 0){
+                data += `<button type="button" class="mx-1 btn btn-xs btn-outline-success" onclick="updateTasksStatus('${tasks[i].name}',true)">Enable</button>`;
+            } else {
+                data += `<button type="button" class="mx-1 btn btn-xs btn-outline-danger" onclick="updateTasksStatus('${tasks[i].name}',false)">Disable</button>`;
+            }
+            data+=       `</td>
+                      </tr>`;
+        }
+        $('#tasks-list').html(data);
+        $('#editTask-name').html('TASK NAME : '+tasks[0].name);
+        populateEditTaskInputValue(tasks[0].frequency);
+    }
+}
+
+function resnderUsers(users){
+    if($('#user-list').length > 0){
+        let data = '';
+        for (let i = 0; i < users.list.length; i++) {
+            data += `<tr>
+                      <td><img src="${(users.list[i].profile == "") ? "../image/1.png" : "../"+users.list[i].profile}" width="25px"></td>
+                      <td><strong>${users.list[i].userName}</strong></td>
+                      <td><span class="badge bg-label-secondary me-1">${users.list[i].role}</span></td>
+                      <td><span class="badge bg-label-success">${(users.list[i].status==1)?"Active":"Disabled"}</span></td>
+                      <td>
+                        <button type="button" class="btn btn-xs btn-outline-success ${(users.list[i].userName == users.currentUser) ? "disabled":""}">Message</button>
+                        <button type="button" class="mx-1 btn btn-xs btn-outline-danger ${(users.list[i].userName == users.currentUser) ? "disabled" : ""}">Disable</button>
+                      </td>
+                    </tr>`;
+        }
+        $('#user-list').html(data);
+    }
+}
+
 //=============================================================
 
 function fetchDrives(callback){
@@ -83,6 +127,22 @@ function fetchDashboardStats(callback){
     }, true)
 }
 
+function fetchTasksDetails(progress = true,callback){
+    request('/admin/u/task', {}, 'GET', (response) => {
+        if (response.status == 'success') {
+            callback(response.data);
+        }
+    }, progress)
+}
+
+function fetchUsers(callback){
+    request('/admin/u/user',{},'GET',(response)=>{
+        console.log(response);
+        if (response.status == 'success') {
+            callback(response.data);
+        }
+    })
+}
 
 // initiators =====================
 function loadDrives(){
@@ -94,7 +154,6 @@ function loadDrives(){
 
 function loadDashboardStats(){
     fetchDashboardStats((status)=>{
-        console.log(status);
         renderDashboardStats(status);
         if(status.refreshRequired == true){
             setTimeout(()=>{
@@ -102,6 +161,18 @@ function loadDashboardStats(){
             },5000);
         }
     })
+}
+
+function loadTasks(progress){
+    fetchTasksDetails(progress,(tasks)=>{
+        renderTasks(tasks);
+    });
+}
+
+function loadUsers(){
+    fetchUsers((users)=>{
+        resnderUsers(users);
+    });
 }
 
 setTimeout(() => {

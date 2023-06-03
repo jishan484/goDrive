@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const appControlService = require("./../../../service/controls");
+const appControlService = require("./../../../service/controlService");
 
 router.get('/', getStatus);
 

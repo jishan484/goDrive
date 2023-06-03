@@ -28,7 +28,7 @@ app.use('/admin', require('./admin'));
 app.get('/image/format/*',(req,res)=>{
     res.sendFile(path.resolve('resources/public/image/format/app.svg'));
 });
-app.get('*', (req, res) => res.send('Ooi! where you are going ? Stay true to your path.'));
+app.get('*', (req, res) => res.sendFile(path.resolve('resources/views/404.html')));
 
 module.exports = server ={
     start: () => {

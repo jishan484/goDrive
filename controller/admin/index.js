@@ -8,11 +8,15 @@ const fs = require('fs');
 // all logics are handled there for admins
 router.use("/auth", require("../app/auth.js"));
 
-// router.use("/u/*", checkAuth);
+router.use("/u/*", checkAuth);
 
 router.use("/u/drive", require("./drive"));
 
 router.use("/u/status", require("./status"));
+
+router.use("/u/task", require("./task"));
+
+router.use("/u/user", require("./user"));
 
 // UI component handler : document No. 'D-01'
 // Please check documentation for this feture/function

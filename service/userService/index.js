@@ -29,6 +29,19 @@ class UserService {
         });
     }
 
+    getAll(callback){
+        db.all('SELECT userName,createdOn,profile,role,status FROM Users', [], (err, row) => {
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
+            else {
+                if (row == undefined) callback(false);
+                else callback(row);
+            }
+        });
+    }
+
     save(data, callback) {
         let user = data.user;
         let userRole = (UserConfig != undefined && UserConfig.defaultRole != undefined)?UserConfig.defaultRole:'user1';
@@ -104,6 +117,20 @@ class UserService {
             }
             else {
                 callback(false);
+            }
+        });
+    }
+
+    getUsers(currentUser, callback) {
+        let users = {};
+        users.currentUser = currentUser;
+        this.getAll((result) => {
+            if (result) {
+                users.list = result
+                callback(true, users);
+            }
+            else {
+                callback(false,'Something went wrong!');
             }
         });
     }

@@ -16,12 +16,13 @@ DBChanges.changes.firstOrder.push(require('./FileChunks.js'));   // File Chunks 
 DBChanges.changes.secondOrder.push(require('./Tasks.js'));   // Tasks table creation
 DBChanges.changes.secondOrder.push(require('./defaultUser.js'));   // Default User creation
 DBChanges.changes.secondOrder.push(require('./adminAccount.js'));   // Default admin account creation
+DBChanges.changes.secondOrder.push(require('./Mails.js'));   // Mails table creation
 
 module.exports = DBChanges;
 
 /*
     UPDATE :   Put a new unique ID in the ChabgeId property of every Schema object.
-    CREATION : Create a new Schema in DBschema foler. 
+    CREATION : Create a new Schema in DBschema folder. 
                Add the new Schema object to the changes array.
                Add new chageId to schema object.
     DELETION : Only update the query property of the Schema object. 

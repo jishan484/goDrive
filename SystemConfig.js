@@ -15,11 +15,11 @@ const UserConfig = {
     // This can not be changed after initial setup! 
     // Changing this will break old users signin process!
     salt:'$2a$10$X.Q.T.V.Y.F.S.Y.S.alasbyqy',
-    // Default role for new user
+    // Default role for new user [applicable if userRegisteration is true]
     // user1 can not share files and has few other limitations, user2 can share files and there is no limitations
     // user_vip is a special role, which can be assigned to any user by admin: no extra benefits but to 
     // identify special users. Accesses are similar to user2 role.
-    defaultRole : 'user1',
+    defaultRole : 'user2',
     // If true, then user can register himself, else only admin can register user
     userRegisteration : true,
     // If userRegisteration = true, then provide a way to connect to admin

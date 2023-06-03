@@ -1,0 +1,95 @@
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card">
+        <div class="card-header">Scheduled Tasks</div>
+        <div class="table-responsive text-nowrap">
+            <table class="table table-dark">
+                <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>Frequency</td>
+                        <td>Last Run</td>
+                        <td>Actions</td>
+                    </tr>
+                </thead>
+                <tbody class="table-border-bottom-0" id="tasks-list">
+                    <tr>
+                        <td><i class="bx bx-task"></i> <strong>No Task available</strong></td>
+                        <td><span class="badge bg-label-secondary me-1">* * * * *</span></td>
+                        <td><span class="badge bg-label-success">NULL</span></td>
+                        <td>
+                            <button type="button" class="btn btn-xs btn-outline-warning disabled">Edit</button>
+                            <button type="button" class="mx-1 btn btn-xs btn-outline-primary disabled">Run</button>
+                            <button type="button" class="mx-1 btn btn-xs btn-outline-danger disabled">Disable</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="my-4 row collapse show">
+        <div class="col-md-12">
+            <div class="card mb-4" style="overflow-x: scroll;">
+                <h5 class="card-header">Edit Task</h5>
+                <div class="card-body" style="min-width: 600px;">
+                    <div>
+                        <h6 for="defaultFormControlInput" id="editTask-name">Select a task (click edit button) : </h6>
+                        <center><h5 id="editTask-value">* * * * *</h5></center>
+                        <div class="input-group" onchange="recalculateCRON()">
+                            <span class="input-group-text">CRON</span>
+                            <div class="form-control" id="editTask-minute">
+                                <label for="defaultFormControlInput" class="form-label">Minute</label>
+                                <select id="defaultSelect" class="form-select">
+                                    <option value="*/" default>Every</option>
+                                    <option value="">Once</option>
+                                </select>
+                                <input type="number" placeholder="Minute" min="0" max="59" class="my-2 form-control">
+                            </div>
+                            <div class="form-control" id="editTask-hour">
+                                <label for="defaultFormControlInput" class="form-label">Hour</label>
+                                <select id="defaultSelect" class="form-select">
+                                    <option value="*/" default>Every</option>
+                                    <option value="">Once</option>
+                                </select>
+                                <input type="number" placeholder="Hour" min="0" max="24" class="my-2 form-control">
+                            </div>
+                            <div class="form-control" id="editTask-day">
+                                <label for="defaultFormControlInput" class="form-label">Day</label>
+                                <select id="defaultSelect" class="form-select">
+                                    <option value="*/" default>Every</option>
+                                    <option value="">Once</option>
+                                </select>
+                                <input type="number" placeholder="Day" min="0" max="365" class="my-2 form-control">
+                            </div>
+                            <div class="form-control" id="editTask-month">
+                                <label for="defaultFormControlInput" class="form-label">Month</label>
+                                <select id="defaultSelect" class="form-select">
+                                    <option value="*/" default>Every</option>
+                                    <option value="">Once</option>
+                                </select>
+                                <input type="number" placeholder="Month" min="0" max="12" class="my-2 form-control">
+                            </div>
+                            <div class="form-control" id="editTask-year">
+                                <label for="defaultFormControlInput" class="form-label">Year</label>
+                                <select id="defaultSelect" class="form-select">
+                                    <option value="*/" default>Every</option>
+                                    <option value="">Once</option>
+                                </select>
+                                <input type="number" placeholder="Year" min="2020" class="my-2 form-control">
+                            </div>
+                        </div>
+                        <div id="defaultFormControlHelp" class="form-text">
+                            Please provide valid CRON expression. e.g. 30 * * * *. Please check <a target="_blank"
+                                href="https://crontab.cronhub.io/">crontab.cronhub.io</a>
+                        </div>
+                        <div id="defaultFormControlHelp" class="form-text">
+                            Default value * (if empty)
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>loadTasks();</script>

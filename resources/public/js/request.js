@@ -142,7 +142,7 @@ function processError(request , code){
         case 403:
             errorToast('Forbidden', 'You are not authorized or<br>your session has expired. Redirecting to login page in 5 seconds.');
             setTimeout(function () {
-                window.location.href = '/';
+                window.location.reload();
             }, 5000);
             break;
         case 404:

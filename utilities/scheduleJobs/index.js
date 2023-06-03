@@ -44,7 +44,7 @@ class Scheduler {
 
 
     //------------------ runtime job controls------------------
-    getDetails() {
+    getDetails(callback) {
         let details = [];
         for (let job in this.jobs) {
             let detail = {};
@@ -52,10 +52,11 @@ class Scheduler {
             detail.status = this.jobs[job].status;
             detail.state = this.jobs[job].state;
             detail.frequency = this.jobs[job].frequency;
-            detail.lastRun = this.jobs[job].lastRun;
+            detail.lastRun = this.jobs[job].lastRun.toLocaleString();
             detail.executionTime = this.jobs[job].executionTime;
             details.push(detail);
         }
+        callback(details);
     }
     stopJob(jobName, callback) {
         if (this.jobs[jobName] != null && this.jobs[jobName].state == 2) {
@@ -63,7 +64,7 @@ class Scheduler {
             logger.log("debug", "Job stopped : " + jobName);
             this.jobs[jobName].state = 4;
             callback(true, "Job stopped : " + jobName);
-        } else if (this.jobs[jobName] != null) {
+        } else if (this.jobs[jobName] == null) {
             callback(false, "Job " + jobName + " is not found or not valid!");
         } else if (this.jobs[jobName].state < 2) {
             callback(false, "Job " + jobName + " is not running!");
@@ -76,12 +77,25 @@ class Scheduler {
             this.jobs[jobName].start();
             logger.log("debug", "Job started : " + jobName);
             callback(true, "Job started : " + jobName);
-        } else if (this.jobs[jobName] != null) {
+        } else if (this.jobs[jobName] == null) {
             callback(false, "Job " + jobName + " is not found or not valid!");
         } else {
             callback(false, "Job " + jobName + " already started!");
         }
     }
+
+    runJob(jobName, user, callback){
+        if (this.jobs[jobName] != null && this.jobs[jobName].status != 0) {
+            this.jobs[jobName].run();
+            logger.log("debug", jobName+" Job manually started" +" by "+ user);
+            callback(true, "Job started : " + jobName);
+        } else if (this.jobs[jobName] == null) {
+            callback(false, "Job " + jobName + " is not found or not valid!");
+        } else {
+            callback(false, "Job " + jobName + " disabled!");
+        }
+    }
+
     updateJobStatus(jobName, status, frequency, callback) {
         if (this.jobs[jobName] != null) {
             if (this.jobs[jobName].status == status && this.jobs[jobName].frequency == frequency) {

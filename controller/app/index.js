@@ -59,6 +59,7 @@ function checkAuth(req,res,next){
                 req.socket.destroy();
             },100);
         });
+
         res.set("connection", "close");
         res.status(403).send({
             urn: RouterConfig.force_login_redirect_urn,

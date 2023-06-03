@@ -10,6 +10,7 @@ module.exports = {
         password TEXT,
         accessToken TEXT,
         role TEXT, 
+        status INTEGER,
         createdOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
         profile TEXT
     )`,
