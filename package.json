@@ -24,7 +24,7 @@
     "express": "4.17.1",
     "fs": "0.0.1-security",
     "googleapis": "^105.0.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "mysql": "^2.18.1",
     "node-cron": "^3.0.2",
     "path": "^0.12.7",
