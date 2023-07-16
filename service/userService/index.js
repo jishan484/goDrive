@@ -17,7 +17,7 @@ class UserService {
 
     get(data, callback) {
         let user = data.user;
-        db.get('SELECT userName,createdOn,profile,role FROM Users WHERE userName = ?', [user], (err, row) => {
+        db.get('SELECT userName,createdOn,profile,status FROM Users WHERE userName = ?', [user], (err, row) => {
             if (err) {
                 callback(false);
                 log.log("error",err);
@@ -44,10 +44,10 @@ class UserService {
 
     save(data, callback) {
         let user = data.user;
-        let userRole = (UserConfig != undefined && UserConfig.defaultRole != undefined)?UserConfig.defaultRole:'user1';
+        let userRole = data.role;
         let profilePic = data.userProfilePic;
         let password = crypto.createHash('sha256').update(data.password + UserConfig.salt).digest('hex');
-        db.run('INSERT INTO Users (userName,password,role,profile) VALUES (?,?,?,?)', [user, password, userRole, profilePic], (err) => {
+        db.run('INSERT INTO Users (userName,password,role,profile,status) VALUES (?,?,?,?,1)', [user, password, userRole, profilePic], (err) => {
             if (err) {
                 callback(false);
                 log.log("error", err);
@@ -73,6 +73,12 @@ class UserService {
                 else callback(true);
             });
         }
+        else if (type == 'status') {
+            db.run('UPDATE Users SET status = ? WHERE userName = ?', [data.status, data.user], (err) => {
+                if (err) callback(false);
+                else callback(true);
+            });
+        }
     }
 
     verifyUser(data, callback) {
@@ -84,7 +90,9 @@ class UserService {
                 log.log("error", err);
             }
             else {
-                if (row == undefined && row != false) callback(false);
+                console.log(row);
+                if (row == undefined && row != false) callback(false, null, "Incorrect username or password entered! Please try again.");
+                else if(row.status != 1 || row.status != '1') callback(false,null,'User account is disabled!');
                 else callback(true, row);
             }
         });
@@ -232,7 +240,7 @@ class UserService {
                 }
             });
         } else {
-            this.verifyUser(req.body, (status, userInfo) => {
+            this.verifyUser(req.body, (status, userInfo,error) => {
                 if (status) {
                     let token = this.getUserToken(req.body, userInfo.role);
                     res.cookie('seid', token, {
@@ -244,7 +252,7 @@ class UserService {
                     callback(true);
                 }
                 else {
-                    callback(false);
+                    callback(false, error);
                 }
             });
         }
@@ -255,7 +263,16 @@ class UserService {
             callback(false, 'New user signup is not allowed! please contact admin('+UserConfig.adminEmail+').');
             return;
         }
+        if (req.body.password != null && req.body.password != undefined && req.body.password.length < 8) {
+            callback(false, 'Password must be atleast 8 characters long!');
+            return;
+        }
+        if (req.body.user != null && req.body.user != undefined && req.body.user.length < 4) {
+            callback(false, 'Username must be atleast 4 characters long!');
+            return;
+        }
         req.body.userProfilePic = '';
+        req.body.role = (UserConfig != undefined && UserConfig.defaultRole != undefined) ? UserConfig.defaultRole : 'user1';
         this.get(req.body,(result)=>{
             if(!result){
                 this.save(req.body, (status) => {
@@ -285,8 +302,69 @@ class UserService {
         res.clearCookie('seid');
     }
     
+    // create user profile from admin panel
+    // only allowed for admin
+    createProfile(req, callback) {
+        req.body.userProfilePic = '';
+        if(req.body.password != null && req.body.password != undefined && req.body.password.length < 8){
+            callback(false, 'Password must be atleast 8 characters long!');
+            return;
+        }
+        if (req.body.user != null && req.body.user != undefined && req.body.user.length < 4) {
+            callback(false, 'Username must be atleast 4 characters long!');
+            return;
+        }
+        this.get(req.body,(result)=>{
+            if(!result){
+                this.save(req.body, (status) => {
+                    if (status) {
+                        callback(true);
+                    }
+                    else {
+                        callback(false, '502 SYSTEM_ERROR');
+                    }
+                }
+                );
+            }
+            else{
+                callback(false, 'UserName not allowed or already exist! Please choose another username.');
+            }
+        });
+    }
+
+    // update user status
+    updateUserStatus(req, callback){
+        if(!this.isAdmin(req)){
+            callback(false, 'You are not authorized to perform this action!');
+            return;
+        }
+        if (req.body.user == req.user || req.body.user == 'admin') {
+            callback(false, 'You can not change your own status!');
+            return;
+        }
+        if(req.body.status == 'active' || req.body.status == 'disable'){
+            req.body.status = (req.body.status == 'active') ? 1 : 0;
+            this.get(req.body, (result) => {
+                if(result){
+                    this.update(req.body, 'status', (status) => {
+                        if (status) {
+                            callback(true);
+                        }
+                        else {
+                            callback(false, '502 SYSTEM_ERROR');
+                        }
+                    });
+                } else {
+                    callback(false, 'User not found!');
+                }
+            });
+        } else {
+            callback(false, 'Invalid status!');
+        }
+    }
+
 }
 
-var userService = new UserService();
+    
 
-module.exports = userService;
+module.exports = new UserService();

@@ -46,3 +46,38 @@ function recalculateCRON(){
     });
     $("#editTask-value").html(result);
 }
+
+//  create user profile
+function createUserProfile(){
+    let data = {};
+    data.user = $('#userName').val();
+    let password1 = $('#password1').val();
+    data.password = $('#password2').val();
+    data.role = $('#userType').val();
+    if(data.password != password1){
+        $('#createUsererror').html('Password does not match!');
+        return;
+    }
+    request('/admin/u/user', data, 'POST', (response) => {
+        if (response.status == 'success') {
+            loadUsers();
+            $('#createUsererror').html("Successfully created user!");
+            setTimeout(()=>{
+                $('#closecreateProfileModalbtn').click();
+            },1000);
+        } else {
+            $('#createUsererror').html(response.error);
+        }
+    }, true);
+}
+
+function updateUserStatus(userName, status){
+    let data = {};
+    data.user = userName;
+    data.status = status;
+    request('/admin/u/user', data, 'PUT', (response) => {
+        if (response.status == 'success') {
+            loadUsers();
+        }
+    }, true);
+}

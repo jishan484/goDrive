@@ -94,14 +94,19 @@ function resnderUsers(users){
     if($('#user-list').length > 0){
         let data = '';
         for (let i = 0; i < users.list.length; i++) {
+            let user = users.list[i].userName;
+            let status = users.list[i].status;
+            let msgBTN = (user == users.currentUser) ? "disabled" : "";
+            let updBTN = (status == 1) ? "danger" : "primary";
+            let oppsiteStatus = (status == 1) ? 'disable' : 'active';
             data += `<tr>
                       <td><img src="${(users.list[i].profile == "") ? "../image/1.png" : "../"+users.list[i].profile}" width="25px"></td>
-                      <td><strong>${users.list[i].userName}</strong></td>
+                      <td><strong>${user}</strong></td>
                       <td><span class="badge bg-label-secondary me-1">${users.list[i].role}</span></td>
-                      <td><span class="badge bg-label-success">${(users.list[i].status==1)?"Active":"Disabled"}</span></td>
+                      <td><span class="badge bg-label-success">${(status==1)?"Active":"Disabled"}</span></td>
                       <td>
-                        <button type="button" class="btn btn-xs btn-outline-success ${(users.list[i].userName == users.currentUser) ? "disabled":""}">Message</button>
-                        <button type="button" class="mx-1 btn btn-xs btn-outline-danger ${(users.list[i].userName == users.currentUser) ? "disabled" : ""}">Disable</button>
+                        <button type="button" class="btn btn-xs btn-outline-success ${msgBTN}">Message</button>
+                        <button type="button" onclick="updateUserStatus('${user}','${oppsiteStatus}')" class="mx-1 btn btn-xs btn-outline-${updBTN} ${msgBTN}">${(status == 1) ? "Disable" : "Active"}</button>
                       </td>
                     </tr>`;
         }

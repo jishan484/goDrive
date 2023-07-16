@@ -18,12 +18,13 @@ function userLogin(req, res) {
         res.redirect(RouterConfig.home_page_urn);
     }
     else {
-        userService.userLogin(req, res , (status)=>{
+        userService.userLogin(req, res , (status,data)=>{
             if (status) {
                 res.status(200).send({ status: 'success', error: null, code: '200' });
             }
             else {
-                res.status(200).send({ status: 'failed', error: "Incorrect username or password entered! Please try again.", code: '204' });
+                
+                res.status(200).send({ status: 'failed', error: data, code: '204' });
             }
         });
     }
