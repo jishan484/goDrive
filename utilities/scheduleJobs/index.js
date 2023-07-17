@@ -96,21 +96,30 @@ class Scheduler {
         }
     }
 
-    updateJobStatus(jobName, status, frequency, callback) {
+    updateJob(jobName, status, frequency, callback) {
         if (this.jobs[jobName] != null) {
             if (this.jobs[jobName].status == status && this.jobs[jobName].frequency == frequency) {
                 callback(false, "Job " + jobName + " already has same status and frequency!");
                 return;
+            } else if (frequency == null && this.jobs[jobName].status == status) {
+                callback(false, "Job " + jobName + " already has same status!");
+                return;
+            } else if (status == null && this.jobs[jobName].frequency == frequency) {
+                callback(false, "Job " + jobName + " already has same frequency!");
+                return;
+            } else if (status == null && frequency == null) {
+                callback(false, "Job " + jobName + " status and frequency cannot be null!");
+                return;
             }
             status = (status == null) ? this.jobs[jobName].status : status;
             frequency = (frequency == null) ? this.jobs[jobName].frequency : frequency;
-            this.jobs[jobName].job.stop();
+            if (this.jobs[jobName].task) this.jobs[jobName].task.stop();
             delete this.jobs[jobName].job;
             this.jobs[jobName].state = 1;
             this.jobs[jobName].status = status;
             this.jobs[jobName].frequency = frequency;
             this.schedule();
-            db.run('UPDATE Tasks SET status = ? WHERE taskName = ?', [status, jobName], (err) => {
+            db.run('UPDATE Tasks SET status = ?, schedule = ? WHERE taskName = ?', [status, frequency, jobName], (err) => {
                 if (err) {
                     callback(false, "Failed to update job status in DB!");
                     logger.log("error", err);

@@ -81,3 +81,46 @@ function updateUserStatus(userName, status){
         }
     }, true);
 }
+
+function searchUser(){
+    let data = {};
+    data.user = $('#searchUserInput').val();
+    request('/admin/u/user/search', data, 'GET', (response) => {
+        if (response.status == 'success') {
+            let users = response.data;
+            console.log(users);
+            resnderUsers(users);
+        }
+    }, true);
+}
+
+function updateTaskFrequency(){
+    $('#taskEditSubmitBtn').addClass('disabled');
+    let data = {};
+    data.name = $('#editTask-name').html().split(':')[1].trim();
+    data.frequency = $('#editTask-value').html();
+    console.log(data);
+    request('/admin/u/task', data, 'PUT', (response) => {
+        if (response.status == 'success') {
+            loadTasks(false);
+            $('#taskEditrespDiv').html(response.data);
+        } else {
+            $('#taskEditrespDiv').html(response.error);
+        }
+        setTimeout(()=>{
+            $('#taskEditrespDiv').html('');
+        },5000);
+        $('#taskEditSubmitBtn').removeClass('disabled');
+    }, true);
+}
+
+function updateTaskStatus(name , status){
+    let data = {};
+    data.name = name;
+    data.status = status;
+    request('/admin/u/task', data, 'PUT', (response) => {
+        if (response.status == 'success') {
+            loadTasks(false);
+        }
+    }, true);
+}

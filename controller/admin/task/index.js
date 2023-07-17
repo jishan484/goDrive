@@ -4,6 +4,7 @@ const taskService = require("./../../../service/taskService");
 
 router.get('/', getTasks);
 router.post('/run', runTasks);
+router.put('/', updateTasks);
 
 module.exports = router;
 
@@ -29,6 +30,17 @@ function runTasks(req, res) {
             res.status(200).json({ status: 'error', data: null, error: data, code: '204' });
         }
     });
+}
+
+function updateTasks(req, res) {
+    taskService.updateTask(req.body,req.role, (status, data)=>{
+        if (status) {
+            res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
+        } else {
+            res.status(200).json({ status: 'error', data: null, error: data, code: '204' });
+        }
+    }
+    );
 }
 
 module.exports = router;

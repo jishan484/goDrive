@@ -72,14 +72,15 @@ function renderTasks(tasks){
             data += `<tr>
                         <td><i class="bx bx-task"></i> <strong>${tasks[i].name}</strong></td>
                         <td><span class="badge bg-label-secondary">${tasks[i].frequency}</span></td>
+                        <td><span class="badge bg-label-secondary">${(tasks[i].status==1)?'Active':'Inactive'}</span></td>
                         <td><span class="badge bg-label-success">${tasks[i].lastRun}</span></td>
                         <td>
                           <button type="button" class="btn btn-xs btn-outline-warning" onclick="editTasks('${tasks[i].name}','${tasks[i].frequency}')">Edit</button>                        
                           <button type="button" class="mx-1 btn btn-xs btn-outline-primary" onclick="runTasks(this,'${tasks[i].name}')">Run</button>`;
             if(tasks[i].status == 0){
-                data += `<button type="button" class="mx-1 btn btn-xs btn-outline-success" onclick="updateTasksStatus('${tasks[i].name}',true)">Enable</button>`;
+                data += `<button type="button" class="mx-1 btn btn-xs btn-outline-success" onclick="updateTaskStatus('${tasks[i].name}',true)">Enable</button>`;
             } else {
-                data += `<button type="button" class="mx-1 btn btn-xs btn-outline-danger" onclick="updateTasksStatus('${tasks[i].name}',false)">Disable</button>`;
+                data += `<button type="button" class="mx-1 btn btn-xs btn-outline-danger" onclick="updateTaskStatus('${tasks[i].name}',false)">Disable</button>`;
             }
             data+=       `</td>
                       </tr>`;
@@ -142,7 +143,6 @@ function fetchTasksDetails(progress = true,callback){
 
 function fetchUsers(callback){
     request('/admin/u/user',{},'GET',(response)=>{
-        console.log(response);
         if (response.status == 'success') {
             callback(response.data);
         }

@@ -7,6 +7,7 @@
                     <tr>
                         <td>Name</td>
                         <td>Frequency</td>
+                        <td>Status</td>
                         <td>Last Run</td>
                         <td>Actions</td>
                     </tr>
@@ -15,6 +16,7 @@
                     <tr>
                         <td><i class="bx bx-task"></i> <strong>No Task available</strong></td>
                         <td><span class="badge bg-label-secondary me-1">* * * * *</span></td>
+                        <td><span class="badge bg-label-success">NULL</span></td>
                         <td><span class="badge bg-label-success">NULL</span></td>
                         <td>
                             <button type="button" class="btn btn-xs btn-outline-warning disabled">Edit</button>
@@ -77,14 +79,15 @@
                                 <input type="number" placeholder="Year" min="2020" class="my-2 form-control">
                             </div>
                         </div>
-                        <div id="defaultFormControlHelp" class="form-text">
+                        <div class="form-text">
                             Please provide valid CRON expression. e.g. 30 * * * *. Please check <a target="_blank"
                                 href="https://crontab.cronhub.io/">crontab.cronhub.io</a>
                         </div>
-                        <div id="defaultFormControlHelp" class="form-text">
+                        <div class="form-text">
                             Default value * (if empty)
                         </div>
-                        <button type="submit" class="btn btn-primary">Update</button>
+                        <div id="taskEditrespDiv" class="form-text" style="color: rgb(99, 100, 212);"></div>
+                        <button type="submit" id="taskEditSubmitBtn" class="btn btn-primary" onclick="updateTaskFrequency()">Update</button>
                     </div>
                 </div>
             </div>

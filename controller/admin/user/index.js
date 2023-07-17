@@ -3,6 +3,7 @@ const router = express.Router({ mergeParams: true });
 const userService = require("./../../../service/userService");
 
 router.get('/', getUsers);
+router.get('/search/', searchUsers);
 router.post('/', createProfile);
 router.put('/', updateUserStatus);
 
@@ -34,6 +35,17 @@ function createProfile(req, res) {
 
 function updateUserStatus(req, res) {
     userService.updateUserStatus(req, (status, data) => {
+        if (status) {
+            res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
+        } else {
+            res.status(200).json({ status: 'error', data: null, error: data, code: '204' });
+        }
+    });
+}
+
+function searchUsers(req, res) {
+    req.body = req.query;
+    userService.searchUsers(req, (status, data) => {
         if (status) {
             res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
         } else {

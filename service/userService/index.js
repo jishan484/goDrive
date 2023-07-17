@@ -42,6 +42,20 @@ class UserService {
         });
     }
 
+    getLike(data, callback){
+        let user = data.user;
+        db.all('SELECT userName,createdOn,profile,role,status FROM Users WHERE userName LIKE ?', ['%'+user+'%'], (err, row) => {
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
+            else {
+                if (row == undefined) callback(false);
+                else callback(row);
+            }
+        });
+    }
+
     save(data, callback) {
         let user = data.user;
         let userRole = data.role;
@@ -363,6 +377,23 @@ class UserService {
         }
     }
 
+    // search user
+    searchUsers(req, callback){
+        if(!this.isAdmin(req)){
+            callback(false, 'You are not authorized to perform this action!');
+            return;
+        }
+        let users = {};
+        users.currentUser = req.user;
+        this.getLike(req.body, (result) => {
+            if(result){
+                users.list = result;
+                callback(true, users);
+            } else {
+                callback(false, 'User not found!');
+            }
+        });
+    }
 }
 
     

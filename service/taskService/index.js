@@ -32,6 +32,23 @@ class TaskService {
         else callback(false, 'User does not have access!')
     }
 
+    updateTask(reqParams, role, callback){
+        let jobName = reqParams.name;
+        let frequency = reqParams.frequency;
+        let status = reqParams.status;
+        if(jobName == null || jobName == undefined){
+            callback(false, 'Please provide a job name!');
+            return;
+        }
+        if((role == 'admin' || role == 'super_admin') && frequency != null && frequency != undefined)
+            scheduler.updateJob(jobName, null ,frequency, callback);
+        else if((role == 'admin' || role == 'super_admin') && status != null && status != undefined) {
+            status = status == 'true' ? 1 : 0;
+            scheduler.updateJob(jobName, status ,null, callback);
+        }
+        else callback(false, 'User does not have access!');
+    }
+
 }
 
 module.exports = new TaskService();
