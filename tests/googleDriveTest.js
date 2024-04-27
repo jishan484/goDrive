@@ -1,6 +1,7 @@
 let assert = require('./assert.js');
 
 module.exports.Test = ()=>{
+    console.log(" [TLOG-STATUS]   Starting GoogleDriveTests");
     createDriveTest();
     getDriveTest();
     getDrivesTest();

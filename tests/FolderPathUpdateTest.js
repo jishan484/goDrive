@@ -11,6 +11,7 @@ module.exports.Test = async () => {
 
 
 async function createFolderTest() {
+    console.log(" [TLOG-STATUS]   Starting FolderPathUpdateTests");
     return new Promise((resolve) => {
         let data = {};
         data.body = {}; data.cookies = {};

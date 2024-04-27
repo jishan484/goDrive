@@ -538,7 +538,7 @@ async function uploadFolders(){
     $('#fileList').html('<center>Preparing files! Pleaese wait.</center>');
     await createFoldersForUpload();
     await setTimeout(() => {}, 9000);
-    for (let i = 0; i < _consicutiveUploadsCounter; i++) {
+    for (let i = 0; i < _consecutiveUploadsCounter; i++) {
         _currentUploadsCounter++;
         uploadFolderHandler(i);
     }
@@ -577,7 +577,7 @@ function uploadFolderHandler(startIndex) {
     let flen = formFolderMultiple.files.length;
     if(_currentUploadsCounter >= flen){
         _currentUploadsCallbackCounter++;
-        if (_currentUploadsCallbackCounter == _consicutiveUploadsCounter){
+        if (_currentUploadsCallbackCounter == _consecutiveUploadsCounter){
             removeFile(0);
         }
     } else {

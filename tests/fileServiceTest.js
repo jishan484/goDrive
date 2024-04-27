@@ -1,6 +1,7 @@
 let assert = require('./assert.js');
 
 module.exports.Test = async () => {
+    console.log(" [TLOG-STATUS]   Starting FileServiceTests");
     await createFileTest();
     await getFilesTest().then(async files=>{
         if(files.length >= 1){

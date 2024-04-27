@@ -237,6 +237,7 @@ async function updateFolderTest4() {
 }
 
 async function updateFolderTest5() {
+    console.log(" [TLOG-STATUS]   Starting FolderServiceTests");
     return new Promise((resolve) => {
         let data = {};
         data.body = {}; data.body.updates = {}; data.cookies = {};
