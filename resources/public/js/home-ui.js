@@ -544,6 +544,7 @@ async function uploadFolders(){
     }
 }
 
+
 async function createFoldersForUpload(){
     for(let i=0;i<formFolderMultiple.files.length;i++){
         let done = ((i / formFolderMultiple.files.length) * 100).toFixed(2);
