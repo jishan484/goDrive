@@ -406,3 +406,21 @@ function getStorageStatus(callback) {
         }
     });
 }
+
+
+// :SHARE:FILE:
+function shareFileorFolder(type, targetId, method='POST', callback){
+    var payload = {
+        type: type,
+        folderId: (type == 'folder') ? targetId : null,
+        fileId: (type == 'file') ? targetId : null,
+        targetId: targetId
+    };
+    request("app/u/file/share", payload, method, (response) => {
+        if(response.error == null){
+            callback(response);
+        } else {
+            errorToast("Operation Failed", response.error)
+        }
+    });
+}

@@ -52,5 +52,9 @@ const appConfig = {
     maintenance: false
 }
 
+const externalAPIConfig = {
+    tokenHashKey : "&R6P3ff$2"
+}
 
-module.exports = { RouterConfig, UserConfig, SyatemConfig, DatabaseConfig, appConfig };
+
+module.exports = { RouterConfig, UserConfig, SyatemConfig, DatabaseConfig, appConfig, externalAPIConfig };

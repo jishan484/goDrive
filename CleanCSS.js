@@ -11,8 +11,8 @@ var final_css = '';
 loadClassAndTags('resources/views/home.html');
 loadClassAndTags('resources/views/login.html');
 loadClassAndTags('resources/views/register.html');
-loadClassAndTags('resources/views/demo.html');
-// loadClassAndTags('resources/views/404.html');
+// loadClassAndTags('resources/views/demo.html');
+loadClassAndTags('resources/views/shared.html');
 // loadClassAndTags('resources/views/500.html');
 loadClassAndTags('resources/views/deniedAccess.html');
 

@@ -62,4 +62,9 @@ router.get('/admin/home',(req,res)=>{
     }
 });
 
+router.get('/shared/:tokenId', (req, res) => {
+    res.set('Cache-Control', 'no-cache, no-store');
+    res.sendFile(path.resolve('resources/views/shared.html'));
+});
+
 module.exports = router

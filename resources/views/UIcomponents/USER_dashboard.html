@@ -1,0 +1,314 @@
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="row">
+        <!-- Top Options -->
+        <div class="col-lg-12 mb-0 order-0 sticky-top mh-100">
+            <div class="card mb-3">
+                <div class="card-body zpad">
+                    <p class="demo-inline-spacing">
+                        <button class="btn btn-sm btn-opt btn-secondary" data-bs-toggle="collapse"
+                            href="#collapseCreate" role="button" aria-expanded="true" aria-controls="collapseCreate">
+                            <span class="tf-icons bx bx-folder-plus"></span> Create Folder </button>
+                        <button type="button" class="btn btn-sm btn-opt btn-secondary" data-bs-toggle="modal"
+                            data-bs-target="#basicModal">
+                            <span class="tf-icons bx bx-cloud-upload"></span> Upload Files </button>
+                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                        <button type="button" class="btn btn-outline-secondary" onclick="folderBack()">
+                            <i class="tf-icons bx bx-arrow-back"></i>Back </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="folderHome()">
+                            <i class="tf-icons bx bx-home"></i>
+                        </button>
+                        <div class="btn-group" role="group">
+                            <button id="btnGroupDrop1" type="button" class="btn btn-outline-secondary dropdown-toggle"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Sort </button>
+                            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                <div class="dropdown-item" onclick="contentSortBy('name')">Sort by Name</div>
+                                <div class="dropdown-item" onclick="contentSortBy('date')">Sort by Date</div>
+                                <div class="dropdown-item" onclick="contentSortBy('default')"> Default </div>
+                            </div>
+                        </div>
+                    </div>
+                    </p>
+                    <div class="collapse" id="collapseCreate" style="padding-bottom: 10px; transition: height 0.2s;">
+                        <form id="formCreateFolder" class="mb-2" onsubmit="return false;">
+                            <div class="mb-2">
+                                <center>
+                                    <input type="text" class="form-control w-50" id="foldername"
+                                        placeholder="Enter Folder Name" autofocus />
+                                </center>
+                            </div>
+                            <div class="mb-1">
+                                <span class="small" id="folderCreateError"></span>
+                            </div>
+                            <div class="mb-2">
+                                <button class="btn btn-primary w-25 mw-50" id="createFolderBtn"
+                                    type="submit">Create</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal modal-top fade" id="basicModal" tabindex="-1" style="display: none;"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <form onsubmit="return false;" id="formFileForm">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" id="exampleModalLabel1">Upload Files or Folder </h4>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col mb-3">
+                                                <center>
+                                                    <input class="form-control after-input" type="file"
+                                                        id="formFileMultiple" multiple="true" />
+                                                </center>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col mb-3">
+                                                <center>
+                                                    <input class="form-control after-input folderUpload" type="file"
+                                                        id="formFolderMultiple" webkitDirectory directory
+                                                        multiple="true" />
+                                                </center>
+                                            </div>
+                                        </div>
+                                        <div class="col" id="fileList">
+
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                            Close </button>
+                                        <button type="button" class="btn btn-primary" onclick="uploadFiles()"
+                                            id="UPBTN">Upload Files</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end of File manager options -->
+        <!-- Top Notification -->
+        <div class="col-lg-12 mb-2 order-0 minpad" id="Notification_top_panel" style="display: none;">
+            <div class="card">
+                <div class="d-flex align-items-end row">
+                    <div class="col-sm-12">
+                        <div class="card-body">
+                            <h3 class="card-title text-primary">Good Moring Jishan! 🎉</h3>
+                            <p class="mb-3">While you were away, <span class="fw-bold">23</span> new Notifications was
+                                sent to you. No new activities for now. 3 temporary files removed from your account.
+                            </p>
+                            <a href="javascript:;"
+                                onclick="$('#Notification_top_panel').animate({height:0},240).hide(0)"
+                                class="btn btn-sm btn-outline-primary ncb" id="notificationClose">Close</a>
+                            <script>
+                                setTimeout(function () {
+                                    $("#Notification_top_panel").animate({
+                                        height: 0
+                                    }, 240).hide(0);
+                                }, 30000);
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--/ Top Notification -->
+        <!-- Folder/File edit model -->
+        <div class="modal fade editModelcls" id="editModel" tabindex="-1" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEditCenterTitle">Modal title</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="modelEditBody">
+
+                    </div>
+                    <div class="modal-footer" id="modelEditActions">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end edit model -->
+        <!-- folder list : JS rendered-->
+        <div id="bodyOptions" oncontextmenu="folderBodyOptions(this,event);">
+            <ul class="dropdown-menu folderBodyOption" data-popper-placement="bottom-start" style="z-index: 1090;">
+                <li>
+                    <div class="dropdown-item" onclick="folderOpen('${folders[i].folderName}')">New Folder</div>
+                </li>
+                <li>
+                    <div class="dropdown-item" onclick="folderOpen('${folders[i].folderName}')"> Upload File</div>
+                </li>
+                <li>
+                    <hr class="dropdown-divider" />
+                </li>
+                <li>
+                    <div class="dropdown-item disabled" id="itemPaste"
+                        onclick="pasteClipboard('${folders[i].folderId}')">Paste</div>
+                </li>
+                <li>
+                    <hr class="dropdown-divider" />
+                </li>
+                <li>
+                    <div class="dropdown-item" onclick="folderCopyMove('${folders[i].folderId}')"> Properties</div>
+                </li>
+                <li>
+                    <div class="dropdown-item" onclick="folderOpen('${folders[i].folderName}')">Open terminal</div>
+                </li>
+            </ul>
+            <div id="folders"></div>
+            <div class="divider">
+                <div class="divider-text"></div>
+            </div>
+            <div id="files"></div>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Order Statistics -->
+        <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex align-items-center justify-content-between pb-0">
+                    <div class="card-title mb-0">
+                        <h5 class="m-0 me-2">Storage Statistics</h5>
+                        <small class="text-muted">5GB Total Space</small>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn p-0" type="button" id="orederStatistics" data-bs-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <i class="bx bx-dots-vertical-rounded"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="orederStatistics">
+                            <a class="dropdown-item" href="javascript:void(0);">Select All</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Share</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex flex-column align-items-center gap-1">
+                            <h3 class="mb-2" id="totalUsedSpaceValue">0.00 MB</h3>
+                            <span>Used Space</span>
+                        </div>
+                        <div id="orderStatisticsChart"></div>
+                    </div>
+                    <div class="d-flex justify-content-center pt-4 gap-2">
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <i class="bx bx-share me-2"></i>
+                                <small>
+                                    <span>32</span> Files Shared </small>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex align-items-center justify-content-between pb-0">
+                    <div class="card-title mb-0">
+                        <h5 class="m-0 me-2">Quick look</h5>
+                        <small class="text-muted small">
+                            <span class="badge bg-label-primary">Auto update : on</span>
+                        </small>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn p-0" type="button" id="orederStatistics" data-bs-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <i class="bx bx-dots-vertical-rounded"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="orederStatistics">
+                            <a class="dropdown-item" href="javascript:void(0);">Mark seen</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="demo-inline-spacing mt-3 margint3">
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <i class="bx bx-run me-2"></i> Activity <span class="badge bg-primary">5</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <i class="bx bx-bell me-2"></i> Notification <span class="badge bg-secondary">0</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <i class="bx bx-support me-2"></i> Request <span class="badge bg-success">1</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <i class="bx bx-share-alt me-2"></i> Shared <span class="badge bg-secondary">0</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <i class="bx bx-task me-2"></i> My Tasks <span class="badge bg-secondary">0</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 col-xl-4 order-0 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex align-items-center justify-content-between pb-0">
+                    <div class="card-title mb-0">
+                        <h5 class="m-0 me-2">FTP Details</h5>
+                        <small class="text-muted"> FTP Connection : Disabled </small>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn p-0" type="button" id="orederStatistics" data-bs-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">
+                            <i class="bx bx-dots-vertical-rounded"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="orederStatistics">
+                            <a class="dropdown-item" href="javascript:void(0);">Disable</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Help</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body status-card">
+                    <h4 class="accordion-header server-details text-body d-flex" id="accordionIconOne">
+                        <i class="bx bx-server rpad"></i>
+                        <small>Hostname</small>
+                        <span class="badge bg-label-secondary lpad">
+                            <small>ftp://mifi.glitch.me</small>
+                        </span>
+                    </h4>
+                    <h4 class="accordion-header server-details text-body d-flex" id="accordionIconOne">
+                        <i class="bx bx-user rpad"></i>
+                        <small>Username</small>
+                        <span class="badge bg-label-secondary lpad">
+                            <small>Unknown</small>
+                        </span>
+                    </h4>
+                    <h4 class="accordion-header server-details text-body d-flex" id="accordionIconOne">
+                        <i class="bx bx-transfer rpad"></i>
+                        <small>Port </small>
+                        <span class="badge bg-label-secondary lpad">
+                            <small>21</small>
+                        </span>
+                    </h4>
+                    <h4 class="accordion-header server-details text-body d-flex" id="accordionIconOne">
+                        <i class="bx bx-key rpad"></i>
+                        <small>Password</small>
+                        <span class="badge bg-label-secondary lpad">
+                            <small>Your Portal Password</small>
+                        </span>
+                    </h4>
+                    <div class="divider margint10">
+                        <div class="divider-text"></div>
+                    </div>
+                    <div class="alert alert-secondary small" role="alert">Last accessed on 07/12/2022 7:20PM</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--/ Order Statistics -->
+<script>loadFolders(''); initDashboardEvents();</script>

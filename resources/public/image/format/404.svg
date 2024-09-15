@@ -1,0 +1,19 @@
+<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+    <defs></defs>
+    <path
+        d="M 393.414 488.127 L 121.414 488.127 C 94.904 488.127 73.414 466.636 73.414 440.127 L 73.414 72.127 C 73.414 45.617 94.904 24.127 121.414 24.127 L 345.414 24.127 L 441.414 120.127 L 441.414 440.127 C 441.414 466.636 419.924 488.127 393.414 488.127 Z"
+        fill="#cfd2fc"></path>
+    <path
+        d="M 73.414 360.127 L 441.414 360.127 C 441.414 360.127 441.414 360.127 441.414 360.127 L 441.414 440.127 C 441.414 466.636 419.924 488.127 393.414 488.127 L 121.414 488.127 C 94.904 488.127 73.414 466.636 73.414 440.127 L 73.414 360.127 C 73.414 360.127 73.414 360.127 73.414 360.127 Z"
+        fill="#5153ff"></path>
+    <text
+        style="fill: rgb(255, 255, 255); font-family: Arial, sans-serif; font-size: 110.7px; font-weight: 700; white-space: pre;"
+        x="160" y="458">404</text>
+    <text
+        style="fill: #8690fa; font-family: Arial, sans-serif; scale: 1.4; font-size: 200px; font-weight: 700; white-space: pre; transform-box: fill-box; transform-origin: 50% 50%;"
+        x="191.104" y="271.777">?<animateMotion path="M 0 0 L 0 50" calcMode="linear" begin="0s"
+            dur="3s" fill="freeze" repeatCount="indefinite" keyTimes="0; 0.48345; 1"
+            keyPoints="0; 0.54; 0"></animateMotion><animateTransform type="rotate" additive="sum"
+            attributeName="transform" values="-5;18;-5" dur="5s" fill="freeze"
+            keyTimes="0; 0.49758; 1" repeatCount="indefinite"></animateTransform></text>
+</svg>

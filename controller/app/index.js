@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require("fs");
 const router = express.Router({ mergeParams: true });
 const userService = require('./../../service/userService');
 const { RouterConfig } = require('./../../SystemConfig');
@@ -10,6 +11,11 @@ router.use("/u/*", checkAuth);
 router.use("/u/status", require("./status"));
 router.use("/u/folder", require("./folder"));
 router.use("/u/file", require("./file"));
+
+// UI component handler : document No. 'D-01'
+// Please check documentation for this feature / function
+
+router.use("/u/ui/component", sendUIComponent);
 
 module.exports = router
 
@@ -69,5 +75,16 @@ function checkAuth(req,res,next){
         }).end();
         
         return;
+    }
+}
+
+
+function sendUIComponent(req, res) {
+    let requestedComponent = __dirname + '/../../resources/views/UIcomponents/USER_' + req.query.name + '.html';
+    if (fs.existsSync(requestedComponent)) {
+        res.status(200).json({ status: 'success', data: fs.readFileSync(requestedComponent, 'utf8'), error: 'data', code: '204' });
+    }
+    else {
+        res.status(200).json({ status: 'error', data: null, error: 'component not found!', code: '204' });
     }
 }

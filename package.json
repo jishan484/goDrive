@@ -19,6 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "async": "^3.2.4",
+    "base32": "0.0.7",
     "cookie-parser": "1.4.6",
     "crypto": "^1.0.1",
     "express": "4.17.1",

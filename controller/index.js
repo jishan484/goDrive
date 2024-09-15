@@ -23,7 +23,7 @@ app.use('/', express.static('resources/public'));
 app.use('/', require('./pages'));
 app.use('/app', require('./app'));
 app.use('/admin', require('./admin'));
-// app.use('/external', require('./controller/external'))
+app.use('/external', require('./external'));
 
 app.get('/image/format/*',(req,res)=>{
     res.sendFile(path.resolve('resources/public/image/format/app.svg'));

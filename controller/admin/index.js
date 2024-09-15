@@ -19,7 +19,7 @@ router.use("/u/task", require("./task"));
 router.use("/u/user", require("./user"));
 
 // UI component handler : document No. 'D-01'
-// Please check documentation for this feture/function
+// Please check documentation for this feature / function
 
 router.use("/u/ui/component", sendUIComponent);
 module.exports = router

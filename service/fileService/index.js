@@ -1,7 +1,9 @@
 const db = require("../../database");
 const userService = require("./../userService");
 const driveService = require("./../driveService");
+const base32 = require('base32');
 const log = require("./../logService");
+const { externalAPIConfig } = require("./../../SystemConfig");
 
 
 class FileService {
@@ -37,6 +39,23 @@ class FileService {
         let owner = data.owner;
 
         db.all('SELECT * FROM Files WHERE (parentFolderId = ? or filePath = ?) and owner = ? and isDeleted=0', [folderId,filePath, owner], (err, row) => {
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
+            else {
+                callback(row);
+            }
+        });
+    }
+
+    _getBySharedTokenId(data, callback) {
+        let tokenId = data.tokenId;
+        db.all(`
+        SELECT f.*,s.tokenId FROM Files f
+        INNER JOIN sharedFileInfo s on f.fileId = s.fileId or f.parentFolderId = s.folderId 
+        WHERE s.tokenId = ? and f.isDeleted=0 and f.accesses = 'RW'
+        `, [tokenId], (err, row) => {
             if (err) {
                 callback(false);
                 log.log("error", err);
@@ -179,6 +198,53 @@ class FileService {
             }
         });
     }
+
+    saveSharedFilesDetails(data, callback){
+        let tokenId = data.tokenId;
+        let fileId = data.fileId;
+        let folderId = data.folderId;
+        let type = data.type;
+        let owner = data.owner;
+        db.run('INSERT INTO sharedFileInfo (tokenId, fileId, folderId, type, owner) VALUES (?,?,?,?,?)', [tokenId, fileId, folderId, type, owner], (err) => {
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
+            else {
+                callback(true);
+            }
+        });
+    }
+    deleteSharedFilesDetails(data, callback) {
+        let tokenId = data.tokenId;
+        let type = data.type;
+        let owner = data.owner;
+        db.run('DELETE FROM sharedFileInfo where tokenId = ? and owner = ? and type = ?', [tokenId, owner, type], (err) => {
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
+            else {
+                callback(true);
+            }
+        });
+    }
+
+    getSharedFilesDetails(data, callback){
+        let fileId = data.fileId;
+        let folderId = data.folderId;
+        let owner = data.owner;
+        db.get(`SELECT * FROM sharedFileInfo WHERE (fileId = ? or folderId = ?) and owner = ?`
+        , [fileId, folderId, owner], (err, row) => {
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
+            else {
+                callback(row);
+            }
+        });
+    }
     // -------------------------------------UTILITY--------------------------------------------//
 
     getFiles(req, callback) {
@@ -187,7 +253,7 @@ class FileService {
         data.owner = userService.getUserName(req.cookies.seid);
         data.filePath = req.body.filePath;
 
-        if(data.parentFolderId == '' && data.filePath == undefined) {
+        if (data.filePath == undefined && data.parentFolderId == '') {
             callback(false,"Missing parameters: parentFolderId and filePath");
             return;
         }
@@ -215,6 +281,111 @@ class FileService {
             }
             else{
                 callback(false, "No files found");
+            }
+        });
+    }
+
+    getSharedFiles(req, callback) {
+        let data = {};
+        data.tokenId = req.body.tokenId;
+
+        if (data.tokenId == undefined && data.tokenId == '') {
+            callback(false, "Missing parameters: tokenId");
+            return;
+        }
+        let response = {};
+        response.files = [];
+        this._getBySharedTokenId(data, (row) => {
+            if (row) {
+                for (let i = 0; i < row.length; i++) {
+                    response.sharedBy = row[0].owner;
+                    let file = {};
+                    file.fileName = row[i].fileName;
+                    file.fileType = row[i].fileType;
+                    file.fileSize = row[i].fileSize;
+                    file.fileFormat = row[i].fileFormat;
+                    file.modifiedOn = row[i].modifiedOn;
+                    file.icon = row[i].fileFormat + '.svg';
+                    file.downloadURL = new TokenService().encode(row[i].tokenId+"_:_"+row[i].fileId, externalAPIConfig.tokenHashKey);
+                    response.files.push(file);
+                }
+                callback(true, response);
+            }
+            else {
+                callback(false, "No files found");
+            }
+        });
+    }
+
+    saveSharedFiles(req, callback) {
+        let data = {};
+        data.alreadyShared = false;
+        data.type = req.body.type;
+        data.folderId = req.body.folderId;
+        data.fileId = req.body.fileId;
+        data.sharedId = req.body.targetId;
+        data.owner = userService.getUserName(req.cookies.seid);
+        data.tokenId = "SH" + Date.now().toString(36) + '-' + Math.floor(Math.random() * 10000000).toString(36);  // from random generator
+        if (data.sharedId != undefined && data.sharedId != null && data.sharedId != '') {
+            if(data.type == undefined){
+                callback(false, "Missing parameters: type (folder / file)");
+                return;
+            }
+            else if (data.type == 'file') data.fileId = data.sharedId;
+            else if (data.type == 'folder') data.folderId = data.sharedId;
+            else {
+                callback(false, "Wrong type provided, acceptable types are (folder / file)");
+                return;
+            }
+        }
+        if (data.folderId == undefined && data.fileId == undefined) {
+            callback(false, "Missing parameters: File id or Folder id");
+            return;
+        }
+
+        this.getSharedFilesDetails(data, (result)=>{
+            if(result){
+                result.alreadyShared = true;
+                callback(true, result);
+            } else {
+                this.saveSharedFilesDetails(data, (status) => {
+                    if (status == false) {
+                        callback(false, "Shared file not saved");
+                    }
+                    else {
+                        callback(true, data);
+                    }
+                });
+            }
+        });
+    }
+
+    cancelSharedFiles(req, callback) {
+        let data = {};
+        data.type = req.body.type;
+        data.tokenId = req.body.targetId;
+        data.owner = userService.getUserName(req.cookies.seid);
+        if (data.tokenId == undefined && data.tokenId == null && data.tokenId == '') {
+            callback(false, "Missing parameters: token id");
+            return;
+        }
+        if (data.type == undefined) {
+            callback(false, "Missing parameters: type (folder / file)");
+            return;
+        }
+
+        this._getBySharedTokenId(data, (result) => {
+            if (result) {
+                this.deleteSharedFilesDetails(data, (status) => {
+                    if (status == false) {
+                        callback(false, "Shared token not found");
+                    }
+                    else {
+                        callback(true, "deleted");
+                    }
+                });
+            } else {
+                callback(false, "Sharing token does not exist.");
             }
         });
     }
@@ -309,6 +480,39 @@ class FileService {
                 }
             });
         }
+    }
+
+
+    downloadFileExternally(req, callback) {
+        if (req.params.tokenId == undefined || req.params.tokenId == null || req.params.tokenId == "") {
+            callback(false, "Token is not provided");
+            return;
+        }
+        let data = {};
+        let paramToken = new TokenService().decode(req.params.tokenId, externalAPIConfig.tokenHashKey).split('_:_');
+        data.tokenId = paramToken[0];
+        data.fileId = paramToken[1];
+        this._getBySharedTokenId(data, (rows) => {
+            if (rows == undefined || rows.length == 0) {
+                callback(false, 'File Not Found');
+                return;
+            }
+            rows = rows.filter(x=>x.fileId == data.fileId)[0];
+            req.body.driveId = rows.driveId;
+            req.body.nodeId = rows.nodeId;
+            req.body.fileName = rows.fileName;
+            req.body.fileSize = rows.fileSize;
+            req.body.fileType = rows.fileType;
+
+            if (rows.driveId == 'CHUNKED') {
+                this.downloadChunked(rows, callback);
+                return;
+            }
+            driveService.downloadFile(req, (status, data) => {
+                callback(status, data);
+            });
+            // TODO: update lastAccessedOn
+        });
     }
 
 
@@ -530,5 +734,28 @@ class FileService {
 
 
 
+class TokenService {
+
+    xorWithKey(input, key) {
+        let output = '';
+        for (let i = 0; i < input.length; i++) {
+            const charCode = input.charCodeAt(i);
+            const keyCharCode = key.charCodeAt(i % key.length);
+            output += String.fromCharCode(charCode ^ keyCharCode);
+        }
+        return output;
+    }
+
+    encode(text, key) {
+        const xorText = this.xorWithKey(text, key);
+        return base32.encode(Buffer.from(xorText, 'utf-8')).toString();
+    }
+
+    decode(text, key) {
+        const decodedBytes = base32.decode(text);
+        const decodedText = Buffer.from(decodedBytes).toString('utf-8');
+        return this.xorWithKey(decodedText, key);
+    }
+}
 
 module.exports = new FileService();

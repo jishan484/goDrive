@@ -9,6 +9,8 @@ function loadComponent(div,componentName, targetDiv = 'component-wrapper'){
         }
     }, true)
 }
+//load the dashboad component during document onload
+loadComponent(this, 'dashboard');
 
 
 
@@ -180,8 +182,6 @@ function loadUsers(){
     });
 }
 
-setTimeout(() => {
-    loadDashboardStats();
-}, 1000);
+
 
 

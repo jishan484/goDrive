@@ -17,6 +17,7 @@ DBChanges.changes.secondOrder.push(require('./Tasks.js'));   // Tasks table crea
 DBChanges.changes.secondOrder.push(require('./defaultUser.js'));   // Default User creation
 DBChanges.changes.secondOrder.push(require('./adminAccount.js'));   // Default admin account creation
 DBChanges.changes.secondOrder.push(require('./Mails.js'));   // Mails table creation
+DBChanges.changes.secondOrder.push(require('./SharedFileInfo.js'));   // Mails table creation
 
 module.exports = DBChanges;
 

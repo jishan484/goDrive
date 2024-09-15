@@ -1,3 +1,16 @@
+function loadComponent(div, componentName, targetDiv = 'component-wrapper'){
+    request('/app/u/ui/component', { name: componentName, UIroot: false, format: 'html/text' }, 'GET', (response) => {
+        if (response.status == 'success') {
+            $('#' + targetDiv).html(response.data);
+            $('#layout-menu > ul > .active').removeClass('active');
+            $(div).addClass('active');
+        }
+    }, true)
+}
+//load the user dashboard component during document onload
+loadComponent('#DashboardComponent', 'dashboard');
+
+
 function renderFolders(folders) {
     var html = `<div class="col-lg-12 col-md-12 order-1">
                     <div class="row">`;
@@ -23,7 +36,7 @@ function renderFolders(folders) {
                                 </div>
                                 <ul class="dropdown-menu folderOption" data-popper-placement="bottom-start">
                                     <li><div class="dropdown-item" onclick="folderOpen('${folders[i].folderName}')">Open</div></li>
-                                    <li><div class="dropdown-item" onclick="folderOpen('${folders[i].folderName}')">Share</div></li>
+                                    <li><div class="dropdown-item" onclick="folderShare('${folders[i].folderId}')">Share</div></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><div class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editModel" onclick="renderFolderRenameModel('${folders[i].folderId}','${folders[i].folderName}')">Rename</div></li>
                                     <li><div class="dropdown-item" onclick="folderCopyMove('${folders[i].folderId}')">Move</div></li>
@@ -239,7 +252,39 @@ function fileRename(fileId) {
     updateFileName(fileName, fileId);
 }
 
+function renderSharedFileInfo(resp) {
+    let html = `
+        <div class="modal fade show" aria-labelledby="modalToggleLabel" tabindex="-1" style="display: block;" aria-modal="true" role="dialog">
+                          <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h4 class="modal-title" id="modalToggleLabel">Copy Link Address</h4>
+                              </div>
+                              <div class="modal-body">
+                                <div class="alert alert-secondary mb-1 text-break" role="alert" id="renderSharedFileInfo_popup_url">
+                                ${window.location.protocol + "//" + window.location.host + '/shared/'+resp.tokenId}
+                                </div>
+                                <div style="line-height:15px;font-size:14px;" class="text-light m-1">You Can Stop Sharing This File By Clicking Cancel Sharing Button.</div>
+                                <div class="mt-2">
+                                    <button type="button" onclick="cancelSharedFileorFolder('${resp.type}','${resp.tokenId}')" class="btn btn-sm btn-outline-secondary"><i class='bx bx-x'></i>Cancel Sharing</button>
+                                </div>
+                              </div>
+                              <div class="modal-footer">
+                                <button class="btn btn-danger" onclick="$('#popups-wrapper').html('')">
+                                  Close
+                                </button>
+                                <button class="btn btn-primary" id = "renderSharedFileInfo_popup_button"
+                                onclick="copyText('renderSharedFileInfo_popup_url', this)">
+                                <i class='bx bx-share-alt'></i> Copy Link
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+    `;
 
+    $("#popups-wrapper").html(html);
+}
 
 
 
@@ -335,6 +380,29 @@ async function loadFolders(folderName,opt=false)
     });
 }
 
+
+function copyText(id, elm){
+    if(navigator && navigator.clipboard){
+        navigator.clipboard.writeText($("#"+id).text().replace(/\n| /g, "")).then(function () {
+            $(elm).html('Copied').removeClass().addClass('btn btn-secondary').delay(1000).queue(function (next) { $('#popups-wrapper').html(''); next(); })
+        }, function () {
+            alert('Failure to copy. Please Manually copy the link!')
+        });
+    } else {
+        var r = document.createRange();
+        r.selectNode(document.getElementById(id));
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(r);
+        try {
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            $(elm).html('Copied').removeClass().addClass('btn btn-secondary').delay(1000).queue(function (next) { $('#popups-wrapper').html(''); next(); })
+        } catch (err) {
+            alert('Unable to copy!');
+        }
+    }
+}
+
 function folderCopyMove(folderId) {
     _currentClipboard.active = true;
     _currentClipboard.type = 'folder';
@@ -425,6 +493,8 @@ function contentSortBy(sortBy) {
     renderFolders(_last_requested_folder_response.subFolders);
     renderFiles(_last_requested_file_response.files)
 }
+
+
 function sortFolders(folders) {
     if(_content_sort_method == 'default') return;
     if (_content_sort_method == 'name') {
@@ -473,17 +543,46 @@ function sortFiles(files) {
     }
 }
 
-basicModal.ondragover = basicModal.ondragenter = function (evt) {
-    evt.preventDefault();
-};
+function initDashboardEvents(){
+    basicModal.ondragover = basicModal.ondragenter = function (evt) {
+        evt.preventDefault();
+    };
 
-basicModal.ondrop = function (evt) {
-    formFileMultiple.files = evt.dataTransfer.files;
-    const dT = new DataTransfer();
-    dT.items.add(evt.dataTransfer.files[0]);
-    formFileMultiple.files = dT.files;
-    evt.preventDefault();
-};
+    basicModal.ondrop = function (evt) {
+        formFileMultiple.files = evt.dataTransfer.files;
+        const dT = new DataTransfer();
+        dT.items.add(evt.dataTransfer.files);
+        formFileMultiple.files = dT.files;
+        evt.preventDefault();
+    };
+
+    $("#formFileMultiple").change(function () {
+        _currentUploadFolder = _current_folder_path;
+        _currentUploadType = 'file';
+        renderTableFiles(formFileMultiple.files);
+        if ($("#formFileMultiple")[0].files.length == 0) {
+            $("#formFolderMultiple").show(500);
+        } else {
+            $("#formFolderMultiple").hide(500);
+        }
+    });
+
+    $("#formFolderMultiple").change(function () {
+        _currentUploadFolder = _current_folder_path;
+        _totalUploadedFiles = 0;
+        _totalUploadableFiles = formFolderMultiple.files.length;
+        _currentUploadType = 'folder';
+        _checkForDuplicateUpload = false;
+        _uploadFaildWithError = false;
+        _currentUploadedFolderList = new Map();
+        renderTableFiles(formFolderMultiple.files);
+        if ($("#formFolderMultiple")[0].files.length == 0) {
+            $("#formFileMultiple").show(500);
+        } else {
+            $("#formFileMultiple").hide(500);
+        }
+    });
+}
 
 function uploadFiles() {
     if(_currentUploadType == 'folder'){
@@ -667,36 +766,6 @@ function handelUploadError(statusCode,message,readyState,resp){
     return canContinue;
 }
 
-$("#formFileMultiple").change(function () {
-    _currentUploadFolder = _current_folder_path;
-    _currentUploadType = 'file';
-    renderTableFiles(formFileMultiple.files);
-    if($("#formFileMultiple")[0].files.length == 0){
-        $("#formFolderMultiple").show(500);
-    } else {
-        $("#formFolderMultiple").hide(500);
-    }
-});
-
-$("#formFolderMultiple").change(function () {
-    _currentUploadFolder = _current_folder_path;
-    _totalUploadedFiles = 0;
-    _totalUploadableFiles = formFolderMultiple.files.length;
-    _currentUploadType = 'folder';
-    _checkForDuplicateUpload = false;
-    _uploadFaildWithError = false;
-    _currentUploadedFolderList = new Map();
-    renderTableFiles(formFolderMultiple.files);
-    if ($("#formFolderMultiple")[0].files.length == 0) {
-        $("#formFileMultiple").show(500);
-    } else {
-        $("#formFileMultiple").hide(500);
-    }
-});
-
-setTimeout(function () {
-    loadFolders('');
-},200);
 
 // cancle all uploads
 function cancleAllUploads(){
@@ -751,6 +820,33 @@ function fileDownload(fileId){
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+}
+
+function fileShare(fileId) {
+    shareFileorFolder('file', fileId, 'POST', (response) => {
+        if (response && response.status != 'error') {
+            $("#" + fileId).click();
+            renderSharedFileInfo(response.data);
+        }
+    });
+}
+function cancelSharedFileorFolder(type, tokenId) {
+    shareFileorFolder(type, tokenId, 'DELETE', (response) => {
+        if (response && response.status != 'error') {
+            $('#popups-wrapper .modal-content').animate({ opacity: 0 }, 1000, function () {
+                $("#popups-wrapper").html('');
+            });
+            successToast("The file is no longer shared.");
+        }
+    });
+}
+function folderShare(fileId) {
+    shareFileorFolder('folder', fileId, 'POST', (response) => {
+        if (response && response.status != 'error') {
+            $("#" + fileId).click();
+            renderSharedFileInfo(response.data);
+        }
+    });
 }
 
 

@@ -9,6 +9,8 @@ router.get('/download', downloadFile); //download file/s by id or (filename and 
 router.post('/', uploadFile);
 router.patch('/', updateFile);
 router.delete('/',deleteFile);
+router.post('/share', shareFile);
+router.delete('/share', cancelSharedFile);
 
 module.exports = router;
 
@@ -108,6 +110,26 @@ function deleteFile(req , res){
 
 function updateFile(req, res) {
     fileService.updateFile(req, (status, data) => {
+        if (status) {
+            res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
+        } else {
+            res.status(200).json({ status: 'error', data: null, error: data, code: '204' }).end();
+        }
+    });
+}
+
+function shareFile(req, res) {
+    fileService.saveSharedFiles(req, (status, data) => {
+        if (status) {
+            res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
+        } else {
+            res.status(200).json({ status: 'error', data: null, error: data, code: '204' }).end();
+        }
+    });
+}
+
+function cancelSharedFile(req, res) {
+    fileService.cancelSharedFiles(req, (status, data) => {
         if (status) {
             res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
         } else {
