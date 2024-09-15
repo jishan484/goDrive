@@ -12,7 +12,8 @@ module.exports = {
         pin BIGINT, 
         type TEXT,
         sharedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-        owner TEXT, 
+        owner TEXT,
+        sharedWith TEXT,
         lastAccessedOn TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
         expireAfter INTEGER,
         isPinProtected INTEGER(1) DEFAULT 0 NOT NULL
