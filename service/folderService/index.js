@@ -69,7 +69,7 @@ class FolderService {
         let parentFolderId = data.parentFolderId;
         let folderPath = data.folderPath;
         let owner = data.owner;
-        db.all('SELECT * FROM Folders WHERE ( parentFolderId = ? or folderPath = ? or fullPath = ? ) and owner = ?', [parentFolderId, folderPath, folderPath,owner], (err, rows) => {
+        db.all('SELECT f.*,s.tokenId FROM Folders f LEFT JOIN sharedFileInfo s on f.folderId = s.folderId WHERE ( f.parentFolderId = ? or f.folderPath = ? or f.fullPath = ? ) and f.owner = ?', [parentFolderId, folderPath, folderPath,owner], (err, rows) => {
             if (err) {
                 callback(false);
                 log.log("error", err);
@@ -187,6 +187,7 @@ class FolderService {
                         folders.permissions = result[i].permissions;
                         folders.accesses = result[i].accesses;
                         folders.priority = result[i].priority;
+                        folders.isShared = (result[i].tokenId != null);
                         isParentFolderFound = true;
                     }
                 }
@@ -216,6 +217,7 @@ class FolderService {
                         folder.permissions = result[i].permissions;
                         folder.accesses = result[i].accesses;
                         folder.priority = result[i].priority;
+                        folder.isShared = (result[i].tokenId != null);
                         folders.subFolders.push(folder);
                     }
                 }

@@ -216,7 +216,7 @@ function showspeed(loaded) {
 
 
 // :CREATE:FOLDER:
-$('#createFolderBtn').click(function () {
+function createFolder() {
     var folderName = $('#foldername').val();
     if (folderName == null || folderName == '') {
         $('#folderCreateError').html('Folder name cannot be empty');
@@ -227,21 +227,21 @@ $('#createFolderBtn').click(function () {
     else if (folderName.match(/[^a-zA-Z0-9-_\\+\\. \\(){}"':\[\]]/)) {
         $('#folderCreateError').html('Folder name contains invalid characters');
     }
-    else if(folderName.match(/^[._]+$/)){
+    else if (folderName.match(/^[._]+$/)) {
         $('#folderCreateError').html('Folder name Must contain atleast one letter or number');
     } // /^[_.]*[a-zA-Z0-9]+[a-zA-Z0-9-_\\+\\.\\(){}"':\[\]]*$/
     else {
         $('#createFolderBtn').attr('disabled', true);
-        var payload = { 
+        var payload = {
             folderName: folderName,
             folderPath: _current_folder_path
         };
         request("app/u/folder", payload, 'POST', (response) => {
-            if(response == false){
+            if (response == false) {
                 $('#folderCreateError').html("Some error occured!");
                 $('#createFolderBtn').attr('disabled', false);
             }
-            if(response.status == 'success'){
+            if (response.status == 'success') {
                 $('#folderCreateError').html('Folder created successfully');
                 $('#createFolderBtn').attr('disabled', true);
                 loadFolders('');
@@ -252,14 +252,14 @@ $('#createFolderBtn').click(function () {
                     $('#foldername').val('');
                 }, 3000);
             }
-            else{
+            else {
                 $('#folderCreateError').html(response.error);
                 $('#createFolderBtn').attr('disabled', false);
             }
         }
         );
     }
-});
+}
 
 
 // :FETCH:FOLDER:

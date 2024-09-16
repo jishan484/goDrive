@@ -49,7 +49,7 @@
                             </a>
                         </div>
                         <!-- /Logo -->
-
+                        <div class="spinner-border centerXMS spinner-border-sm text-primary m-0 hide" role="status"></div>
                         <form id="formAuthentication" class="mb-3" onsubmit="return false;">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Username</label>
@@ -74,7 +74,7 @@
                                 <span class="small" id="loginError"></span>
                             </div>
                             <div class="mb-3">
-                                <button class="btn btn-primary d-grid w-100" type="submit">Sign in</button>
+                                <button class="btn btn-primary d-grid w-100 mt-2" type="submit">Sign in</button>
                             </div>
                         </form>
 
@@ -100,7 +100,12 @@
 
         $('#formAuthentication').submit(loginuser);
         ee = "";
+        lastClicked = 0;
         function loginuser(form) {
+            $(".spinner-border").addClass("show")
+            $('#loginError').html('');
+            if((Date.now()-lastClicked)/1000 < 30) return;
+            lastClicked = Date.now();
             var email = $('#username')[0].value;
             var password = $('#password')[0].value;
 
@@ -141,6 +146,10 @@
                         }
                     });
                 }
+            }).catch(e=>{
+                lastClicked = 0;
+                $(".spinner-border").removeClass("show")
+                $('#loginError').html(e);
             });
             
             return false;

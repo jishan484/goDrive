@@ -103,7 +103,7 @@ function resnderUsers(users){
             let updBTN = (status == 1) ? "danger" : "primary";
             let oppsiteStatus = (status == 1) ? 'disable' : 'active';
             data += `<tr>
-                      <td><img src="${(users.list[i].profile == "") ? "../image/1.png" : "../"+users.list[i].profile}" width="25px"></td>
+                      <td><img src="${(users.list[i].profile == "") ? "../image/demo.jpeg" : "../"+users.list[i].profile}" width="25px"></td>
                       <td><strong>${user}</strong></td>
                       <td><span class="badge bg-label-secondary me-1">${users.list[i].role}</span></td>
                       <td><span class="badge bg-label-success">${(status==1)?"Active":"Disabled"}</span></td>

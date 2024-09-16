@@ -23,7 +23,6 @@ function userLogin(req, res) {
                 res.status(200).send({ status: 'success', error: null, code: '200' });
             }
             else {
-                
                 res.status(200).send({ status: 'failed', error: data, code: '204' });
             }
         });

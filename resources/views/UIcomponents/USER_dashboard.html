@@ -42,7 +42,7 @@
                             </div>
                             <div class="mb-2">
                                 <button class="btn btn-primary w-25 mw-50" id="createFolderBtn"
-                                    type="submit">Create</button>
+                                    type="submit" onclick="createFolder()">Create</button>
                             </div>
                         </form>
                     </div>
@@ -140,10 +140,10 @@
         <div id="bodyOptions" oncontextmenu="folderBodyOptions(this,event);">
             <ul class="dropdown-menu folderBodyOption" data-popper-placement="bottom-start" style="z-index: 1090;">
                 <li>
-                    <div class="dropdown-item" onclick="folderOpen('${folders[i].folderName}')">New Folder</div>
+                    <div class="dropdown-item" onclick="folderOpen('')">Refresh</div>
                 </li>
                 <li>
-                    <div class="dropdown-item" onclick="folderOpen('${folders[i].folderName}')"> Upload File</div>
+                    <div class="dropdown-item" onclick="folderShare(_current_folder_id)">Share Current Folder</div>
                 </li>
                 <li>
                     <hr class="dropdown-divider" />
@@ -162,11 +162,11 @@
                     <div class="dropdown-item" onclick="folderOpen('${folders[i].folderName}')">Open terminal</div>
                 </li>
             </ul>
-            <div id="folders"></div>
+            <div id="folders"><div class="spinner-border centerXMS text-primary m-0" role="status"></div></div>
             <div class="divider">
                 <div class="divider-text"></div>
             </div>
-            <div id="files"></div>
+            <div id="files"><div class="spinner-border centerXMS text-primary m-0" role="status"></div></div>
         </div>
     </div>
     <div class="row">

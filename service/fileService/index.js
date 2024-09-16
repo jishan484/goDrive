@@ -38,7 +38,7 @@ class FileService {
         let filePath = data.filePath;
         let owner = data.owner;
 
-        db.all('SELECT * FROM Files WHERE (parentFolderId = ? or filePath = ?) and owner = ? and isDeleted=0', [folderId,filePath, owner], (err, row) => {
+        db.all('SELECT f.*,s.tokenId FROM Files f LEFT JOIN sharedFileInfo s on f.fileId = s.fileId or f.parentFolderId = s.folderId WHERE (f.parentFolderId = ? or f.filePath = ?) and f.owner = ? and f.isDeleted=0', [folderId,filePath, owner], (err, row) => {
             if (err) {
                 callback(false);
                 log.log("error", err);
@@ -54,7 +54,7 @@ class FileService {
         db.all(`
         SELECT f.*,s.tokenId FROM Files f
         INNER JOIN sharedFileInfo s on f.fileId = s.fileId or f.parentFolderId = s.folderId 
-        WHERE s.tokenId = ? and f.isDeleted=0 and f.accesses = 'RW'
+        WHERE s.tokenId = ? and f.isDeleted=0 and f.accesses = 'RW' and s.owner = f.owner
         `, [tokenId], (err, row) => {
             if (err) {
                 callback(false);
@@ -230,18 +230,22 @@ class FileService {
         });
     }
 
-    getSharedFilesDetails(data, callback){
+    _getSharedFilesDetails(data, callback){
         let fileId = data.fileId;
         let folderId = data.folderId;
         let owner = data.owner;
-        db.get(`SELECT * FROM sharedFileInfo WHERE (fileId = ? or folderId = ?) and owner = ?`
-        , [fileId, folderId, owner], (err, row) => {
+        let tokenId = data.tokenId;
+        let type = data.type;
+        db.all(`SELECT * FROM sharedFileInfo 
+            WHERE ((fileId = ? AND type = 'file') OR (folderId = ? AND type = 'folder') OR tokenId = ?) 
+            AND owner = ?`
+            , [fileId, folderId, tokenId, owner], (err, row) => {
             if (err) {
                 callback(false);
                 log.log("error", err);
             }
             else {
-                callback(row);
+                callback(row[0]);
             }
         });
     }
@@ -275,6 +279,7 @@ class FileService {
                     file.lastAccessedOn = row[i].lastAccessedOn;
                     file.icon = row[i].fileFormat + '.svg';
                     file.star = row[i].star;
+                    file.isShared = (row[i].tokenId != null);
                     response.files.push(file);
                 }
                 callback(true, response);
@@ -342,8 +347,10 @@ class FileService {
             callback(false, "Missing parameters: File id or Folder id");
             return;
         }
+        data.fileId = (data.fileId == '') ? null : data.fileId;
+        data.folderId = (data.folderId == '') ? null : data.folderId;
 
-        this.getSharedFilesDetails(data, (result)=>{
+        this._getSharedFilesDetails(data, (result)=>{
             if(result){
                 result.alreadyShared = true;
                 callback(true, result);
@@ -374,7 +381,7 @@ class FileService {
             return;
         }
 
-        this._getBySharedTokenId(data, (result) => {
+        this._getSharedFilesDetails(data, (result) => {
             if (result) {
                 this.deleteSharedFilesDetails(data, (status) => {
                     if (status == false) {

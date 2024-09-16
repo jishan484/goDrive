@@ -46,7 +46,7 @@ function downloadFile(req, res) {
                 data.end();
             });
         } else {
-            res.status(200).json({ status: 'error', data: null, error: data, code: '404' }).end();
+            res.status(404).json({ status: 'error', data: null, error: data, code: '404' }).end();
         }
     });
 }
