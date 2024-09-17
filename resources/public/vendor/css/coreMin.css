@@ -473,6 +473,7 @@ box-shadow: 0 2px 20px 0 rgba(67, 89, 113, 0.45);
 .pb-0 {padding-bottom: 0 !important;}
 .fs-4 {font-size: calc(1.2625rem + 0.15vw) !important;}
 .centerX {transform: translate(-50%);left: 50%;position: relative !important;}
+.centerY {margin-top: auto !important;margin-bottom: auto !important;}
 .centerXMS {position: relative !important;left: 50% !important;margin-left: -1rem !important;}
 .fw-semibold {font-weight: 600 !important;}
 .fw-bolder {font-weight: 900 !important;}
