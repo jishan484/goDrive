@@ -130,6 +130,8 @@
                 },
                 body: JSON.stringify(data)
             }).then((data)=>{
+                lastClicked = 0;
+                $(".spinner-border").removeClass("show")
                 if(data == null) {
                     $('#loginError').text('Invalid Response from Server');
                 }

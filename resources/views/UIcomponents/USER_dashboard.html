@@ -12,14 +12,14 @@
                         <button type="button" class="btn btn-sm btn-opt btn-secondary" data-bs-toggle="modal"
                             data-bs-target="#basicModal">
                             <span class="tf-icons bx bx-cloud-upload"></span> Upload Files </button>
-                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                        <button type="button" class="btn btn-outline-secondary" onclick="folderBack()">
+                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown" style="margin-right:5px;">
+                        <button type="button" class="btn btn-outline-secondary w80px" onclick="folderBack()">
                             <i class="tf-icons bx bx-arrow-back"></i>Back </button>
-                        <button type="button" class="btn btn-outline-secondary" onclick="folderHome()">
+                        <button type="button" class="btn btn-outline-secondary w80px" onclick="folderHome()">
                             <i class="tf-icons bx bx-home"></i>
                         </button>
                         <div class="btn-group" role="group">
-                            <button id="btnGroupDrop1" type="button" class="btn btn-outline-secondary dropdown-toggle"
+                            <button id="btnGroupDrop1" type="button" class="btn btn-outline-secondary dropdown-toggle w80px"
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Sort </button>
                             <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                                 <div class="dropdown-item" onclick="contentSortBy('name')">Sort by Name</div>
@@ -311,4 +311,4 @@
     </div>
 </div>
 <!--/ Order Statistics -->
-<script>loadFolders(''); initDashboardEvents();</script>
+<script>loadFolders(''); initDashboardEvents(); renderStorageStatus();</script>

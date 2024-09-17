@@ -769,6 +769,7 @@ filter: invert(0);
 opacity: 1;
 }}.minpad {padding: 5px 10px;margin-bottom: 15px !important;}
 .pointable {cursor: pointer;}
+.w80px {width: 80px;}
 .status-card {max-height: 280px !important;-ms-overflow-style: none;scrollbar-width: none;}
 .status-card::-webkit-scrollbar {display: none;}
 .lpad {position: absolute !important;text-transform:none !important;left: 125px !important;margin-top: -2px;}
