@@ -184,6 +184,7 @@ class FolderService {
                         folders.fullPath = result[i].fullPath;
                         folders.folderName = result[i].folderName;
                         folders.parentFolderId = result[i].parentFolderId;
+                        folders.createdOn = result[i].createdOn;
                         folders.permissions = result[i].permissions;
                         folders.accesses = result[i].accesses;
                         folders.priority = result[i].priority;
@@ -203,6 +204,7 @@ class FolderService {
                     folders.permissions = "RW";
                     folders.accesses = "FULL";
                     folders.priority = "NORMAL";
+                    folders.createdOn = new Date();
                 }
                 folders.subFolders = [];
                 for(let i = 0; i < result.length; i++){

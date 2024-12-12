@@ -88,7 +88,6 @@ function searchUser(){
     request('/admin/u/user/search', data, 'GET', (response) => {
         if (response.status == 'success') {
             let users = response.data;
-            console.log(users);
             resnderUsers(users);
         }
     }, true);
@@ -99,7 +98,6 @@ function updateTaskFrequency(){
     let data = {};
     data.name = $('#editTask-name').html().split(':')[1].trim();
     data.frequency = $('#editTask-value').html();
-    console.log(data);
     request('/admin/u/task', data, 'PUT', (response) => {
         if (response.status == 'success') {
             loadTasks(false);
