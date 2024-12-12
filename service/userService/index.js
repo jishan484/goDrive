@@ -104,7 +104,6 @@ class UserService {
                 log.log("error", err);
             }
             else {
-                console.log(row);
                 if (row == undefined && row != false) callback(false, null, "Incorrect username or password entered! Please try again.");
                 else if(row.status != 1 || row.status != '1') callback(false,null,'User account is disabled!');
                 else callback(true, row);
