@@ -31,8 +31,8 @@ class WebDAVProcessor {
         : req.path);
     data.body.filePath = decodeURIComponent(data.body.folderPath);
     data.body.folderPath = decodeURIComponent(data.body.folderPath);
-    data.body.user = "jishan";
-    data.cookies.seid = userService.getUserToken(data.body, "RemoteUser");
+    data.body.user = req.owner;
+    data.cookies.seid = (req.cookies.seid != undefined) ? req.cookies.seid : userService.getUserToken(data.body, "RemoteUser");
     folderService.getFolderTree(data, (status, result) => {
       if (status) {
         fileService.getFiles(data, (status, files) => {
@@ -75,9 +75,8 @@ class WebDAVProcessor {
     (data.body = {}), (data.cookies = {});
     data.body.filePath = "/home" + path.dirname(req.originalUrl).slice(7);
     data.body.fileName = decodeURIComponent(path.basename(req.originalUrl));
-    data.body.user = "jishan";
-    data.cookies.seid = userService.getUserToken(data.body, "RemoteUser");
-    // data.isDAVParamProvided = true;
+    data.body.user = req.owner;
+    data.cookies.seid = (req.cookies.seid != undefined) ? req.cookies.seid : userService.getUserToken(data.body, "RemoteUser");
     fileService.downloadFile(data, (status, fileData) => {
       if (status) {
         res.set(
@@ -122,8 +121,8 @@ class WebDAVProcessor {
     let data = {};
     (data.body = {}), (data.cookies = {});
     data.body.filePath = decodeURIComponent(req.body.filePath);
-    data.body.user = "jishan";
-    data.cookies.seid = userService.getUserToken(data.body, "RemoteUser");
+    data.body.user = req.owner;
+    data.cookies.seid = (req.cookies.seid != undefined) ? req.cookies.seid : userService.getUserToken(data.body, "RemoteUser");
     fileService.updateFileProperties(data, (status, result) => {
       if (status) {
         let xmlresult = `<?xml version="1.0" encoding="utf-8" ?>
@@ -156,9 +155,8 @@ class WebDAVProcessor {
     data.cookies = {};
     data.body.fileName = path.basename(req.originalUrl);
     data.body.filePath = "/home" + path.dirname(req.originalUrl).slice(7);
-    data.body.user = "jishan";
-    data.cookies.seid = userService.getUserToken(data.body, "RemoteUser");
-    //data for file
+    data.body.user = req.owner;
+    data.cookies.seid = (req.cookies.seid != undefined) ? req.cookies.seid : userService.getUserToken(data.body, "RemoteUser");
     data.body.fileType = req.headers["content-type"] != undefined ? req.headers["content-type"] : mimeTypes[data.body.fileName.split(".").pop().toLowerCase()];
     data.body.fileType = (data.body.fileType == undefined) ? 'application/octet-stream' : data.body.fileType;
     data.body.fileSize =
@@ -179,8 +177,8 @@ class WebDAVProcessor {
     data.body = {};
     data.cookies = {};
     data.body.filePath = "/home" + req.originalUrl.slice(7);
-    data.body.user = "jishan";
-    data.cookies.seid = userService.getUserToken(data.body, "RemoteUser");
+    data.body.user = req.owner;
+    data.cookies.seid = (req.cookies.seid != undefined) ? req.cookies.seid : userService.getUserToken(data.body, "RemoteUser");
     req.body = data.body;
     req.cookies = data.cookies;
     // res.status(204).end();
@@ -204,8 +202,8 @@ class WebDAVProcessor {
     data.cookies = {};
     data.body.folderName = path.basename(req.originalUrl);
     data.body.folderPath = "/home" + path.dirname(req.originalUrl).slice(7);
-    data.body.user = "jishan";
-    data.cookies.seid = userService.getUserToken(data.body, "RemoteUser");
+    data.body.user = req.owner;
+    data.cookies.seid = (req.cookies.seid != undefined) ? req.cookies.seid : userService.getUserToken(data.body, "RemoteUser");
     folderService.deleteFolder(data, (status, resp) => {
       if (status) res.status(200).end();
       else{
@@ -228,8 +226,8 @@ class WebDAVProcessor {
     data.cookies = {};
     data.body.folderName = path.basename(req.originalUrl);
     data.body.folderPath = "/home" + path.dirname(req.originalUrl).slice(7);
-    data.body.user = "jishan";
-    data.cookies.seid = userService.getUserToken(data.body, "RemoteUser");
+    data.body.user = req.owner;
+    data.cookies.seid = (req.cookies.seid != undefined) ? req.cookies.seid : userService.getUserToken(data.body, "RemoteUser");
     folderService.createFolder(data, (status, data) => {
       if (status) res.status(200).send(data).end();
       else res.status(200).send(data).end();
