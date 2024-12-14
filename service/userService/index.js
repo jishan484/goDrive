@@ -271,6 +271,31 @@ class UserService {
         }
     }
 
+    userLoginByToken(req, res, callback) {
+        if(req.cookies != undefined && req.cookies.seid != undefined){
+          req.owner = this.getUserName(req.cookies.seid);
+        }
+        let data = {};
+        data.user = req.userName;
+        data.password = req.password;
+        this.verifyUser(data, (status, userInfo,error) => {
+            if (status) {
+                let token = this.getUserToken(data, userInfo.role);
+                res.cookie('seid', token, {
+                    httpOnly: (SyatemConfig != undefined && SyatemConfig.onlyHTTPCookie != undefined) ? SyatemConfig.onlyHTTPCookie : true,
+                    maxAge: (SyatemConfig != undefined && SyatemConfig.cookieMaxAge != undefined) ? SyatemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
+                    sameSite: true,
+                    secure: (SyatemConfig != undefined && SyatemConfig.secureCookie != undefined) ? SyatemConfig.secureCookie : true
+                });
+                req.owner = req.userName;
+                callback(true);
+            }
+            else {
+                callback(false, error);
+            }
+        });
+    }
+
     userRegister(req, res, callback) {
         if (UserConfig != undefined && UserConfig.userRegisteration == false){
             callback(false, 'New user signup is not allowed! please contact admin('+UserConfig.adminEmail+').');

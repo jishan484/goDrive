@@ -1,11 +1,10 @@
-const fs = require('fs');
-const path = require('path');
 const express = require('express');
 const router = express.Router({ mergeParams: true });
+const userService = require('./../../service/userService');
 const webDAV = require('./../../service/webDavService');
 
-// Middleware to handle WebDAV
 router.use(express.text({ type: 'application/xml' }));
+router.use(checkUser);
 
 // Route to handle different WebDAV methods
 router.all('/*', (req, res) => {
@@ -41,5 +40,27 @@ router.all('/*', (req, res) => {
       res.status(405).send('Method Not Allowed');
   }
 });
+
+function checkUser(req, res, next) {
+  if (req.headers["authorization"] == undefined) {
+      res.append('WWW-Authenticate', 'Basic realm="www.dlp-test.com"');
+      res.status(401).send("You are not authorized").end();
+  } else {
+    let creds = Buffer.from(req.headers["authorization"].slice(6), 'base64').toString('utf8').split(":");
+    req.userName = creds[0];
+    req.password = creds[1];    
+    userService.userLoginByToken(req, res, (status, err)=>{      
+      if(status){
+        next();
+      } else {
+        res.status(401).send("You are not authorized").end();
+      }
+    });
+  }
+}
+
+
+
+
 
 module.exports = router
