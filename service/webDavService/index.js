@@ -77,7 +77,6 @@ class WebDAVProcessor {
     data.body.fileName = decodeURIComponent(path.basename(req.originalUrl));
     data.body.user = req.owner;
     data.cookies.seid = (req.cookies.seid != undefined) ? req.cookies.seid : userService.getUserToken(data.body, "RemoteUser");
-    // data.isDAVParamProvided = true;
     fileService.downloadFile(data, (status, fileData) => {
       if (status) {
         res.set("Content-Disposition", 'inline; filename="' + data.body.fileName + '"');
@@ -105,6 +104,7 @@ class WebDAVProcessor {
   }
 
   /**
+
    * Handle PUT - Upload or overwrite a file
    */
   handlePut(req, res) {
@@ -115,7 +115,6 @@ class WebDAVProcessor {
     data.body.filePath = "/home" + path.dirname(req.originalUrl).slice(7);
     data.body.user = req.owner;
     data.cookies.seid = (req.cookies.seid != undefined) ? req.cookies.seid : userService.getUserToken(data.body, "RemoteUser");
-    //data for file
     data.body.fileType = req.headers["content-type"] != undefined ? req.headers["content-type"] : mimeTypes[data.body.fileName.split(".").pop().toLowerCase()];
     data.body.fileType = (data.body.fileType == undefined) ? 'application/octet-stream' : data.body.fileType;
     data.body.fileSize =
@@ -167,11 +166,10 @@ class WebDAVProcessor {
     fileService.deleteFile(data, (status, resp) => {
       if (status) res.status(200).end();
       else{
-        
         folderService.deleteFolder(data,(status,resp)=>{
           if(status) res.status(200).end();
           else res.status(400).end();
-        })
+        });
       }
     });
   }
