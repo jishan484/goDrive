@@ -26,6 +26,7 @@ app.use('/admin', require('./admin'));
 app.use('/external', require('./external'));
 app.use('/remote', require('./webDav/index.js'));
 app.propfind('/', require('./webDav/index.js'));
+app.options('/', require('./webDav/index.js'));
 
 app.get('/image/format/*',(req,res)=>{
     res.sendFile(path.resolve('resources/public/image/format/app.svg'));

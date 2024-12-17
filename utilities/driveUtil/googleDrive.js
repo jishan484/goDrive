@@ -168,7 +168,8 @@ module.exports = class GoogleDrive extends Storage{
     readFile(nodeId, callback){
         this.driveService.files.get({
             fileId:nodeId,
-            alt: 'media'
+            alt: 'media',
+            validation: false
         }, { responseType: 'stream' }).then(res=>{
             callback(true,res.data);
         }).catch(err=>{
