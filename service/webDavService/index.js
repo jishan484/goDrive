@@ -69,8 +69,8 @@ class WebDAVProcessor {
    * Handle GET - Download a file
    */
   handleGet(req, res) {
-    req.connection.setNoDelay(true);
-    res.connection.setNoDelay(true);
+    // req.connection.setNoDelay(true);
+    // res.connection.setNoDelay(true);
     let data = {};
     (data.body = {}), (data.cookies = {});
     data.body.filePath = "/home" + path.dirname(req.originalUrl).slice(7);
@@ -79,18 +79,15 @@ class WebDAVProcessor {
     data.cookies.seid = (req.cookies.seid != undefined) ? req.cookies.seid : userService.getUserToken(data.body, "RemoteUser");
     fileService.downloadFile(data, (status, fileData) => {
       if (status) {
-        res.set(
-          "Content-Disposition",
-          ' attachment; filename="' + data.body.fileName + '"'
-        );
+        res.set("Content-Disposition", 'inline; filename="' + data.body.fileName + '"');
         res.set("Content-Length", data.body.fileSize);
         res.set("Content-Type", data.body.fileType);
-        fileData._readableState.highWaterMark = 320000;
-        fileData._writableState.highWaterMark = 320000;
-        res.socket._readableState.highWaterMark = 320000;
-        res.connection._readableState.highWaterMark = 320000;
-        res.socket._writableState.highWaterMark = 320000;
-        res.connection._writableState.highWaterMark = 320000;
+        // fileData._readableState.highWaterMark = 320000;
+        // fileData._writableState.highWaterMark = 320000;
+        // res.socket._readableState.highWaterMark = 320000;
+        // res.connection._readableState.highWaterMark = 320000;
+        // res.socket._writableState.highWaterMark = 320000;
+        // res.connection._writableState.highWaterMark = 320000;
         fileData.pipe(res);
         res.on("close", () => {
           fileData.unpipe();
@@ -107,46 +104,7 @@ class WebDAVProcessor {
   }
 
   /**
-   * handle PROPPATCH
-   **/
-  handleProppatch(req, res) {
-    res.status(200).send("ook").end();
-    return;
-    if (
-      !req.body.toString().includes('<?xml version="1.0" encoding="utf-8"?>')
-    ) {
-      res.status(400).send("invalid prop request").end();
-      return;
-    }
-    let data = {};
-    (data.body = {}), (data.cookies = {});
-    data.body.filePath = decodeURIComponent(req.body.filePath);
-    data.body.user = req.owner;
-    data.cookies.seid = (req.cookies.seid != undefined) ? req.cookies.seid : userService.getUserToken(data.body, "RemoteUser");
-    fileService.updateFileProperties(data, (status, result) => {
-      if (status) {
-        let xmlresult = `<?xml version="1.0" encoding="utf-8" ?>
-                <D:multistatus xmlns:D="DAV:">
-                    <D:response>
-                        <D:href>${data.body.filePath}</D:href>
-                        <D:propstat>
-                            <D:status>HTTP/1.1 200 OK</D:status>
-                            <D:prop>
-                                <D:getlastmodified>${new Date().toUTCString()}</D:getlastmodified>
-                                <D:getetag>"12345"</D:getetag>
-                            </D:prop>
-                        </D:propstat>
-                    </D:response>
-                </D:multistatus>`;
-        res.set("Content-Type", "application/xml");
-        res.status(207).send(xmlresult).end();
-      } else {
-        res.status(404).end();
-      }
-    });
-  }
 
-  /**
    * Handle PUT - Upload or overwrite a file
    */
   handlePut(req, res) {
@@ -181,7 +139,6 @@ class WebDAVProcessor {
     data.cookies.seid = (req.cookies.seid != undefined) ? req.cookies.seid : userService.getUserToken(data.body, "RemoteUser");
     req.body = data.body;
     req.cookies = data.cookies;
-    // res.status(204).end();
     fileService.getFile(req, (status, resp) => {
       if (status){
         res.set({
@@ -202,17 +159,17 @@ class WebDAVProcessor {
     data.cookies = {};
     data.body.folderName = path.basename(req.originalUrl);
     data.body.folderPath = "/home" + path.dirname(req.originalUrl).slice(7);
+    data.body.filePath = data.body.folderPath;
+    data.body.fileName = data.body.folderName;
     data.body.user = req.owner;
     data.cookies.seid = (req.cookies.seid != undefined) ? req.cookies.seid : userService.getUserToken(data.body, "RemoteUser");
-    folderService.deleteFolder(data, (status, resp) => {
+    fileService.deleteFile(data, (status, resp) => {
       if (status) res.status(200).end();
       else{
-        data.body.filePath = data.body.folderPath;
-        data.body.fileName = data.body.folderName;
-        fileService.deleteFile(data,(status,resp)=>{
+        folderService.deleteFolder(data,(status,resp)=>{
           if(status) res.status(200).end();
           else res.status(400).end();
-        })
+        });
       }
     });
   }
@@ -233,6 +190,43 @@ class WebDAVProcessor {
       else res.status(200).send(data).end();
     });
   }
+
+  /**
+   * handle MOVE - Move a resource to another location
+   */
+  handleMove(req, res) {
+    let data = {};
+    data.body = {};
+    data.cookies = {};
+    data.body.fileFullPath = "/home" + req.originalUrl.slice(7);
+    data.body.filePath = path.dirname(data.body.fileFullPath);
+    data.body.fileName = path.basename(data.body.fileFullPath);
+    // replace protocol and host
+    data.body.updates = {
+      filePath: path.dirname(req.headers["destination"].replace(req.protocol + "://" + req.headers["host"]+"/remote", "/home")),
+      fileName: path.basename(req.headers["destination"]),
+      fileFormat: path.extname(req.headers["destination"]).replace('.','')
+    };
+    data.body.user = req.owner;
+    data.cookies.seid = (req.cookies.seid != undefined) ? req.cookies.seid : userService.getUserToken(data.body, "RemoteUser");
+    fileService.updateFile(data, (status, resp) => {
+      if (status) res.status(200).end();
+      else {
+        data.body.folderPath = data.body.filePath;
+        data.body.folderName = data.body.fileName;
+        data.body.updates = {
+          folderPath: path.dirname(req.headers["destination"].replace(req.protocol + "://" + req.headers["host"]+"/remote", "/home")),
+          folderName: path.basename(req.headers["destination"])
+        };
+        folderService.updateFolder(data, (status, resp) => {
+          if (status) res.status(200).end();
+          else res.status(400).end();
+        });
+      }
+    });
+  }
+
+
 
   /**
    * Generate XML response for PROPFIND

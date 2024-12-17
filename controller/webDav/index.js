@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router({ mergeParams: true });
 const userService = require('./../../service/userService');
 const webDAV = require('./../../service/webDavService');
+const logService = require('./../../service/logService');
 
 router.use(express.text({ type: 'application/xml' }));
 router.use(checkUser);
@@ -14,9 +15,6 @@ router.all('/*', (req, res) => {
   switch (req.method) {
     case 'PROPFIND':
         webDAV.handlePropfind(req,res);
-      break;
-    case 'PROPPATCH':
-        webDAV.handleProppatch(req,res);
       break;
     case 'GET':
       webDAV.handleGet(req, res);
@@ -36,7 +34,17 @@ router.all('/*', (req, res) => {
     case 'HEAD':
       webDAV.handleHead(req, res);
       break;
+    case 'MOVE':
+      webDAV.handleMove(req, res);
+      break;
+    case 'LOCK':
+      res.status(200).end();
+      break;
+    case 'UNLOCK':
+      res.status(200).end();
+      break;
     default:
+      logService.log('warn', 'Method Not Allowed : ' + req.method +' userAgent: ' + req.headers['user-agent']);
       res.status(405).send('Method Not Allowed');
   }
 });

@@ -257,8 +257,8 @@
             <div class="card h-100">
                 <div class="card-header d-flex align-items-center justify-content-between pb-0">
                     <div class="card-title mb-0">
-                        <h5 class="m-0 me-2">FTP Details</h5>
-                        <small class="text-muted"> FTP Connection : Disabled </small>
+                        <h5 class="m-0 me-2">WebDAV Details</h5>
+                        <small class="text-muted"> WebDAV Connection : Enabled </small>
                     </div>
                     <div class="dropdown">
                         <button class="btn p-0" type="button" id="orederStatistics" data-bs-toggle="dropdown"
@@ -266,32 +266,27 @@
                             <i class="bx bx-dots-vertical-rounded"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="orederStatistics">
-                            <a class="dropdown-item" href="javascript:void(0);">Disable</a>
-                            <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Connect with Linux</a>
+                            <a class="dropdown-item" href="javascript:void(0);">Connect as Netword Drive</a>
+                            <a class="dropdown-item" href="javascript:void(0);">WinSCP</a>
                             <a class="dropdown-item" href="javascript:void(0);">Help</a>
                         </div>
                     </div>
                 </div>
-                <div class="card-body status-card">
+                <div class="card-body status-card mt-1">
                     <h4 class="accordion-header server-details text-body d-flex" id="accordionIconOne">
                         <i class="bx bx-server rpad"></i>
                         <small>Hostname</small>
                         <span class="badge bg-label-secondary lpad">
-                            <small>ftp://mifi.glitch.me</small>
+                            <small id="webdav_hostname"></small>
+                            <script>document.getElementById("webdav_hostname").innerHTML=location.origin</script>
                         </span>
                     </h4>
                     <h4 class="accordion-header server-details text-body d-flex" id="accordionIconOne">
                         <i class="bx bx-user rpad"></i>
                         <small>Username</small>
                         <span class="badge bg-label-secondary lpad">
-                            <small>Unknown</small>
-                        </span>
-                    </h4>
-                    <h4 class="accordion-header server-details text-body d-flex" id="accordionIconOne">
-                        <i class="bx bx-transfer rpad"></i>
-                        <small>Port </small>
-                        <span class="badge bg-label-secondary lpad">
-                            <small>21</small>
+                            <small>Your Portal Username</small>
                         </span>
                     </h4>
                     <h4 class="accordion-header server-details text-body d-flex" id="accordionIconOne">
@@ -301,10 +296,12 @@
                             <small>Your Portal Password</small>
                         </span>
                     </h4>
-                    <div class="divider margint10">
+                    <div class="divider m-0">
                         <div class="divider-text"></div>
                     </div>
-                    <div class="alert alert-secondary small" role="alert">Last accessed on 07/12/2022 7:20PM</div>
+                    <div class="alert alert-secondary small"  role="alert">HTTPS is needed for WebDAV as a Windows network drive.<br>
+                    <a href="/wiki/webdav.html"><small><i class="bx bx-link"></i>Read More</a></small><br>
+                    <small>Last Accessed on: 12/13/2024 07:34 PM</small></div>
                 </div>
             </div>
         </div>
