@@ -23,7 +23,8 @@ const UserConfig = {
     // If true, then user can register himself, else only admin can register user
     userRegisteration : true,
     // If userRegisteration = true, then provide a way to connect to admin
-    adminEmail : 'admin@yoursite.com',
+    adminEmail : 'email@demo.mifi'
+    // This email will be shown in contact us page
 }
 
 const SyatemConfig = {
