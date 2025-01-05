@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/logo.png" />
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/vendor/fonts/boxicons.css" />
+  <link rel="stylesheet" href="/vendor/css/core.css" class="template-customizer-core-css" />
+  <link rel="stylesheet" href="/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+  <link rel="stylesheet" href="/css/demo.css" />
+  <title>INSTALL MIFI</title>
+</head>
+
+<body>
+  <!-- progress bar -->
+  <div class="udprogress" id="udprogress">
+    <div class="progress" style="height: 2px;">
+      <div id="reqProgress" class="progress-bar progress-bar-striped progress-bar-animated bg-primary"
+        role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+  </div>
+  <!-- / progress bar -->
+  <!-- Layout wrapper -->
+  <div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+      <div class="layout-page">
+        <div class="content-wrapper">
+          <div class="container-xxl flex-grow-1 container-p-y">
+            <!-- Logo and Welcome Message -->
+            <div class="card mb-4 py-1 m-0">
+              <div class="card-body d-flex align-items-center justify-content-between p-2">
+                <div class="d-flex align-items-center">
+                  <img src="/logo.png" style="width: 40px;" alt="MIFI" />
+                  <span class="app-brand-text demo menu-text fw-bolder ms-2">MiFi</span>
+                  <span class="app-brand-text menu-text fw-bolder ms-2">Installer</span>
+                </div>
+                <div class="ms-4 text-end">
+                  <a class="btn btn-outline-secondary">Help</a>
+                </div>
+              </div>
+            </div>
+            <div class="card mb-12">
+              <div class="card-body">
+                <!-- Steps Navigation -->
+                <div class="col-md-6 col-lg-4 mb-0">
+                  <h5 class="text-light fw-medium m-0">One Time Installation Steps</h5>
+                  <div class="mt-3">
+                    <div class="btn-group" role="group" aria-label="Installation steps">
+                      <button type="button" class="btn btn-primary" id="pills-step1-tab" data-bs-toggle="pill"
+                        data-bs-target="#pills-step1" aria-controls="pills-step1" aria-selected="true" role="tab">Step
+                        1</button>
+                      <button type="button" class="btn btn-secondary disabled" id="pills-step2-tab"
+                        data-bs-toggle="pill" data-bs-target="#pills-step2" aria-controls="pills-step2"
+                        aria-selected="false" role="tab">Step
+                        2</button>
+                      <button type="button" class="btn btn-secondary disabled" id="pills-step3-tab"
+                        data-bs-toggle="pill" data-bs-target="#pills-step3" aria-controls="pills-step3"
+                        aria-selected="false" role="tab">Step
+                        3</button>
+                    </div>
+                  </div>
+                </div>
+                <div id="form-errors" class="alert alert-danger d-none"></div>
+                <div class="tab-content" id="pills-tabContent">
+                  <!-- Step 1 -->
+                  <div class="tab-pane fade show active" id="pills-step1" role="tabpanel"
+                    aria-labelledby="pills-step1-tab">
+                    <form id="form1" method="POST" action="/install/step1">
+                      <div class="row g-6">
+                        <div class="col-12 alert alert-dark mb-4">
+                          <i class="bx bx-data"></i> Database Configuration
+                        </div>
+                        <div class="col-12">
+                          <label for="databaseType" class="form-label">Database Type</label>
+                          <select id="databaseType" name="databaseType" class="form-select" required>
+                            <option value="sqlite3">SQLite File based</option>
+                            <option value="mysql">MySQL</option>
+                          </select>
+                        </div>
+                        <div class="col-md-6 database-field">
+                          <label for="databaseHost" class="form-label">Database Host</label>
+                          <input type="text" id="databaseHost" name="databaseHost" class="form-control">
+                        </div>
+                        <div class="col-md-6 database-field">
+                          <label for="databaseName" class="form-label">Database Name</label>
+                          <input type="text" id="databaseName" name="databaseName" class="form-control">
+                        </div>
+                        <div class="col-md-6 database-field">
+                          <label for="databaseUser" class="form-label">Database User</label>
+                          <input type="text" id="databaseUser" name="databaseUser" class="form-control">
+                        </div>
+                        <div class="col-md-6 database-field">
+                          <label for="databasePassword" class="form-label">Database Password</label>
+                          <input type="password" id="databasePassword" name="databasePassword" class="form-control">
+                        </div>
+                        <div class="col-12 alert alert-dark my-4">
+                          <i class="bx bx-user"></i> Admin User
+                        </div>
+                        <div class="col-md-6">
+                          <label for="adminName" class="form-label">Admin Name</label>
+                          <input type="text" id="adminName" name="adminName" class="form-control" value="mifi_admin"
+                            required>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="adminEmail" class="form-label">Admin Email</label>
+                          <input type="email" id="adminEmail" name="adminEmail" class="form-control"
+                            value="email@demo.mifi" required>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="adminPassword" class="form-label">Admin Password</label>
+                          <input type="password" id="adminPassword" name="adminPassword" class="form-control" required>
+                          <small id="passwordHelp" class="form-text text-muted">Password must be at least 8 characters
+                            long, contain one uppercase letter, and one number.</small>
+                        </div>
+                        <div class="col-md-6">
+                          <label for="confirmPassword" class="form-label">Confirm Password</label>
+                          <input type="password" id="confirmPassword" name="confirmPassword" class="form-control"
+                            required>
+                        </div>
+                        <div class="col-12 mt-3">
+                          <button type="submit" class="btn btn-primary">
+                            <span class="tf-icons bx bxs-chevrons-right"></span>Next</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <!-- Step 2 -->
+                  <div class="tab-pane fade" id="pills-step2" role="tabpanel" aria-labelledby="pills-step2-tab">
+                    <form id="form2" method="POST" action="/install/step2">
+                      <div class="row g-6">
+                        <div class="col-12 alert alert-dark mb-4">
+                          <i class="bx bx-hdd"></i> Drive Configuration
+                        </div>
+                        <div class="col-12">
+                          <label for="driveType" class="form-label">Drive Type</label>
+                          <select id="driveType" name="driveType" class="form-select" required>
+                            <option value="Google Drive">Google Drive</option>
+                            <option value="Local">Local</option>
+                            <option value="FTP">FTP</option>
+                          </select>
+                        </div>
+                        <div class="col-12 drive-field" id="googleDriveTokenField">
+                          <label for="googleDriveToken" class="form-label">Google Drive API TOKEN (JSON)</label>
+                          <textarea id="googleDriveToken" name="googleDriveToken" class="form-control" rows="14"
+                            placeholder='**This is an Example
+{
+  "installed": {
+    "client_id": "362XXXXXXX8-sXXTXXXme56g2vb812ho3pl0mssfgagn.apps.googleusercontent.com",
+    "project_id": "example",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_secret": "XXXXXX-XXXXXXXXXXXXXXXXX-XXXXXX_XXX",
+    "redirect_uris": [
+        "http://example:8118/admin/u/drive/callback"
+    ]
+  }
+}                         '></textarea>
+                        </div>
+                        <div class="col-md-6 drive-field" id="ftpHostField">
+                          <label for="ftpHost" class="form-label">FTP Host</label>
+                          <input type="text" id="ftpHost" name="ftpHost" class="form-control">
+                        </div>
+                        <div class="col-md-6 drive-field" id="ftpUserField">
+                          <label for="ftpUser" class="form-label">FTP User</label>
+                          <input type="text" id="ftpUser" name="ftpUser" class="form-control">
+                        </div>
+                        <div class="col-md-6 drive-field" id="ftpPasswordField">
+                          <label for="ftpPassword" class="form-label">FTP Password</label>
+                          <input type="password" id="ftpPassword" name="ftpPassword" class="form-control">
+                        </div>
+                        <div class="col-md-6 drive-field" id="ftpPortField">
+                          <label for="ftpPort" class="form-label">FTP Port</label>
+                          <input type="number" value="22" min="1" max="65000" id="ftpPort" name="ftpPort"
+                            class="form-control">
+                        </div>
+                        <div class="col-12 mt-3">
+                          <button type="submit" class="btn btn-primary">
+                            <span class="tf-icons bx bxs-chevrons-right"></span>Next</button>
+                          <button type="button" class="btn btn-secondary float-end" id="skip-step2">
+                            <span class="tf-icons bx bxs-chevrons-right"></span>Skip</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <!-- Step 3 -->
+                  <div class="tab-pane fade" id="pills-step3" role="tabpanel" aria-labelledby="pills-step3-tab">
+                    <form id="form3" method="POST" action="/install/step3">
+                      <div class="row g-6">
+                        <div class="col-12 alert alert-dark mb-4">
+                          <i class="bx bx-cloud"></i> WebDAV Configuration
+                        </div>
+                        <div class="col-12">
+                          <label for="activateWebDAV" class="form-label">Activate WebDAV Server</label>
+                          <select id="activateWebDAV" name="activateWebDAV" class="form-select" required>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                          </select>
+                        </div>
+                        <div class="col-12 mt-3">
+                          <button type="submit" class="btn btn-primary">
+                            <span class="tf-icons bx bxs-chevrons-right"></span>Finish</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+
+                  <!-- final installation message -->
+                  <div class="tab-pane fade" id="pills-step4" role="tabpanel" aria-labelledby="pills-step3-tab">
+                    <div class="row g-6">
+                      <div class="col-12 alert alert-success mb-4">
+                        <i class="bx bx-check"></i> Installation Completed
+                      </div>
+                      <div class="col-12 mt-3">
+                        <a href="/home" class="btn btn-primary">
+                          <span class="tf-icons bx bxs-chevrons-right"></span>Go to Dashboard</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- / Content wrapper -->
+        <!-- Footer -->
+        <!-- ...existing code... -->
+        <!-- / Footer -->
+      </div>
+      <!-- / Layout page -->
+    </div>
+  </div>
+  <!-- Core JS -->
+  <script src="/vendor/libs/jquery/jquery.js"></script>
+  <script src="/vendor/js/menu.js"></script>
+  <script src="/js/local.js"></script>
+  <script src="/js/request.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const databaseType = document.getElementById('databaseType');
+      const databaseFields = document.querySelectorAll('.database-field');
+      const driveType = document.getElementById('driveType');
+      const googleDriveTokenField = document.getElementById('googleDriveTokenField');
+      const ftpHostField = document.getElementById('ftpHostField');
+      const ftpUserField = document.getElementById('ftpUserField');
+      const ftpPasswordField = document.getElementById('ftpPasswordField');
+      const ftpPortField = document.getElementById('ftpPortField');
+      const form1 = document.getElementById('form1');
+      const form2 = document.getElementById('form2');
+      const form3 = document.getElementById('form3');
+      const formErrors = document.getElementById('form-errors');
+
+      function toggleDatabaseFields() {
+        if (databaseType.value === 'sqlite3') {
+          databaseFields.forEach(field => {
+            field.style.display = 'none';
+            field.querySelector('input').required = false;
+          });
+        } else {
+          databaseFields.forEach(field => {
+            field.style.display = 'block';
+            field.querySelector('input').required = true;
+          });
+        }
+      }
+
+      function toggleDriveFields() {
+        if (driveType.value === 'Google Drive') {
+          googleDriveTokenField.style.display = 'block';
+          googleDriveTokenField.querySelector('textarea').required = true;
+          ftpHostField.style.display = 'none';
+          ftpHostField.querySelector('input').required = false;
+          ftpUserField.style.display = 'none';
+          ftpUserField.querySelector('input').required = false;
+          ftpPasswordField.style.display = 'none';
+          ftpPasswordField.querySelector('input').required = false;
+          ftpPortField.style.display = 'none';
+          ftpPortField.querySelector('input').required = false;
+        } else if (driveType.value === 'FTP') {
+          googleDriveTokenField.style.display = 'none';
+          googleDriveTokenField.querySelector('textarea').required = false;
+          ftpHostField.style.display = 'block';
+          ftpHostField.querySelector('input').required = true;
+          ftpUserField.style.display = 'block';
+          ftpUserField.querySelector('input').required = true;
+          ftpPasswordField.style.display = 'block';
+          ftpPasswordField.querySelector('input').required = true;
+          ftpPortField.style.display = 'block';
+          ftpPortField.querySelector('input').required = true;
+        } else {
+          googleDriveTokenField.style.display = 'none';
+          googleDriveTokenField.querySelector('textarea').required = false;
+          ftpHostField.style.display = 'none';
+          ftpHostField.querySelector('input').required = false;
+          ftpUserField.style.display = 'none';
+          ftpUserField.querySelector('input').required = false;
+          ftpPasswordField.style.display = 'none';
+          ftpPasswordField.querySelector('input').required = false;
+          ftpPortField.style.display = 'none';
+          ftpPortField.querySelector('input').required = false;
+        }
+      }
+
+      function showErrors(errors) {
+        formErrors.innerHTML = errors.join('<br>');
+        formErrors.classList.remove('d-none');
+        formErrors.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      function showPasswordErrors(errors) {
+        const passwordHelp = document.getElementById('passwordHelp');
+        passwordHelp.innerHTML = errors.join('<br>');
+        passwordHelp.className = 'form-text text-danger';
+      }
+
+      function switchStep(currentStep) {
+        let btn_type = "success";
+        document.getElementById(`pills-step${currentStep}`).className = 'tab-pane show active';
+        [1, 2, 3].forEach(step => {
+          if (step === currentStep) {
+            document.getElementById(`pills-step${step}-tab`).className = 'btn btn-primary';
+            btn_type = "secondary";
+          } else {
+            document.getElementById(`pills-step${step}`).className = 'tab-pane fade';
+            document.getElementById(`pills-step${step}-tab`).className = 'btn btn-' + btn_type + ' disabled';
+          }
+        })
+      }
+
+      function updateStatus() {
+        request('/install', {}, 'GET', function (response) {
+          if (!response.status.step1) {
+            switchStep(1);
+          } else if (!response.status.step2) {
+            switchStep(2);
+          } else {
+            switchStep(3);
+          }
+        });
+      }
+
+      form1.addEventListener('submit', function (event) {
+        event.preventDefault();
+        if (!validatePassword()) return;
+
+        const formData = new FormData(form1);
+        const jsonData = {};
+        formData.forEach((value, key) => {
+          jsonData[key] = value;
+        });
+
+        request(form1.action, jsonData, 'POST', function (response) {
+          if (response.errors) {
+            showErrors(response.errors);
+          } else {
+            switchStep(2);
+          }
+        });
+      });
+
+      form2.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(form2);
+        const jsonData = {};
+        formData.forEach((value, key) => {
+          jsonData[key] = value;
+        });
+
+        request(form2.action, jsonData, 'POST', function (response) {
+          if (response.errors) {
+            showErrors(response.errors);
+          } else {
+            switchStep(3);
+          }
+        });
+      });
+
+      document.getElementById('skip-step2').addEventListener('click', function () {
+        const jsonData = { skipped: true };
+        request('/install/step2', jsonData, 'POST', function (response) {
+          if (response.errors) {
+            showErrors(response.errors);
+          } else {
+            switchStep(3);
+          }
+        });
+      });
+
+      form3.addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(form3);
+        const jsonData = {};
+        formData.forEach((value, key) => {
+          jsonData[key] = value;
+        });
+
+        request(form3.action, jsonData, 'POST', function (response) {
+          if (response.errors) {
+            showErrors(response.errors);
+          } else {
+            switchStep(4);
+            setTimeout(checkServerRestartStatus, 2000);
+          }
+        });
+      });
+
+      function checkServerRestartStatus() {
+        request('/home', {}, 'GET', function (response) {
+          if (response) {
+            window.location.href = '/home';
+          } else {
+            setTimeout(checkServerRestartStatus, 1000);
+          }
+        });
+      }
+      function validatePassword() {
+        const password = document.getElementById('adminPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const passwordPattern = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+
+        if (!passwordPattern.test(password)) {
+          showPasswordErrors(['Password must be at least 8 characters long, contain one uppercase letter, and one number.']);
+          return false;
+        }
+
+        if (password !== confirmPassword) {
+          showPasswordErrors(['Passwords do not match.']);
+          return false;
+        }
+
+        return true;
+      }
+
+      databaseType.addEventListener('change', toggleDatabaseFields);
+      driveType.addEventListener('change', toggleDriveFields);
+      toggleDatabaseFields();
+      toggleDriveFields();
+      updateStatus();
+
+    });
+  </script>
+</body>
+
+</html>

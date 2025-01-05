@@ -31,7 +31,7 @@ app.options('/', require('./webDav/index.js'));
 app.get('/image/format/*',(req,res)=>{
     res.sendFile(path.resolve('resources/public/image/format/app.svg'));
 });
-app.get('*', (req, res) => res.sendFile(path.resolve('resources/views/404.html')));
+app.get('*', (req, res) => res.status(404).sendFile(path.resolve('resources/views/404.html')));
 
 module.exports = server ={
     start: () => {

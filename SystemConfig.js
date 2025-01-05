@@ -50,11 +50,14 @@ const appConfig = {
     userSignup: true,
     logging: true,
     tasks: true,
-    maintenance: false
+    maintenance: false,
+    webDAVServer: true,
 }
 
 const externalAPIConfig = {
     tokenHashKey : "&R6P3ff$2"
+    // Please change this to a random string before deploying it
+    // this needs to be same for all nodes in a cluster [ if you are using cluster]
 }
 
 

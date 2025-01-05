@@ -26,8 +26,9 @@ async function getDrivesTest(){
     let drive = new Drive();
     await drive.init();
     setTimeout(()=>{
-        let res = drive.getDrives(1);
+        let res = drive.getDrives(0);
         assert.notNull(res);
+        if(!res) return;
         assert.equals(res.length>0,true);
         if (drive.drives.ActiveDrives.length == 1){
             console.log(' [TLOG]   Skiping getDrivesTest (total drives: 1)');
