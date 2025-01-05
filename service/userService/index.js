@@ -418,6 +418,10 @@ class UserService {
             }
         });
     }
+
+    getEncryptedPassword(password){
+        return crypto.createHash('sha256').update(password + UserConfig.salt).digest('hex');
+    }
 }
 
     

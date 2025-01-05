@@ -28,8 +28,13 @@ module.exports = logs={
     },
 
     testLog : function(message,level = 'error'){
-        if(level == 'error')
-            console.log('[TEST-FAILED]', message, (new Error()).stack.split("\n")[3].trim());
+        if(level == 'error') {
+            const error = new Error(message);
+            error.name = 'CustomError';
+            error.stack = `${error.name}: ${error.message}\n${error.stack.split("\n").slice(3).join("\n")}`;
+            throw error;
+
+        }
         else
             console.log('[TEST-WARNING]', message, (new Error()).stack.split("\n")[3].trim());
     },

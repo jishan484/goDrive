@@ -23,7 +23,8 @@ const UserConfig = {
     // If true, then user can register himself, else only admin can register user
     userRegisteration : true,
     // If userRegisteration = true, then provide a way to connect to admin
-    adminEmail : 'admin@yoursite.com',
+    adminEmail : 'email@demo.mifi'
+    // This email will be shown in contact us page
 }
 
 const SyatemConfig = {
@@ -49,11 +50,14 @@ const appConfig = {
     userSignup: true,
     logging: true,
     tasks: true,
-    maintenance: false
+    maintenance: false,
+    webDAVServer: true,
 }
 
 const externalAPIConfig = {
     tokenHashKey : "&R6P3ff$2"
+    // Please change this to a random string before deploying it
+    // this needs to be same for all nodes in a cluster [ if you are using cluster]
 }
 
 
