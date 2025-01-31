@@ -413,9 +413,9 @@
       });
 
       function checkServerRestartStatus() {
-        request('/home', {}, 'GET', function (response) {
+        request('/', {}, 'GET', function (response) {
           if (response) {
-            window.location.href = '/home';
+            window.location.href = '/';
           } else {
             setTimeout(checkServerRestartStatus, 1000);
           }

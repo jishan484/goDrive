@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const db = require('../../database');
-const { UserConfig, SyatemConfig } = require('./../../SystemConfig.js');
+const { UserConfig, SystemConfig } = require('./../../SystemConfig.js');
 const { keyValidator } = require('./../keyValidation');
 const log = require('./../logService');
 const crypto = require('crypto');
@@ -195,11 +195,11 @@ class UserService {
             }
             if (extendSession != undefined && extendSession.isSet && (decoded.exp-(Date.now())/1000)<=300000){
                 extendSession.res.cookie('seid', this.getUserToken({ user: decoded.id,modKey:decoded.modKey }, decoded.role), {
-                    httpOnly: (SyatemConfig != undefined && SyatemConfig.onlyHTTPCookie != undefined) ? SyatemConfig.onlyHTTPCookie : true,
-                    maxAge: (SyatemConfig != undefined && SyatemConfig.cookieMaxAge != undefined) ? SyatemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
+                    httpOnly: (SystemConfig != undefined && SystemConfig.onlyHTTPCookie != undefined) ? SystemConfig.onlyHTTPCookie : true,
+                    maxAge: (SystemConfig != undefined && SystemConfig.cookieMaxAge != undefined) ? SystemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
                     sameSite: true,
                     overwrite: true,
-                    secure: (SyatemConfig != undefined && SyatemConfig.secureCookie != undefined) ? SyatemConfig.secureCookie : true
+                    secure: (SystemConfig != undefined && SystemConfig.secureCookie != undefined) ? SystemConfig.secureCookie : true
                 });
             }
             return true;
@@ -230,7 +230,7 @@ class UserService {
             modKey: modKey,
             role: role
         }, "process.env.JWT_SECRET", {
-            expiresIn: (SyatemConfig != undefined && SyatemConfig.cookieMaxAge != undefined) ? SyatemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
+            expiresIn: (SystemConfig != undefined && SystemConfig.cookieMaxAge != undefined) ? SystemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
         });
         return token;
     }
@@ -241,10 +241,10 @@ class UserService {
                 if (status) {
                     let token = this.getUserToken(req.body, userInfo.role);
                     res.cookie('seid', token, {
-                        httpOnly: (SyatemConfig != undefined && SyatemConfig.onlyHTTPCookie != undefined) ? SyatemConfig.onlyHTTPCookie : true,
-                        maxAge: (SyatemConfig != undefined && SyatemConfig.cookieMaxAge != undefined) ? SyatemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
+                        httpOnly: (SystemConfig != undefined && SystemConfig.onlyHTTPCookie != undefined) ? SystemConfig.onlyHTTPCookie : true,
+                        maxAge: (SystemConfig != undefined && SystemConfig.cookieMaxAge != undefined) ? SystemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
                         sameSite: true,
-                        secure: (SyatemConfig != undefined && SyatemConfig.secureCookie != undefined) ? SyatemConfig.secureCookie : true
+                        secure: (SystemConfig != undefined && SystemConfig.secureCookie != undefined) ? SystemConfig.secureCookie : true
                     });
                     callback(true);
                 }
@@ -257,10 +257,10 @@ class UserService {
                 if (status) {
                     let token = this.getUserToken(req.body, userInfo.role);
                     res.cookie('seid', token, {
-                        httpOnly: (SyatemConfig != undefined && SyatemConfig.onlyHTTPCookie != undefined) ? SyatemConfig.onlyHTTPCookie : true,
-                        maxAge: (SyatemConfig != undefined && SyatemConfig.cookieMaxAge != undefined) ? SyatemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
+                        httpOnly: (SystemConfig != undefined && SystemConfig.onlyHTTPCookie != undefined) ? SystemConfig.onlyHTTPCookie : true,
+                        maxAge: (SystemConfig != undefined && SystemConfig.cookieMaxAge != undefined) ? SystemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
                         sameSite: true,
-                        secure: (SyatemConfig != undefined && SyatemConfig.secureCookie != undefined) ? SyatemConfig.secureCookie : true
+                        secure: (SystemConfig != undefined && SystemConfig.secureCookie != undefined) ? SystemConfig.secureCookie : true
                     });
                     callback(true);
                 }
@@ -282,10 +282,10 @@ class UserService {
             if (status) {
                 let token = this.getUserToken(data, userInfo.role);
                 res.cookie('seid', token, {
-                    httpOnly: (SyatemConfig != undefined && SyatemConfig.onlyHTTPCookie != undefined) ? SyatemConfig.onlyHTTPCookie : true,
-                    maxAge: (SyatemConfig != undefined && SyatemConfig.cookieMaxAge != undefined) ? SyatemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
+                    httpOnly: (SystemConfig != undefined && SystemConfig.onlyHTTPCookie != undefined) ? SystemConfig.onlyHTTPCookie : true,
+                    maxAge: (SystemConfig != undefined && SystemConfig.cookieMaxAge != undefined) ? SystemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
                     sameSite: true,
-                    secure: (SyatemConfig != undefined && SyatemConfig.secureCookie != undefined) ? SyatemConfig.secureCookie : true
+                    secure: (SystemConfig != undefined && SystemConfig.secureCookie != undefined) ? SystemConfig.secureCookie : true
                 });
                 req.owner = req.userName;
                 callback(true);
@@ -317,10 +317,10 @@ class UserService {
                     if (status) {
                         let token = this.getUserToken(req.body, UserConfig.defaultRole);
                         res.cookie('seid', token, {
-                            httpOnly: (SyatemConfig != undefined && SyatemConfig.onlyHTTPCookie != undefined) ? SyatemConfig.onlyHTTPCookie : true,
-                            maxAge: (SyatemConfig != undefined && SyatemConfig.cookieMaxAge != undefined) ? SyatemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
+                            httpOnly: (SystemConfig != undefined && SystemConfig.onlyHTTPCookie != undefined) ? SystemConfig.onlyHTTPCookie : true,
+                            maxAge: (SystemConfig != undefined && SystemConfig.cookieMaxAge != undefined) ? SystemConfig.cookieMaxAge * 1000 : 1000 * 60 * 60,
                             sameSite: true,
-                            secure: (SyatemConfig != undefined && SyatemConfig.secureCookie != undefined) ? SyatemConfig.secureCookie : true
+                            secure: (SystemConfig != undefined && SystemConfig.secureCookie != undefined) ? SystemConfig.secureCookie : true
                         });
                         callback(true);
                     }

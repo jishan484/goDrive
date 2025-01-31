@@ -1,7 +1,8 @@
 const log = require("../logService/index.js");
+const { UserConfig,SystemConfig } = require('./../../SystemConfig.js');
 const fs = require('fs');
 const path = require('path');
-const UserService = require('../userService/index.js');
+const crypto = require('crypto');
 
 class InstallationService {
     constructor() {
@@ -23,7 +24,7 @@ class InstallationService {
 
     check() {
         return new Promise((resolve, reject) => {
-            if (fs.existsSync(path.resolve('resources/installerInfo.mifi'))) {
+            if (SystemConfig.firstTimeInstallationRequired == true && fs.existsSync(path.resolve('resources/installerInfo.mifi'))) {
                 reject();
             } else {
                 resolve();
@@ -34,7 +35,7 @@ class InstallationService {
     updateInstallationStatus(data, step, onCompleteTask, callback) {
         if (fs.existsSync(path.resolve('resources/installerInfo.mifi'))) {
             let installerInfo = JSON.parse(fs.readFileSync(path.resolve('resources/installerInfo.mifi')));
-            installerInfo[step] = true;            
+            installerInfo[step] = true;
             fs.writeFileSync(path.resolve('resources/installerInfo.mifi'), JSON.stringify(installerInfo));
             this.processStep(step, data, callback);
             if (step === 'step3') {
@@ -67,8 +68,8 @@ class InstallationService {
             systemConfig.DatabaseConfig.port = data.databaseType === 'mysql' ? 3306 : 5432;
 
             let filedata = fs.readFileSync(path.resolve('SystemConfig.js')).toString();
-            filedata = filedata.replace(/const\s+DatabaseConfig\s*=\s*{[^}]*}/, 'const DatabaseConfig = ' + JSON.stringify(systemConfig.DatabaseConfig,null, 2));
-            filedata = filedata.replace(/adminEmail.*/, "adminEmail: '"+data.adminEmail+"'");
+            filedata = filedata.replace(/const\s+DatabaseConfig\s*=\s*{[^}]*}/, 'const DatabaseConfig = ' + JSON.stringify(systemConfig.DatabaseConfig, null, 2));
+            filedata = filedata.replace(/adminEmail.*/, "adminEmail: '" + data.adminEmail + "'");
             fs.writeFileSync(path.resolve('SystemConfig.js'), filedata);
 
             let adminAccountCreationQuery = `
@@ -79,23 +80,23 @@ class InstallationService {
                 query:
                     \`INSERT INTO Users 
                     (userName, password, accessToken, role, createdOn, profile)
-                    VALUES ('${data.adminName}', '${UserService.getEncryptedPassword(data.adminPassword)}', 'super_admin_token', 'super_admin', CURRENT_TIMESTAMP, '')\`,
+                    VALUES ('${data.adminName}', '${this.getEncryptedPassword(data.adminPassword)}', 'super_admin_token', 'super_admin', CURRENT_TIMESTAMP, '')\`,
             }
             `;
             fs.writeFileSync(path.resolve('database/DBschema/adminAccount.js'), adminAccountCreationQuery);
             callback(true);
         } else {
-            callback(false,'No valid data provided');
+            callback(false, 'No valid data provided');
         }
     }
 
     processStep2(data, callback) {
         if (data) {
-            if(data.skipped == undefined) {
-                if(data.driveType == "Google Drive" && data.googleDriveToken == undefined){
+            if (data.skipped == undefined) {
+                if (data.driveType == "Google Drive" && data.googleDriveToken == undefined) {
                     callback(false, "Invalid Token");
-                } else if(data.driveType == "Google Drive" && data.googleDriveToken != undefined && data.googleDriveToken != '') {
-                    fs.writeFileSync(path.resolve("CREDENTIALS/google.json"),data.googleDriveToken);
+                } else if (data.driveType == "Google Drive" && data.googleDriveToken != undefined && data.googleDriveToken != '') {
+                    fs.writeFileSync(path.resolve("CREDENTIALS/google.json"), data.googleDriveToken);
                 } else {
                     callback(false, "No setup process avilable now. Please skip for now");
                 }
@@ -103,13 +104,13 @@ class InstallationService {
                 callback(true);
             }
         } else {
-            callback(false,'No valid data provided');
+            callback(false, 'No valid data provided');
         }
     }
 
     processStep3(data, callback) {
         if (data) {
-            if(data.activateWebDAV != undefined && data.activateWebDAV == 'Yes') {
+            if (data.activateWebDAV != undefined && data.activateWebDAV == 'Yes') {
                 let filedata = fs.readFileSync(path.resolve('SystemConfig.js')).toString();
                 filedata = filedata.replace(/webDAVServer.*/, "webDAVServer: true,");
                 fs.writeFileSync(path.resolve('SystemConfig.js'), filedata);
@@ -120,8 +121,12 @@ class InstallationService {
             }
             callback(true);
         } else {
-            callback(false,'No valid data provided');
+            callback(false, 'No valid data provided');
         }
+    }
+
+    getEncryptedPassword(password) {
+        return crypto.createHash('sha256').update(password + UserConfig.salt).digest('hex');
     }
 }
 
