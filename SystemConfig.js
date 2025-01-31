@@ -33,7 +33,7 @@ const SystemConfig = {
     // Database, admin user, and other necessary information will be configured at that time.
     // If false, ensure this config file is set properly.
     // Also, update the CREDENTIALS/google.json if this value is set to false.
-    firstTimeInstallationRequired: false,
+    firstTimeInstallationRequired: true,
     onlyHTTPCookie: true,
     // Making secureCookie false has massive security risk. Please avoid this
     // This option is only for local usages/testing and should be true in remote server
