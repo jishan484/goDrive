@@ -7,7 +7,7 @@ module.exports = {
     (   
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         driveName TEXT,
-        driveId TEXT UNIQUE,
+        driveId TEXT(20) UNIQUE,
         driveType TEXT, 
         drivePath TEXT, 
         driveToken TEXT,

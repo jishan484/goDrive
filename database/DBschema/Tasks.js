@@ -6,7 +6,7 @@ module.exports = {
         `CREATE TABLE IF NOT EXISTS Tasks
     (   
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        taskName TEXT UNIQUE,
+        taskName TEXT(20) UNIQUE,
         status INTEGER DEFAULT 1,
         state INTEGER DEFAULT 1, 
         schedule TEXT, 
