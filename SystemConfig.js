@@ -27,7 +27,13 @@ const UserConfig = {
     // This email will be shown in contact us page
 }
 
-const SyatemConfig = {
+const SystemConfig = {
+    
+    // If true, the server will open a page for one-time installation.
+    // Database, admin user, and other necessary information will be configured at that time.
+    // If false, ensure this config file is set properly.
+    // Also, update the CREDENTIALS/google.json if this value is set to false.
+    firstTimeInstallationRequired: false,
     onlyHTTPCookie: true,
     // Making secureCookie false has massive security risk. Please avoid this
     // This option is only for local usages/testing and should be true in remote server
@@ -61,4 +67,4 @@ const externalAPIConfig = {
 }
 
 
-module.exports = { RouterConfig, UserConfig, SyatemConfig, DatabaseConfig, appConfig, externalAPIConfig };
+module.exports = { RouterConfig, UserConfig, SystemConfig, DatabaseConfig, appConfig, externalAPIConfig };
