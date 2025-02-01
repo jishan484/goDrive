@@ -8,8 +8,10 @@ var db = null;
 
 if(DatabaseConfig.databaseType == 'mysql'){
     db = require('./mysql.js');
+    log.log('debug','MySQL Database config found!');
 } else if(DatabaseConfig.databaseType == 'sqlite3') {
     initSqlite();
+    log.log('debug','SQLite3 Database config found!');
 }
 
 function initSqlite(){
