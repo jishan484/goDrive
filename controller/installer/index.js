@@ -42,8 +42,11 @@ module.exports = server = {
         this.server.timeout = 5000;
     },
     stop: () => {
-        this.server.close(() => {
-            console.log(' [SLOG] Server closed' + Date.now());
+        return new Promise((resolve, reject) => {
+            this.server.close(() => {
+                console.log(' [SLOG] Server closed' + Date.now());
+                resolve();
+            });
         });
     }
 }

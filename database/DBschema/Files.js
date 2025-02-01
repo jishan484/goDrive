@@ -7,7 +7,7 @@ module.exports = {
     (   
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         fileName TEXT, 
-        fileId TEXT UNIQUE,
+        fileId VARCHAR(20) UNIQUE,
         fileType TEXT,
         fileSize BIGINT, 
         filePath TEXT,
