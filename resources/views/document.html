@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation</title>
+    <link rel="stylesheet" href="/vendor/css/core.css">
+</head>
+<body>
+    <div class="container">
+        <h1>API Documentation</h1>
+        <div class="api-group">
+            <h2>Group 1: User APIs</h2>
+            <div class="api">
+                <h3>GET /api/users</h3>
+                <p>Fetches a list of users.</p>
+                <h4>Parameters:</h4>
+                <ul>
+                    <li><strong>query:</strong> Optional. Search query to filter users.</li>
+                </ul>
+                <h4>Response:</h4>
+                <pre>
+{
+    "users": [
+        {
+            "id": 1,
+            "name": "John Doe",
+            "email": "john.doe@example.com"
+        },
+        ...
+    ]
+}
+                </pre>
+            </div>
+            <!-- Add more APIs here -->
+        </div>
+        <div class="api-group">
+            <h2>Group 2: File APIs</h2>
+            <div class="api">
+                <h3>POST /api/files/upload</h3>
+                <p>Uploads a new file.</p>
+                <h4>Body:</h4>
+                <ul>
+                    <li><strong>file:</strong> Required. The file to be uploaded.</li>
+                </ul>
+                <h4>Response:</h4>
+                <pre>
+{
+    "success": true,
+    "fileId": 123
+}
+                </pre>
+            </div>
+            <!-- Add more APIs here -->
+        </div>
+    </div>
+    <script src="/vendor/js/helpers.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>

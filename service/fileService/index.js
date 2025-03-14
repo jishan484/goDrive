@@ -5,6 +5,7 @@ const base32 = require('base32');
 const log = require("./../logService");
 const { externalAPIConfig } = require("./../../SystemConfig");
 const path = require('path');
+const { dataflow } = require("googleapis/build/src/apis/dataflow");
 
 
 class FileService {
@@ -266,6 +267,59 @@ class FileService {
                 }
             });
     }
+
+    getFileRequestInfo(data, callback) {
+        let queryCondition = '';
+        if(data.ownerFilter) queryCondition+=` WHERE owner = "${data.owner}" `;
+        if(data.type) queryCondition+=` ${(queryCondition == '')?'WHERE':'AND'} type = "${data.type}" `;
+        if(data.creatorFilter) queryCondition+=` ${(queryCondition == '')?'WHERE':'AND'} owner!="${data.owner}" `;
+        if(data.assignedFilter) queryCondition+=` ${(queryCondition == '')?'WHERE':'AND'} assignedTo = "${data.owner}" `;
+        if(data.requestId != null) queryCondition+=` ${(queryCondition == '')?'WHERE':'AND'} requestId = "${data.requestId}" `;
+        db.all(`SELECT * FROM FileRequestInfo${queryCondition}` , (err,row) => {
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
+            else {
+                callback(row);
+            }
+        });
+    }
+
+    saveFileRequestInfo(data, callback) {
+        let requestId = data.tokenId;
+        let fileName = data.fileName;
+        let type = data.requestType;
+        let filePath = data.filePath;
+        let fileType = data.fileType;
+        let description = data.requestDescription;
+        let note = data.requestNote;
+        let lebel = data.requestLebel;
+        let owner = data.owner;
+        db.run(`INSERT INTO FileRequestInfo 
+                (requestId, type, fileName, fileType, filePath, description, note, lebel, owner ) 
+                VALUES (?,?,?,?,?,?,?,?,?)`, [requestId, type, fileName, fileType, filePath, description, note, lebel, owner], (err) => {
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
+            else {
+                callback(true);
+            }
+        });
+    }
+
+    deleteFileRequestInfo(requestId, callback) {
+        db.run(`DELETE FROM FileRequestInfo WHERE requestId = ?`, [requestId], (err) => {
+            if (err) {
+                callback(false);
+                log.log("error", err);
+            }
+            else {
+                callback(true);
+            }
+        });
+    }
     // -------------------------------------UTILITY--------------------------------------------//
 
     getFiles(req, callback) {
@@ -387,7 +441,7 @@ class FileService {
         data.fileId = req.body.fileId;
         data.sharedId = req.body.targetId;
         data.owner = userService.getUserName(req.cookies.seid);
-        data.tokenId = "SH" + Date.now().toString(36) + '-' + Math.floor(Math.random() * 10000000).toString(36);  // from random generator
+        data.tokenId = "SH" + Date.now().toString(36) + Math.floor(Math.random() * 1000).toString(36);  // from random generator
         if (data.sharedId != undefined && data.sharedId != null && data.sharedId != '') {
             if (data.type == undefined) {
                 callback(false, "Missing parameters: type (folder / file)");
@@ -809,6 +863,88 @@ class FileService {
                         callback(false, 'System failed to update the file!');
                     }
                 });
+            }
+        });
+    }
+
+    initRequestFile(req, callback) {
+        let data = {};
+        data.requestType = req.body.requestVia;
+        data.fileName = req.body.fileName;
+        data.fileType = req.body.fileType;
+        data.filePath = req.body.filePath;
+        data.requestDescription = req.body.requestDescription;
+        data.requestNote = req.body.requestNote;
+        data.requestLebel = req.body.requestLebel;
+        data.owner = userService.getUserName(req.cookies.seid);
+        data.tokenId = ((req.body.requestVia.toLowerCase()=="link")?"RL":"RT") + Date.now().toString(36) + Math.floor(Math.random() * 1000).toString(36);  // from random generator
+
+        if (data.fileName == undefined || data.fileName == "") {
+            callback(false, "File Name is not provided!");
+            return;
+        }
+        if (data.filePath == undefined || data.filePath == "") {
+            callback(false, "File Path is not provided!");
+            return;
+        }
+        let response = {
+            type: data.requestType,
+            fileName: data.fileName,
+            fileType: data.fileType,
+            requester: data.owner,
+            filePath: data.filePath,
+            description: data.requestDescription,
+            lebel: data.requestLebel,
+            note: data.requestNote,
+            tokenId: data.tokenId
+        }
+        this.saveFileRequestInfo(data,(status)=>{
+            if(status){
+                callback(true, response);
+            } else {
+                callback(false, "Server error! failed to save in DB");
+            }
+        });
+    }
+
+    getMyRequests(req, callback) {
+        let dataFilter = {
+            owner: userService.getUserName(req.cookies.seid),
+            type: (req.body.type != undefined && req.body.type != null && req.body.type != '') ? req.body.type : null,
+            ownerFilter: (req.body.createdByMe != undefined && (req.body.createdByMe == true || req.body.createdByMe == 'true')),
+            creatorFilter: (req.body.createdByOthers != undefined && (req.body.createdByOthers == true || req.body.createdByOthers == 'true')),
+            assignedFilter: (req.body.assignedToMe != undefined && (req.body.assignedToMe == true || req.body.assignedToMe == 'true')),
+            requestId: (req.body.tokenId != undefined && req.body.tokenId != null && req.body.tokenId != '') ? req.body.tokenId : null
+        };
+        this.getFileRequestInfo(dataFilter,(result)=>{
+            if(result){
+                let response = [];
+                result.forEach(entry=>{
+                    let data = {
+                        status: 0,
+                        type: entry.type,
+                        fileName: entry.fileName,
+                        requester: entry.owner,
+                        filePath: entry.filePath,
+                        description: entry.description,
+                        tokenId: entry.requestId
+                    }
+                    response.push(data);
+                })
+                callback(true, response);
+            } else {
+                callback(false, "No request found");
+            }
+        });
+    }
+
+    deleteFileRequest(req, callback) {
+        let requestId = req.body.tokenId;
+        this.deleteFileRequestInfo(requestId,(status)=>{
+            if(status){
+                callback(true);
+            } else {
+                callback(false, "Server error! failed to delete the info!");
             }
         });
     }

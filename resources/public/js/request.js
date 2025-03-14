@@ -7,14 +7,14 @@ $.ajaxSetup({
 window.addEventListener('online', () => _systemOnlineStatus = true);
 window.addEventListener('offline', () => _systemOnlineStatus = false);
 
-function request(path, datas, method, callback,backgroundFetch=true) {
-    if(backgroundFetch) $('#udprogress')[0].style.display = 'block';
+function request(path, datas, method, callback, backgroundFetch = true) {
+    if (backgroundFetch) $('#udprogress')[0].style.display = 'block';
     $.ajax({
         xhr: function () {
             var xhr = new window.XMLHttpRequest();
             //Upload progress and event handling
             xhr.upload.addEventListener("progress", progressHandler, false);
-            if(backgroundFetch){
+            if (backgroundFetch) {
                 xhr.addEventListener("load", completeHandler, false);
             }
             xhr.addEventListener("error", errorHandler, false);
@@ -35,9 +35,9 @@ function request(path, datas, method, callback,backgroundFetch=true) {
     });
 }
 
-function upload(file,path,callback,tracker,showProgress=true,checkDuplicate=false) {
-    if(path == undefined || path == '' || path == null)
-    _uploaded = 0;
+function upload(file, path, callback, tracker, showProgress = true, checkDuplicate = false) {
+    if (path == undefined || path == '' || path == null)
+        _uploaded = 0;
     _lastUpTime = (new Date()).getTime();
     _globalUPjax = $.ajax({
         xhr: function () {
@@ -55,28 +55,28 @@ function upload(file,path,callback,tracker,showProgress=true,checkDuplicate=fals
         data: file,
         mimeType: 'multipart/form-data',
         cache: false,
-        headers: { 'm-filename': file.name, 'm-filepath': path,'m-mimetype': file.type,'m-chkdup':checkDuplicate },
+        headers: { 'm-filename': file.name, 'm-filepath': path, 'm-mimetype': file.type, 'm-chkdup': checkDuplicate },
         contentType: false,
         processData: false,
         success: (data, text) => {
             if (onSuccessUpload != undefined && onSuccessUpload != null)
-                onSuccessUpload(file,data);
-            try{
+                onSuccessUpload(file, data);
+            try {
                 data = JSON.parse(data);
-            } catch(e){
-                data = {status:'error',error:data};
+            } catch (e) {
+                data = { status: 'error', error: data };
             }
             callback(true, data, tracker);
         },
         error: (request, status, error) => {
             processError(request, 0);
             completeHandler(null);
-            if (request.responseText != undefined && request.responseText != null){
+            if (request.responseText != undefined && request.responseText != null) {
                 let data = null;
-                try{
+                try {
                     data = JSON.parse(request.responseText);
                     callback(true, data, tracker);
-                } catch(e){
+                } catch (e) {
                     callback(false, request, tracker);
                 }
             } else {
@@ -105,12 +105,12 @@ function uploadProgressHandler(e) {
         let speed = showspeed(loaded);
         let remaining = (total - loaded) / speed;
         // seconds to minutes seconds
-        let remainingTime = Math.floor(remaining / 60) + 'Min ' + Math.floor(remaining % 60)+'Sec';
+        let remainingTime = Math.floor(remaining / 60) + 'Min ' + Math.floor(remaining % 60) + 'Sec';
 
         $('#uploadProgress')[0].style.width = progressValue + '%';
         $('#UPspeed').html(formatBytes(speed, 2) + '/s');
         $('#UPusize').html(formatBytes(loaded, 3));
-        $('#UPtime').html((remainingTime =='NaNMin NaNSec' ? '0Min 0Sec' : remainingTime));
+        $('#UPtime').html((remainingTime == 'NaNMin NaNSec' ? '0Min 0Sec' : remainingTime));
     }
 }
 function completeHandler(event) {
@@ -118,7 +118,7 @@ function completeHandler(event) {
     setTimeout(function () {
         $('#reqProgress')[0].style.width = '10%';
         $('#udprogress')[0].style.display = 'none';
-    },600);
+    }, 600);
 }
 function errorHandler(event) {
     errorToast('Network Error', 'It seems you are currently ofline! Please check your network.');
@@ -127,10 +127,10 @@ function abortHandler(event) {
     errorToast('Upload Aborted', 'Upload has been aborted.');
 }
 
-function processError(request , code){
+function processError(request, code) {
     switch (request.status) {
         case 0:
-            if(code != 0)
+            if (code != 0)
                 errorToast('Request Aborted', 'Request has been aborted.');
             if (_systemOnlineStatus == true)
                 errorToast('Request Failed', 'File could not be uploaded.');
@@ -167,9 +167,8 @@ function processError(request , code){
     }
 }
 
-function errorToast(type , msg)
-{
-    if(_isToastActive) return;
+function errorToast(type, msg) {
+    if (_isToastActive) return;
     _isToastActive = true;
     $('#errorToast .me-auto').html(type);
     $('#errorToast .toast-body').html(msg);
@@ -263,14 +262,14 @@ function createFolder() {
 
 
 // :FETCH:FOLDER:
-function fetchFolder(folderName,callback,opt) {
+function fetchFolder(folderName, callback, opt) {
     var payload = {
-        folderPath: (folderName != '')?_current_folder_path+"/"+folderName:_current_folder_path,
+        folderPath: (folderName != '') ? _current_folder_path + "/" + folderName : _current_folder_path,
         folderName: folderName
     };
     request("app/u/folder", payload, 'GET', (response) => {
-        if(response.status == 'success'){
-            if(response.data.fullPath != undefined){
+        if (response.status == 'success') {
+            if (response.data.fullPath != undefined) {
                 _current_folder_path = response.data.fullPath;
                 _previous_folder_path = response.data.folderPath;
                 _current_folder_id = response.data.id;
@@ -279,54 +278,67 @@ function fetchFolder(folderName,callback,opt) {
             _last_requested_folder_response = response.data;
             callback(response.data.subFolders);
         }
-    },opt
+    }, opt
+    );
+}
+
+// :FETCH:FOLDER:LIST:
+function fetchFolderList(folderPath, callback, opt) {
+    var payload = {
+        folderPath: folderPath
+    };
+    request("app/u/folder", payload, 'GET', (response) => {
+        if (response.status == 'success') {
+            callback(response.data.subFolders);
+        }
+    }, opt
     );
 }
 
 // :DELETE:FOLDER:
-function removeFolder(folderName,callback) {
+function removeFolder(folderName, callback) {
     var payload = {
         folderPath: _current_folder_path,
         folderName: folderName
     };
     request("app/u/folder", payload, 'DELETE', (response) => {
-        if(response.status == 'success'){
+        if (response.status == 'success') {
             callback(true);
         }
     });
 }
 
 // :UPDATE:FOLDER:
-function updateFolder(type,data,folderId,folderName,callback){
+function updateFolder(type, data, folderId, folderName, callback) {
     let payload = {}; payload.updates = {};
 
     payload.folderPath = _current_folder_path;
     payload.folderName = folderName;
     payload.folderId = folderId;
 
-    if(type == 'name'){
+    if (type == 'name') {
         payload.updates.folderName = data;
         if (payload.updates.folderName == null || payload.updates.folderName == '') {
-            callback(false,{error:'Folder name cannot be empty'}); return;
+            callback(false, { error: 'Folder name cannot be empty' }); return;
         }
         else if (!payload.updates.folderName.match(/^[a-zA-Z0-9_.]+.+/)) {
-            callback(false,{error:'Folder name cannot start with special characters'}); return;
+            callback(false, { error: 'Folder name cannot start with special characters' }); return;
         }
         else if (payload.updates.folderName.match(/[^a-zA-Z0-9-_\\+\\. \\(){}"':\[\]]/)) {
-            callback(false,{error:'Folder name contains invalid characters'}); return;
+            callback(false, { error: 'Folder name contains invalid characters' }); return;
         }
         else if (payload.updates.folderName.match(/^[._]+$/)) {
-            callback(false,{error:'Folder name Must contain atleast one letter or number'}); return;
+            callback(false, { error: 'Folder name Must contain atleast one letter or number' }); return;
         }
-    } else if(type == 'location'){
+    } else if (type == 'location') {
         payload.updates.folderPath = _current_folder_path;
         payload.updates.folderId = _current_folder_id;
         payload.folderPath = data.path;
         payload.folderId = data.id;
         payload.folderName = data.name;
-    } else{ callback(false,'Not a valid update type'); return; }
+    } else { callback(false, 'Not a valid update type'); return; }
 
-    request('/app/u/folder',payload,'PATCH',(response)=>{
+    request('/app/u/folder', payload, 'PATCH', (response) => {
         callback(response);
     });
 }
@@ -385,7 +397,7 @@ function updateFile(type, update, fileId, fileName, callback) {
     });
 }
 
-function createFolderDuringUpload(path,newDirsName,callback,showProgress){
+function createFolderDuringUpload(path, newDirsName, callback, showProgress) {
     var payload = {
         foldersFullPath: newDirsName,
         folderPath: path,
@@ -395,7 +407,7 @@ function createFolderDuringUpload(path,newDirsName,callback,showProgress){
     };
     request("app/u/folder", payload, 'POST', (response) => {
         callback(response);
-    },showProgress);
+    }, showProgress);
 }
 
 // :STATUS:STORAGE:
@@ -409,7 +421,7 @@ function getStorageStatus(callback) {
 
 
 // :SHARE:FILE:
-function shareFileorFolder(type, targetId, method='POST', callback){
+function shareFileorFolder(type, targetId, method = 'POST', callback) {
     var payload = {
         type: type,
         folderId: (type == 'folder') ? targetId : null,
@@ -417,10 +429,53 @@ function shareFileorFolder(type, targetId, method='POST', callback){
         targetId: targetId
     };
     request("app/u/file/share", payload, method, (response) => {
-        if(response.error == null){
+        if (response.error == null) {
             callback(response);
         } else {
             errorToast("Operation Failed", response.error)
+        }
+    });
+}
+
+// :REQUEST:FILE
+function requestFileUpload(type = "link", fileName, fileType, description, targetLocation, requestNote, requestLebel, callback) {
+    var payload = {
+        requestVia: type,
+        fileName: fileName,
+        fileType: (fileType=='') ? 'binary' : fileType,
+        requestDescription: description,
+        filePath: targetLocation,
+        requestNote: requestNote,
+        requestLebel: requestLebel
+    };
+    request("app/u/file/request", payload, "POST", (response) => {
+        if (response.error == null) {
+            callback(response);
+        } else {
+            errorToast(false, response.error)
+        }
+    });
+}
+
+// :GET:MYREQUEST:
+
+function fetchFileRequests(payload, callback){
+    request("app/u/file/request", payload, "GET", (response) =>  {
+        if (response.error == null) {
+            callback(response);
+        } else {
+            errorToast(false, response.error)
+        }
+    });
+}
+
+// :DELETE:MYREQUEST:
+function deleteMyRequests(requestId, callback) {
+    request("app/u/file/request/"+requestId, {}, "DELETE", (response) =>  {
+        if (response.error == null) {
+            callback(response);
+        } else {
+            errorToast(false, response.error)
         }
     });
 }

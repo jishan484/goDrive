@@ -8,7 +8,7 @@ const fs = require('fs');
 // all logics are handled there for admins
 router.use("/auth", require("../app/auth.js"));
 
-router.use("/u/drive", require("./drive/callbacks.js")); 
+router.use("/u/drive/callback", require("./drive/callbacks.js")); 
 
 router.use("/u/*", checkAuth);
 

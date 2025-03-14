@@ -794,5 +794,7 @@ input::-webkit-file-upload-button {width: 120px;font-size: 15px;}
 .mt-2 {margin-top: 0.5rem !important;}
 .text-light {--bs-text-opacity:1;color: #b4bdc6 !important;}
 .text-break {word-wrap: break-word !important;word-break: break-word !important;}
-
+.btn-xs,.btn-group-xs>.btn {padding: 0.14rem 0.5rem;font-size: 0.75rem;border-radius: 0.265rem;}
+.text-reset {text-transform: none;}
+.btn-success {color: #ffffff;background-color: #71dd37;border-color: #71dd37;box-shadow: 0 0.125rem 0.25rem 0 rgba(113, 221, 55, 0.4);}
 

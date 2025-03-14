@@ -1,0 +1,88 @@
+<div class="container-xxl flex-grow-1 container-p-y" id="myRequests">
+    <div class="spinner-border centerXMS centerY text-primary" role="status"></div>
+</div>
+
+<script>
+    function loadTasks(taskId = null) {
+        fetchFileRequests({ createdByOthers: (taskId == null), type: 'task', tokenId: taskId }, (response) => {
+            if (response.status == 'success') {
+                console.log(response.data)
+                if (response.data.length == 0) {
+                    myRequests.innerHTML = `<div class="alert alert-secondary" role="alert">There are no assignable tasks for you.</div>`;
+                } else myRequests.innerHTML = `<div class="alert alert-primary" role="alert">Task will be closed once a file is successfully uploaded.</div>`;
+                response.data.forEach(requestInfo => {
+                    myRequests.innerHTML += `
+            <div class="card mb-3" id="${requestInfo.tokenId + '_element'}" style="transition:all 1s ease;">
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <div class="row g-6">
+                        <div class="col-6 mb-2">
+                            <label class="form-label text-reset">File Name</label>
+                            <input type="text" value="${requestInfo.fileName}" class="form-control" readonly>
+                        </div>
+                        <div class="col-6 mb-2">
+                            <label class="form-label text-reset">File Requester</label>
+                            <input type="text" value="${requestInfo.requester}" class="form-control" readonly>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <label class="form-label text-reset">File Description</label>
+                            <input type="text" value="${requestInfo.description}" placeholder="No Description provided" class="form-control" readonly>
+                        </div>
+                        <div class="col-12 mb-2">
+                            <label class="form-label text-reset">File Path</label>
+                            <input type="text" value="${requestInfo.filePath}" class="form-control" readonly>
+                        </div>
+                        <div class="col-12">
+                            <table class="table table-dark m-0">
+                                <thead>
+                                    <tr>
+                                        <td>${(requestInfo.type.toLowerCase() == 'link') ? 'Request' : 'Task'} Id</td>
+                                        <td>Status</td>
+                                        <td style="float:right;">Actions</td>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-border-bottom-0">
+                                    <tr>
+                                        <td><span class="badge bg-label-primary text-reset">${requestInfo.tokenId}</span></td>
+                                        <td>
+                                            <span class="badge bg-label-primary">${requestInfo.status == 0 ? 'Open' : 'Pending'}</span>
+                                        </td>   
+                                        <td style="float:right;">
+                                            <button type="button" class="btn btn-xs btn-success" data-bs-toggle="modal" data-bs-target="#basicModal" onclick="uploadRequestedFile('${requestInfo.tokenId}')">Upload</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+                });
+            }
+        });
+    }
+
+    function reset(elem) {
+        let text = elem.innerHTML;
+        let className = elem.className;
+        setTimeout(() => {
+            elem.innerHTML = text;
+            elem.className = className;
+        }, 3000)
+    }
+
+    function deleteMyRequestsById(requestId) {
+        document.getElementById(requestId + '_element').style.opacity = 0.5;
+        deleteMyRequests(requestId, (response) => {
+            if (response.status == 'success') {
+                document.getElementById(requestId + '_element').style.transform = "scale(0)"
+                setTimeout(() => { document.getElementById(requestId + '_element').remove(); }, 1000);
+            } else {
+                document.getElementById(requestId + '_element').style.opacity = 1;
+            }
+        })
+    }
+    function uploadRequestedFile() {
+        alert("setup")
+    }
+    loadTasks();
+</script>

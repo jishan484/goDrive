@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router({ mergeParams: true });
 const driveService = require("./../../../service/driveService");
 
-router.get('/callback', addDriveCallback);
+router.get('/', addDriveCallback);
 
 module.exports = router;
 

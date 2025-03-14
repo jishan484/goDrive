@@ -11,6 +11,9 @@ router.patch('/', updateFile);
 router.delete('/',deleteFile);
 router.post('/share', shareFile);
 router.delete('/share', cancelSharedFile);
+router.get('/request', getMyRequests);
+router.post('/request', requestFile);
+router.delete('/request/:tokenId', deleteFileRequest);
 
 module.exports = router;
 
@@ -54,7 +57,7 @@ function uploadFile(req, res) {
     });
     fileService.uploadFile(req, (status, data,code=502) => {
         if (status) {
-            res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
+            res.status(200).json({ status: 'success', data: data, error: null, code: '200' }).end();
         } else {
             res.set("connection", "close");
             res.status(code).json({ status: 'error', data: null, error: data, code: '204' }).end();
@@ -101,7 +104,7 @@ function downloadFile(req,res){
 function deleteFile(req , res){
     fileService.deleteFile(req, (status, data) => {
         if (status) {
-            res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
+            res.status(200).json({ status: 'success', data: data, error: null, code: '200' }).end();
         } else {
             res.status(200).json({ status: 'error', data: null, error: data, code: '204' }).end();
         }
@@ -111,7 +114,7 @@ function deleteFile(req , res){
 function updateFile(req, res) {
     fileService.updateFile(req, (status, data) => {
         if (status) {
-            res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
+            res.status(200).json({ status: 'success', data: data, error: null, code: '200' }).end();
         } else {
             res.status(200).json({ status: 'error', data: null, error: data, code: '204' }).end();
         }
@@ -121,7 +124,7 @@ function updateFile(req, res) {
 function shareFile(req, res) {
     fileService.saveSharedFiles(req, (status, data) => {
         if (status) {
-            res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
+            res.status(200).json({ status: 'success', data: data, error: null, code: '200' }).end();
         } else {
             res.status(200).json({ status: 'error', data: null, error: data, code: '204' }).end();
         }
@@ -131,7 +134,39 @@ function shareFile(req, res) {
 function cancelSharedFile(req, res) {
     fileService.cancelSharedFiles(req, (status, data) => {
         if (status) {
-            res.status(200).json({ status: 'success', data: data, error: null, code: '200' });
+            res.status(200).json({ status: 'success', data: data, error: null, code: '200' }).end();
+        } else {
+            res.status(200).json({ status: 'error', data: null, error: data, code: '204' }).end();
+        }
+    });
+}
+
+function requestFile(req, res) {
+    fileService.initRequestFile(req, (status, data) => {
+        if (status) {
+            res.status(200).json({ status: 'success', data: data, error: null, code: '200' }).end();
+        } else {
+            res.status(200).json({ status: 'error', data: null, error: data, code: '204' }).end();
+        }
+    });
+}
+
+function getMyRequests(req, res) {
+    req.body = req.query;
+    fileService.getMyRequests(req, (status, data) => {
+        if (status) {
+            res.status(200).json({ status: 'success', data: data, error: null, code: '200' }).end();
+        } else {
+            res.status(200).json({ status: 'error', data: null, error: data, code: '204' }).end();
+        }
+    });
+}
+
+function deleteFileRequest(req, res) {
+    req.body = req.params;
+    fileService.deleteFileRequest(req, (status, data) => {
+        if (status) {
+            res.status(200).json({ status: 'success', data: data, error: null, code: '200' }).end();
         } else {
             res.status(200).json({ status: 'error', data: null, error: data, code: '204' }).end();
         }

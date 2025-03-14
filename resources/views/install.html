@@ -216,15 +216,11 @@
                   <!-- final installation message -->
                   <div class="tab-pane fade" id="pills-step4" role="tabpanel" aria-labelledby="pills-step3-tab">
                     <div class="row g-6">
-                      <div class="col-12 alert alert-success mb-2">
+                      <div class="col-12 alert alert-success mb-4">
                         <i class="bx bx-check"></i> Installation Completed
                       </div>
-                      <div class="col-12 alert alert-primary">
-                        please wait for server to restart!
-                        The process can take some time!
-                      </div>
-                      <div class="col-12 mt-4">
-                        <a href="/home" id="homeButton" class="btn btn-primary disabled">
+                      <div class="col-12 mt-3">
+                        <a href="/home" class="btn btn-primary">
                           <span class="tf-icons bx bxs-chevrons-right"></span>Go to Dashboard</a>
                       </div>
                     </div>
@@ -412,25 +408,16 @@
           } else {
             switchStep(4);
             setTimeout(checkServerRestartStatus, 2000);
-            setTimeout(()=>{
-              document.getElementById("homeButton").className = 'btn btn-primary';
-            },10000);
           }
         });
       });
 
       function checkServerRestartStatus() {
-        request('/install', {}, 'GET', function (response) {
+        request('/home', {}, 'GET', function (response) {
           if (response) {
-            setTimeout(checkServerRestartStatus, 2000);
+            window.location.href = '/home';
           } else {
-            request('/', {}, 'GET', function (response) {
-              if (response) {
-                window.location.href = '/';
-              } else {
-                setTimeout(checkServerRestartStatus, 2000);
-              }
-            });
+            setTimeout(checkServerRestartStatus, 1000);
           }
         });
       }

@@ -73,11 +73,6 @@ function setEnvIfPresent(configs) {
     for (config in configs) {
         for (key in configs[config]) {
             configs[config][key] = process.env[(config + '_' + key).toUpperCase()] || configs[config][key];
-            console.log(
-                (config + '_' + key).toUpperCase(),
-                process.env[(config + '_' + key).toUpperCase()],
-                configs[config][key]
-            )
         }
     }
     return configs;
