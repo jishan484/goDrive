@@ -67,4 +67,9 @@ router.get('/shared/:tokenId', (req, res) => {
     res.sendFile(path.resolve('resources/views/shared.html'));
 });
 
+router.get('/wiki/apis', (req, res) => {
+    res.set('Cache-Control', 'no-cache, no-store');
+    res.sendFile(path.resolve('resources/views/APIdocument.html'));
+});
+
 module.exports = router

@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation</title>
+
+    <!-- Include PrismJS CSS for syntax highlighting -->
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/themes/prism-tomorrow.min.css" rel="stylesheet"/>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #444;
+        }
+        h2 {
+            background-color: #2a9d8f; /* Green background */
+            color: white;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-size: 20px;
+        }
+        .api-group {
+            margin-top: 15px;
+            background-color: #fff;
+            padding: 12px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .api-group h2 {
+            cursor: pointer;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .api-methods {
+            margin-top: 10px;
+            display: none;
+        }
+        .api-methods.show {
+            display: block;
+        }
+        .api-item {
+            background-color: #fff;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .api-item h3 {
+            margin: 0;
+            color: #2a9d8f;
+            font-size: 14px;
+        }
+        .api-details {
+            margin-top: 10px;
+        }
+
+        /* Styling for HTTP methods */
+        .method-get {
+            background-color: #e0f7fa; /* Light blue for GET */
+        }
+        .method-post {
+            background-color: #c8e6c9; /* Light green for POST */
+        }
+        .method-delete {
+            background-color: #ffb9a4; /* Light red for DELETE */
+        }
+        .method-other {
+            background-color: #d8d8d8; /* Light purple for others */
+        }
+
+        /* Smaller font size for description */
+        .description {
+            font-size: 14px; /* Smaller font size */
+            margin-top: 5px;
+        }
+
+        .input-output {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #2d2d2d;
+            border-radius: 5px;
+        }
+        .input-output strong {
+            color: yellow;
+        }
+        pre {
+            background-color: #2d2d2d;
+            padding: 12px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            color: #ccc;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin: 0;
+            overflow: auto;
+        }
+
+        /* Styling for Middlewares and File Path to make it look cool */
+        .middlewares, .filepath {
+            background-color: #e0f7fa; /* Light cyan background */
+            border-left: 5px solid #00796b; /* Darker cyan left border */
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .middlewares strong, .filepath strong {
+            color: #00796b; /* Darker cyan for strong text */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>API Documentation</h1>
+        <div id="api-container"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.27.0/prism.min.js"></script>
+
+    <script>
+        const apiData = [
+  {
+    "path": "/",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "A static File Route",
+        "description": "Routes for Static Files",
+        "middlewares": "express.static('__PATH__')",
+        "input": "File name with relative path as path param",
+        "output": "File",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "A static File Route",
+        "description": "Routes for Static Files",
+        "middlewares": "express.static('__PATH__')",
+        "input": "File name with relative path as path param",
+        "output": "File",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/pages/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/register",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "Get  register",
+        "description": "Get for the route /register",
+        "input": "",
+        "output": "register.html",
+        "middlewares": "ArrowFunctionExpression (req, res)=>{...}",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/pages/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/home",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "Get  home",
+        "description": "Get for the route /home",
+        "input": "NA",
+        "output": "home.html",
+        "middlewares": "ArrowFunctionExpression (req, res)=>{...}",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/pages/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/admin",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "A static File Route",
+        "description": "Routes for Static Files",
+        "middlewares": "express.static('__PATH__')",
+        "input": "NA",
+        "output": "login.html or redirect",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/pages/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/admin/home",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "Get admin home page",
+        "description": "Get for the route /admin/home",
+        "input": "NA",
+        "output": "admin-home.html",
+        "middlewares": "ArrowFunctionExpression (req, res)=>{...}",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/pages/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/shared/:tokenId",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "Get  shared :tokenId",
+        "description": "Get for the route /shared/:tokenId",
+        "input": "",
+        "output": "share.html",
+        "middlewares": "ArrowFunctionExpression (req, res)=>{...}",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/pages/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/wiki/apis",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "Get  wiki apis",
+        "description": "Get for the route /wiki/apis",
+        "input": "NA",
+        "output": "APIdocument.html",
+        "middlewares": "ArrowFunctionExpression (req, res)=>{...}",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/pages/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/app/auth/login",
+    "methods": [
+      {
+        "method": "POST",
+        "name": "Post  app auth login",
+        "description": "Post for the route /app/auth/login",
+        "input": {
+          "user": "username",
+          "password": "password"
+        },
+        "output": {
+          "status": "failed",
+          "error": "Incorrect username or password entered! Please try again.",
+          "code": "204"
+        },
+        "middlewares": "userLogin",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/./auth.js"
+      }
+    ]
+  },
+  {
+    "path": "/app/auth/logout",
+    "methods": [
+      {
+        "method": "ALL",
+        "name": "__FILL__",
+        "description": "API can handle any type of HTTP method to handle logout",
+        "middlewares": "userLogout",
+        "input": "",
+        "output": "redirect to /",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/./auth.js"
+      }
+    ]
+  },
+  {
+    "path": "/app/auth/register",
+    "methods": [
+      {
+        "method": "POST",
+        "name": "Post  app auth register",
+        "description": "Post for the route /app/auth/register",
+        "input": {
+          "user": "username",
+          "password": "password"
+        },
+        "output": {
+          "status": "failed",
+          "error": "UserName not allowed or already exist! Please choose another username.",
+          "code": "204"
+        },
+        "middlewares": "userRegister",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/./auth.js"
+      }
+    ]
+  },
+  {
+    "path": "/app/u/status/storage",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "Get  app u status storage",
+        "description": "Get for the route /app/u/status/storage",
+        "input": "NA",
+        "output": {
+          "status": "success",
+          "data": {
+            "fileTypes": [
+              {
+                "fileType": "text/css",
+                "size": 90540,
+                "count": 2
+              },
+              {
+                "fileType": "text/html",
+                "size": 1772,
+                "count": 1
+              }
+            ],
+            "totalSize": 92312,
+            "totalFileTypes": 2,
+            "totalFileCount": 3
+          },
+          "error": null,
+          "code": "200"
+        },
+        "middlewares": "getFolder",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/status/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/app/u/folder/",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "Get  app u folder ",
+        "description": "Get for the route /app/u/folder/",
+        "input": "folderPath=%2Fhome&folderName=",
+        "output": {
+          "status": "success",
+          "data": {
+            "id": "0",
+            "folderPath": "/home",
+            "fullPath": "/home",
+            "folderName": "home",
+            "permissions": "RW",
+            "accesses": "FULL",
+            "priority": "NORMAL",
+            "createdOn": "2025-03-15T00:05:19.295Z",
+            "subFolders": [
+              {
+                "folderId": "Fm7xij3b9-1golp",
+                "folderName": "Test22",
+                "folderPath": "/home",
+                "fullPath": "/home/Test22",
+                "parentFolderId": "0",
+                "createdOn": "2025-03-06 15:39:54",
+                "permissions": "RW",
+                "accesses": "FULL",
+                "priority": "NORMAL",
+                "isShared": true
+              },
+              {
+                "folderId": "Fm7xij9ol-4q7zp",
+                "folderName": "Test2",
+                "folderPath": "/home",
+                "fullPath": "/home/Test2",
+                "parentFolderId": "0",
+                "createdOn": "2025-03-06 15:40:02",
+                "permissions": "RW",
+                "accesses": "FULL",
+                "priority": "NORMAL",
+                "isShared": true
+              }
+            ]
+          },
+          "error": null,
+          "code": "200"
+        },
+        "middlewares": "getFolder",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/folder/index.js"
+      },
+      {
+        "method": "POST",
+        "name": "Post  app u folder ",
+        "description": "Post for the route /app/u/folder/",
+        "input": "folderName=new+folder&folderPath=%2Fhome",
+        "output": {
+          "status": "success",
+          "data": "Folder created successfully!",
+          "error": null,
+          "code": "200"
+        },
+        "middlewares": "createFolder",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/folder/index.js"
+      },
+      {
+        "method": "DELETE",
+        "name": "Delete  app u folder ",
+        "description": "Delete for the route /app/u/folder/",
+        "input": "folderPath=%2Fhome&folderName=new+folder",
+        "output": {
+          "status": "success",
+          "data": "Folder deleted successfully!",
+          "error": null,
+          "code": "200"
+        },
+        "middlewares": "deleteFolder",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/folder/index.js"
+      },
+      {
+        "method": "PATCH",
+        "name": "Patch  app u folder ",
+        "description": "Patch for the route /app/u/folder/",
+        "input": "updates%5BfolderName%5D=Test22&folderPath=%2Fhome&folderId=Fm7xij3b9-1golp",
+        "output": {
+          "status": "error",
+          "data": "UPDATION_FAILED",
+          "error": "Folder with same name already present in same location!",
+          "code": "204"
+        },
+        "middlewares": "updateFolder",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/folder/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/app/u/file/",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "Get  app u file ",
+        "description": "Get for the route /app/u/file/",
+        "input": "filePath=%2Fhome&folderName=",
+        "output": {
+          "status": "success",
+          "data": {
+            "files": [
+              {
+                "fileId": "FLm8241af8-atr",
+                "filePath": "/home",
+                "fileName": "hh.html",
+                "fileType": "text/html",
+                "fileSize": 1772,
+                "fileFormat": "html",
+                "access": "RW",
+                "modifiedOn": "2025-03-09 20:52:59",
+                "lastAccessedOn": "2025-03-09 20:52:59",
+                "icon": "html.svg",
+                "star": 0,
+                "isShared": false
+              }
+            ],
+            "folder": "/home"
+          },
+          "error": null,
+          "code": "200"
+        },
+        "middlewares": "getFile",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/file/index.js"
+      },
+      {
+        "method": "POST",
+        "name": "Post  app u file ",
+        "description": "Post for the route /app/u/file/",
+        "input": "file",
+        "output": "200 empty",
+        "middlewares": "uploadFile",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/file/index.js"
+      },
+      {
+        "method": "PATCH",
+        "name": "Patch  app u file ",
+        "description": "Patch for the route /app/u/file/",
+        "input": "updates%5BfileName%5D=hhh.html&filePath=%2Fhome&fileName=&fileId=FLm8241af8-atr",
+        "output": {
+          "status": "success",
+          "data": "File details updated",
+          "error": null,
+          "code": "200"
+        },
+        "middlewares": "updateFile",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/file/index.js"
+      },
+      {
+        "method": "DELETE",
+        "name": "Delete  app u file ",
+        "description": "Delete for the route /app/u/file/",
+        "input": "filePath=%2Fhome&fileId=FLm89gc5kn-2ci1r",
+        "output": {
+          "status": "success",
+          "data": "File deleted",
+          "error": null,
+          "code": "200"
+        },
+        "middlewares": "deleteFile",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/file/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/app/u/file/download/:fileId",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "Get  app u file download",
+        "description": "Get for the route /app/u/file/download",
+        "input": "",
+        "output": "file",
+        "middlewares": "downloadFile",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/file/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/app/u/file/share",
+    "methods": [
+      {
+        "method": "POST",
+        "name": "Post  app u file share",
+        "description": "Post for the route /app/u/file/share",
+        "input": "type=file&folderId=&fileId=FLm8241af8-atr&targetId=FLm8241af8-atr",
+        "output": {
+          "status": "success",
+          "data": {
+            "alreadyShared": false,
+            "type": "file",
+            "folderId": null,
+            "fileId": "FLm8241af8-atr",
+            "sharedId": "FLm8241af8-atr",
+            "owner": "jishan",
+            "tokenId": "SHm89ghk9qng"
+          },
+          "error": null,
+          "code": "200"
+        },
+        "middlewares": "shareFile",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/file/index.js"
+      },
+      {
+        "method": "DELETE",
+        "name": "Delete  app u file share",
+        "description": "Delete for the route /app/u/file/share",
+        "input": "type=file&folderId=&fileId=SHm89ghk9qng&targetId=SHm89ghk9qng)",
+        "output": {
+          "status": "success",
+          "data": "deleted",
+          "error": null,
+          "code": "200"
+        },
+        "middlewares": "cancelSharedFile",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/file/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/app/u/file/request",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "Get  app u file request",
+        "description": "Get for the route /app/u/file/request",
+        "input": "truecreatedByMe=true",
+        "output": {
+          "status": "success",
+          "data": [
+            {
+              "status": 0,
+              "type": "task",
+              "fileName": "my document",
+              "requester": "jishan",
+              "filePath": "/home/Test2",
+              "description": "",
+              "tokenId": "RTm83wlej9ke"
+            },
+            {
+              "status": 0,
+              "type": "link",
+              "fileName": "aa",
+              "requester": "jishan",
+              "filePath": "/home",
+              "description": "",
+              "tokenId": "RLm83wuxuv6v"
+            },
+            {
+              "status": 0,
+              "type": "task",
+              "fileName": "aa",
+              "requester": "jishan",
+              "filePath": "/home",
+              "description": "adsdsf",
+              "tokenId": "RTm850n7fd9o"
+            },
+            {
+              "status": 0,
+              "type": "task",
+              "fileName": "jj",
+              "requester": "jishan",
+              "filePath": "/home",
+              "description": "ll",
+              "tokenId": "RTm87vfjufnf"
+            },
+            {
+              "status": 0,
+              "type": "link",
+              "fileName": "file name",
+              "requester": "jishan",
+              "filePath": "/home/Test",
+              "description": "description",
+              "tokenId": "RLm89fkfxh5b"
+            },
+            {
+              "status": 0,
+              "type": "link",
+              "fileName": "file name",
+              "requester": "jishan",
+              "filePath": "/home",
+              "description": "description",
+              "tokenId": "RLm89gj770fa"
+            }
+          ],
+          "error": null,
+          "code": "200"
+        },
+        "middlewares": "getMyRequests",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/file/index.js"
+      },
+      {
+        "method": "POST",
+        "name": "Post  app u file request",
+        "description": "Post for the route /app/u/file/request",
+        "input": "requestVia=link&fileName=file+name&fileType=Text+File&requestDescription=description&filePath=%2Fhome&requestNote=note&requestLebel=URGENT",
+        "output": {
+          "status": "success",
+          "data": {
+            "type": "link",
+            "fileName": "file name",
+            "fileType": "Text File",
+            "requester": "jishan",
+            "filePath": "/home",
+            "description": "description",
+            "lebel": "URGENT",
+            "note": "note",
+            "tokenId": "RLm89gj770fa"
+          },
+          "error": null,
+          "code": "200"
+        },
+        "middlewares": "requestFile",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/file/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/app/u/file/request/:tokenId",
+    "methods": [
+      {
+        "method": "DELETE",
+        "name": "Delete  app u file request :tokenId",
+        "description": "Delete for the route /app/u/file/request/:tokenId",
+        "input": "",
+        "output": {
+          "status": "success",
+          "error": null,
+          "code": "200"
+        },
+        "middlewares": "deleteFileRequest",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/file/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/app/u/ui/component",
+    "methods": [
+      {
+        "method": "ALL",
+        "name": "get html component by name",
+        "description": "API can handle any type of HTTP method to get component",
+        "middlewares": "sendUIComponent",
+        "input": "component name",
+        "output": "file",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/app/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/admin/auth/login",
+    "methods": [
+      {
+        "method": "POST",
+        "name": "Post  admin auth login",
+        "description": "Post for the route /admin/auth/login",
+        "input": {
+          "user": "username",
+          "password": "password"
+        },
+        "output": {
+          "status": "failed",
+          "error": "Incorrect username or password entered! Please try again.",
+          "code": "204"
+        },
+        "middlewares": "userLogin",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/admin/../app/auth.js"
+      }
+    ]
+  },
+  {
+    "path": "/admin/auth/logout",
+    "methods": [
+      {
+        "method": "ALL",
+        "name": "logout",
+        "description": "API can handle any type of HTTP method to handle logout",
+        "middlewares": "userLogout",
+        "input": "",
+        "output": "redirect to /admin",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/admin/../app/auth.js"
+      }
+    ]
+  },
+  {
+    "path": "/admin/auth/register",
+    "methods": [
+      {
+        "method": "POST",
+        "name": "register a new user/admin in admin dashboard",
+        "description": "Post for the route /admin/auth/register to create a new user or admin",
+        "input": "NA",
+        "output": "NA",
+        "middlewares": "userRegister",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/admin/../app/auth.js"
+      }
+    ]
+  },
+  {
+    "path": "/admin/u/drive/callback/",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "Get  admin u drive callback ",
+        "description": "Get for the route /admin/u/drive/callback/",
+        "input": "NA",
+        "output": "NA",
+        "middlewares": "addDriveCallback",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/admin/./drive/callbacks.js"
+      }
+    ]
+  },
+  {
+    "path": "/admin/u/drive/",
+    "methods": [
+      {
+        "method": "POST",
+        "name": "Post  admin u drive ",
+        "description": "Post for the route /admin/u/drive/",
+        "input": "NA",
+        "output": "NA_CANT BE PROVIDED_",
+        "middlewares": "addDrive",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/admin/drive/index.js"
+      },
+      {
+        "method": "GET",
+        "name": "Get  admin u drive ",
+        "description": "Get for the route /admin/u/drive/",
+        "input": "NA",
+        "output": "NA_CANT BE PROVIDED_",
+        "middlewares": "getAllDrives",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/admin/drive/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/admin/u/status/",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "Get  admin u status ",
+        "description": "Get for the route /admin/u/status/",
+        "input": "NA",
+        "output": "NA_CANT BE PROVIDED_",
+        "middlewares": "getStatus",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/admin/status/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/admin/u/task/",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "Get  admin u task ",
+        "description": "Get for the route /admin/u/task/",
+        "input": "NA",
+        "output": "NA_CANT BE PROVIDED_",
+        "middlewares": "getTasks",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/admin/task/index.js"
+      },
+      {
+        "method": "PUT",
+        "name": "Put  admin u task ",
+        "description": "Put for the route /admin/u/task/",
+        "input": "NA",
+        "output": "NA_CANT BE PROVIDED_",
+        "middlewares": "updateTasks",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/admin/task/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/admin/u/task/run",
+    "methods": [
+      {
+        "method": "POST",
+        "name": "Post  admin u task run",
+        "description": "Post for the route /admin/u/task/run",
+        "input": "NA",
+        "output": "NA_CANT BE PROVIDED_",
+        "middlewares": "runTasks",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/admin/task/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/admin/u/user/",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "Get  admin u user ",
+        "description": "Get for the route /admin/u/user/",
+        "input": "NA",
+        "output": "NA_CANT BE PROVIDED_",
+        "middlewares": "getUsers",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/admin/user/index.js"
+      },
+      {
+        "method": "POST",
+        "name": "Post  admin u user ",
+        "description": "Post for the route /admin/u/user/",
+        "input": "NA",
+        "output": "NA_CANT BE PROVIDED_",
+        "middlewares": "createProfile",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/admin/user/index.js"
+      },
+      {
+        "method": "PUT",
+        "name": "Put  admin u user ",
+        "description": "Put for the route /admin/u/user/",
+        "input": "NA",
+        "output": "NA_CANT BE PROVIDED_",
+        "middlewares": "updateUserStatus",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/admin/user/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/admin/u/user/search/",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "Get  admin u user search ",
+        "description": "Get for the route /admin/u/user/search/",
+        "input": "NA",
+        "output": "NA_CANT BE PROVIDED_",
+        "middlewares": "searchUsers",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/admin/user/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/admin/u/ui/component",
+    "methods": [
+      {
+        "method": "ALL",
+        "name": "__FILL__",
+        "description": "API can handle any type of HTTP method to handle component",
+        "middlewares": "sendUIComponent",
+        "input": "",
+        "output": "",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/admin/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/external/v1/download/:tokenId",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "Get  external v1 download :tokenId",
+        "description": "Get for the route /external/v1/download/:tokenId",
+        "input": "",
+        "output": "File",
+        "middlewares": "downloadFile",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/external/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/external/v1/file/:tokenId",
+    "methods": [
+      {
+        "method": "ALL",
+        "name": "__FILL__",
+        "description": "API can handle any type of HTTP method to handle file",
+        "middlewares": "getSharedFile",
+        "input": "",
+        "output": {
+          "status": "success",
+          "data": {
+            "files": [
+              {
+                "fileName": "styles.css",
+                "fileType": "text/css",
+                "fileSize": 45270,
+                "fileFormat": "css",
+                "modifiedOn": "2025-03-08 11:06:39",
+                "icon": "css.svg",
+                "downloadURL": "emd5pu0214b52hj36x3gy29t41m5y7k20mz5c2rj1435ctuu6w"
+              }
+            ],
+            "sharedBy": "jishan"
+          },
+          "error": null,
+          "code": "200"
+        },
+        "filepath": "/home/jishan/goDrive/goDrive/controller/external/index.js"
+      }
+    ]
+  },
+  {
+    "path": "/image/format/*",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "Get  image format any",
+        "description": "Get for the route /image/format/*",
+        "input": "FILE_NAME as path param",
+        "output": "file",
+        "middlewares": "ArrowFunctionExpression (req, res)=>{...}",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/index.js"
+      }
+    ]
+  },
+  {
+    "path": "*",
+    "methods": [
+      {
+        "method": "GET",
+        "name": "Get any",
+        "description": "Get for the route *",
+        "input": "anything",
+        "output": "404.html",
+        "middlewares": "ArrowFunctionExpression (req, res)=>{...}",
+        "filepath": "/home/jishan/goDrive/goDrive/controller/index.js"
+      }
+    ]
+  }
+];
+
+        function generateApiDocs() {
+            const container = document.getElementById('api-container');
+
+            apiData.forEach(group => {
+                const groupSection = document.createElement('div');
+                groupSection.classList.add('api-group');
+
+                const groupTitle = document.createElement('h2');
+                groupTitle.textContent = `API Path: ${group.path}`;
+                groupSection.appendChild(groupTitle);
+
+                const apiGroupContent = document.createElement('div');
+                apiGroupContent.classList.add('api-methods');
+
+                group.methods.forEach(method => {
+                    const apiItem = document.createElement('div');
+                    apiItem.classList.add('api-item');
+
+                    // Add a specific class based on the HTTP method
+                    let methodClass = 'method-other'; // Default color
+                    if (method.method === 'GET') {
+                        methodClass = 'method-get';
+                    } else if (method.method === 'POST') {
+                        methodClass = 'method-post';
+                    } else if (method.method === 'DELETE') {
+                        methodClass = 'method-delete';
+                    }
+
+                    apiItem.classList.add(methodClass);
+
+                    const methodTitle = document.createElement('h3');
+                    methodTitle.textContent = `${method.name || method.method}`;
+                    apiItem.appendChild(methodTitle);
+
+                    const description = document.createElement('div');
+                    description.classList.add('description');
+                    description.innerHTML = `<strong>Description:</strong> ${method.description}`;
+                    apiItem.appendChild(description);
+
+                    const middlewares = document.createElement('div');
+                    middlewares.classList.add('middlewares');
+                    middlewares.innerHTML = `<strong>Middlewares:</strong> ${method.middlewares && method.middlewares.length > 0 ? method.middlewares : 'None'}`;
+                    apiItem.appendChild(middlewares);
+
+                    const filepath = document.createElement('div');
+                    filepath.classList.add('filepath');
+                    filepath.innerHTML = `<strong>File Path:</strong> ${method.filepath}`;
+                    apiItem.appendChild(filepath);
+
+                    const inputSection = document.createElement('div');
+                    inputSection.classList.add('input-output');
+                    inputSection.innerHTML = `<strong>Input:</strong><pre class="language-json">${JSON.stringify(method.input, null, 2)}</pre>`;
+                    apiItem.appendChild(inputSection);
+
+                    const outputSection = document.createElement('div');
+                    outputSection.classList.add('input-output');
+                    outputSection.innerHTML = `<strong>Output:</strong><pre class="language-json">${JSON.stringify(method.output, null, 2)}</pre>`;
+                    apiItem.appendChild(outputSection);
+
+                    apiGroupContent.appendChild(apiItem);
+                });
+
+                // Toggle method list visibility when clicking on the API group title
+                groupTitle.addEventListener('click', () => {
+                    apiGroupContent.classList.toggle('show');
+                });
+
+                groupSection.appendChild(apiGroupContent);
+                container.appendChild(groupSection);
+            });
+        }
+
+        generateApiDocs();
+    </script>
+</body>
+</html>
