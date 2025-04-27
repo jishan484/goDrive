@@ -28,6 +28,13 @@ app.use('/remote', require('./webDav/index.js'));
 app.propfind('/', require('./webDav/index.js'));
 app.options('/', require('./webDav/index.js'));
 
+const swaggerUi = require("swagger-ui-express");
+const fs = require("fs");
+if (fs.existsSync("./swagger-output.json")) {
+    const swaggerDocument = require("../swagger-output.json");
+    app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+}
+
 app.get('/image/format/*',(req,res)=>{
     res.sendFile(path.resolve('resources/public/image/format/app.svg'));
 });

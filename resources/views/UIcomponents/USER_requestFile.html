@@ -1,0 +1,214 @@
+<div class="container-xxl flex-grow-1 container-p-y">
+    <div class="card mb-4 py-1 m-0">
+        <div class="card-body d-flex align-items-center justify-content-between p-2">
+            <div class="tab-pane fade show active" id="pills-step1" role="tabpanel" aria-labelledby="pills-step1-tab">
+                <form id="form1" method="POST" onsubmit="return false;">
+                    <div class="row g-6" id="request_content_body">
+                        <div class="col-12 alert alert-dark">
+                            <i class="bx bx-help-circle"></i> Provide the details below to help the user identify the
+                            correct file to upload.
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="FileName" class="form-label">File Name <span style="color:red;">*
+                                </span></label>
+                            <input type="text" id="FileName" name="FileName" class="form-control" autocomplete="off"
+                                required="true">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="FileType" class="form-label">File Type</label>
+                            <input type="text" list="FileType-list" id="FileType" name="FileType" class="form-control"
+                                autocomplete="off">
+                            <datalist id="FileType-list">
+                                <option value="Text File">
+                                <option value="Excel File">
+                                <option value="Word Document">
+                                <option value="Image">
+                                <option value="Music">
+                                <option value="Video">
+                                <option value="Movie">
+                                <option value="Application">
+                                <option value="Spreadsheet">
+                                <option value="Presentation">
+                                <option value="PDF">
+                                <option value="eBook">
+                                <option value="Archive">
+                                <option value="Audio Book">
+                                <option value="Document">
+                                <option value="Executable">
+                                <option value="Font">
+                                <option value="GIF">
+                                <option value="HTML">
+                                <option value="JavaScript">
+                                <option value="XML">
+                                <option value="Compressed File">
+                                <option value="Code">
+                                <option value="SQL">
+                                <option value="work">
+                                <option value="secrate">
+                                <option value="hidden">
+                                <option value="notes">
+                                <option value="CSV">
+                                <option value="Markdown">
+                                <option value="ZIP">
+                                <option value="book">
+                            </datalist>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="RequestDescription" class="form-label">Request Description</label>
+                            <input type="text" id="RequestDescription" name="RequestDescription" class="form-control"
+                                autocomplete="off">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="FileLocation" class="form-label">File Location <span
+                                    style="color:red;">*</span></label>
+                            <input type="text" id="FileLocation" name="FileLocation" class="form-control"
+                                autocomplete="off" data-bs-toggle="modal" data-bs-target="#folderSelector" value="/home"
+                                placeholder="Select Target Folder"
+                                onclick="loadFolderListForSlector(this.value,this.value)" readonly
+                                style="background-color: #ffffff;">
+                            <div class="modal modal-top hidden fade" id="folderSelector" tabindex="-1">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="exampleModalLabel1">Select Folder</h4>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col mb-3">
+                                                    <div class="form-control" id="current_folderList_selector">/home
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row" id="folderList_selector"
+                                                style="max-height: 200px; overflow-y: auto;">
+                                                <div class="spinner-border centerXMS centerY text-primary"
+                                                    role="status"></div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" id="close_folder_selector"
+                                                class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                                Close </button>
+                                            <button type="button" class="btn btn-primary" onclick="selectFolderName()"
+                                                id="SLCTBTN" data-bs-dismiss="modal">Select Folder</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 database-field">
+                            <label for="FileNotes" class="form-label">File Notes</label>
+                            <input type="text" id="FileNotes" name="FileNotes" class="form-control" autocomplete="off">
+                        </div>
+                        <div class="col-md-6 database-field">
+                            <label for="FileLebel" class="form-label">File Lebel</label>
+                            <input type="text" id="FileLebel" list="FileLebel-list" name="FileLebel"
+                                class="form-control" autocomplete="off" autocapitalize="on">
+                            <datalist id="FileLebel-list">
+                                <option value="URGENT">
+                                <option value="IMPORTANT">
+                                <option value="CONFIDENTIAL">
+                                <option value="PENDING">
+                                <option value="APPROVED">
+                                <option value="REJECTED">
+                                <option value="ARCHIVED">
+                                <option value="REVIEW">
+                                <option value="FOLLOW UP">
+                                <option value="PERSONAL">
+                                <option value="WORK">
+                                <option value="OPEN">
+                                <option value="OFFICIAL">
+                                <option value="OPENSOURCE">
+                                <option value="LARGE">
+                                <option value="BIG">
+                                <option value="SMALL">
+                                <option value="NEW">
+                                <option value="CREATED">
+                                <option value="COMPLETED">
+                            </datalist>
+                        </div>
+
+                        <div class="col-md-6 mt-3">
+                            <button type="submit" class="btn btn-primary" onclick="requestFileByType('link')">
+                                <span class="tf-icons bx bx-link"></span> Request Via Link</button>
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <button type="submit" class="btn btn-primary" onclick="requestFileByType('task')">
+                                <span class="tf-icons bx bx-task"></span> Create Task</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    function loadFolderListForSlector(folderName, _current = '/home') {
+        current_folderList_selector.innerHTML = _current;
+        folderList_selector.innerHTML = '<div class="spinner-border centerXMS centerY text-primary" role="status"></div>';
+        fetchFolderList(folderName, (folders) => {
+            if (document.getElementById('folderList_selector') == undefined) return;
+            if (folders) {
+                folderList_selector.innerHTML = `<div class="button btn-outline-secondary mb-1" onclick="loadFolderListForSlector('${_current}','${_current}')"><i class="bx bx-folder-open"></i> .</div>`;
+                if (_current != '/home') folderList_selector.innerHTML += `<div class="button btn-outline-secondary mb-1" onclick="loadFolderListForSlector('${_current.split('/').slice(0, -1).join('/')}','${_current.split('/').slice(0, -1).join('/')}')"><i class="bx bx-folder-open"></i> ..</div>`;
+                folders.forEach(subdir => {
+                    folderList_selector.innerHTML += `<div class="button btn-outline-secondary mb-1" onclick="loadFolderListForSlector('${subdir.fullPath}','${subdir.fullPath}')"><i class="bx bx-folder-open"></i><span style="color:#2ec9bb;"> ${subdir.folderName}</span></div>`;
+                });
+            }
+        });
+    }
+
+    function selectFolderName() {
+        FileLocation.value = current_folderList_selector.innerHTML;
+    }
+
+    function requestFileByType(type = "link") {
+        let fileName = document.getElementById("FileName").value;
+        let fileType = document.getElementById("FileType").value;
+        let description = document.getElementById("RequestDescription").value;
+        let fileLocation = document.getElementById("FileLocation").value;
+        let requestNote = document.getElementById("FileNotes").value;
+        let requestLebel = document.getElementById("FileLebel").value;
+
+        requestFileUpload(type, fileName, fileType, description, fileLocation, requestNote, requestLebel, (response, error) => {
+            if (response) {
+                if (response.data != undefined && response.data.type == 'link')
+                    renderRequestFileInfo(response.data);
+
+                document.getElementById("request_content_body").innerHTML = `
+                <div class="col-12 alert alert-dark py-1">
+                    <h3 class="mt-0 mb-0"><i class="bx bx-conversation"></i> Request File</h3>
+                </div>
+                <div class="col-12 alert alert-dark">
+                    <i class="bx bx-info-circle"></i> ${response.data.type == 'link'?'Link':'Task'} Created
+                </div>
+                <div class="col-md-6">
+                    <label for="FileName" class="form-label">${response.data.type == 'link'?'Request':'Task'} Id</label>
+                    <input type="text" class="form-control" value='${response.data.tokenId}' readonly>
+                </div>
+                <div class="col-md-6">
+                    <label for="FileName" class="form-label">${response.data.type == 'link'?'Request':'Task'} Status</label>
+                    <input type="text" class="form-control" value="Open" readonly>
+                </div>
+                <div class="col-md-12">
+                    <label for="FileName" class="form-label">${response.data.type == 'link'?'Request':'Task'} Description</label>
+                    <input type="text" class="form-control" value='${response.data.description}' readonly>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <button type="submit" class="btn btn-primary" onclick="loadComponent(this,'myRequests')">
+                        <span class="tf-icons bx bx-book"></span> Go to My Requests</button>
+                </div>
+                <div class="col-md-6 mt-3">
+                    <button type="submit" class="btn btn-primary" onclick="loadComponent(RequestFileComponent,'requestFile')">
+                        <span class="tf-icons bx bx-message-square-add"></span> Request a New File</button>
+                </div>`;
+            }
+        });
+    }
+</script>

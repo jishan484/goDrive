@@ -1,11 +1,18 @@
 function loadComponent(div, componentName, targetDiv = 'component-wrapper') {
-    request('/app/u/ui/component', { name: componentName, UIroot: false, format: 'html/text' }, 'GET', (response) => {
-        if (response.status == 'success') {
-            $('#' + targetDiv).html(response.data);
-            $('#layout-menu > ul > .active').removeClass('active');
-            $(div).addClass('active');
-        }
-    }, true)
+    return new Promise((resolve, reject) => {
+        request('/app/u/ui/component', {name: componentName, UIroot: false, format:'html/text'}, 'GET', (response) => {
+            if (response.status == 'success') {
+                $('#'+targetDiv).html(response.data);
+                if(div != null) {
+                    $('#layout-menu > ul > .active').removeClass('active');
+                    $(div).addClass('active');
+                }
+                resolve();
+            } else {
+                reject();
+            }
+        }, true)
+    });
 }
 //load the user dashboard component during document onload
 loadComponent('#DashboardComponent', 'dashboard');
@@ -310,6 +317,60 @@ function renderSharedFileInfo(resp) {
 
     $("#popups-wrapper").html(html);
 }
+function renderRequestFileInfo(resp) {
+    resp.description = (resp.description == '')?'Please Upload the Requested File.':resp.description;
+    let html = `
+        <div class="modal fade show" aria-labelledby="modalToggleLabel" tabindex="-1" style="display: block;" aria-modal="true" role="dialog">
+                          <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                              <div class="modal-header py-1">
+                                <h4 class="modal-title" id="modalToggleLabel">Copy Link Address</h4>
+                              </div>
+                              <small class="modal-header py-1">Share the link with the user to request the file.</small>'
+                              <div class="modal-body py-1">
+                                <div class="alert alert-secondary mb-1 text-break" role="alert" id="renderSharedFileInfo_popup_url">
+                                ${window.location.protocol + "//" + window.location.host + '/request/' + resp.tokenId}
+                                </div>
+                                <div class="btn-group centerX mt-2 mb-2 w-50" role="group" aria-label="First group" style="min-width:200px;">
+                              <a type="button" class="btn btn-outline-secondary" target="_black"
+                              href="whatsapp://send?text=${getTextForFileRequestWithLink(resp,"whatsapp")}">
+                                <i class='bx bxl-whatsapp'></i>
+                              </a>
+                              <a type="button" class="btn btn-outline-secondary" target="_black"
+                              href="mailto:?subject=${encodeURIComponent(resp.requester + ' has requested you to upload a file!')}&body=${getTextForFileRequestWithLink(resp, "mail")}">
+                                <i class='bx bx-envelope'></i>
+                              </a>
+                              <a type="button" class="btn btn-outline-secondary" target="_black"
+                              href="sms:?body=${getTextForFileRequestWithLink(resp, "text")}">
+                                <i class='bx bx-message-rounded-dots'></i>
+                              </a>
+                              ${(navigator.share)?`
+                                <button type="button" class="btn btn-outline-secondary" onclick="shareButtonActionForRequestFile('${resp.requester}','${resp.type}','${resp.fileId}','${resp.folderId}','${resp.tokenId}')">
+                                    <i class='bx bx-share'></i>
+                                </button>
+                              `:''}
+                            </div>
+                                
+                                <div style="line-height:15px;font-size:0.74rem;" class="text-light m-1">You can share the link below with the targeted user to request the file.</div>
+                                <div style="line-height:15px;font-size:0.84rem; color:#ffa083;text-align:center;" class="form-control m-1">The user can upload the file using this link without authentication.</div>
+                                
+                              </div>
+                              <div class="modal-footer">
+                                <button class="btn btn-danger" onclick="$('#popups-wrapper').html('')">
+                                  Close
+                                </button>
+                                <button class="btn btn-primary" id = "renderSharedFileInfo_popup_button"
+                                onclick="copyText('renderSharedFileInfo_popup_url', this)">
+                                <i class='bx bx-share-alt'></i> Copy Link
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+    `;
+
+    $("#popups-wrapper").html(html);
+}
 
 
 
@@ -409,10 +470,10 @@ async function loadFolders(folderName, opt = false) {
 }
 
 
-function copyText(id, elm) {
+function copyText(id, elm, newClass="btn btn-success") {
     if (navigator && navigator.clipboard) {
         navigator.clipboard.writeText($("#" + id).text().replace(/\n| /g, "")).then(function () {
-            $(elm).html('Copied').removeClass().addClass('btn btn-secondary').delay(1000).queue(function (next) { $('#popups-wrapper').html(''); next(); })
+            $(elm).html('Copied').removeClass().addClass(newClass).delay(1000).queue(function (next) { $('#popups-wrapper').html(''); next(); })
         }, function () {
             alert('Failure to copy. Please Manually copy the link!')
         });
@@ -424,7 +485,7 @@ function copyText(id, elm) {
         try {
             document.execCommand('copy');
             window.getSelection().removeAllRanges();
-            $(elm).html('Copied').removeClass().addClass('btn btn-secondary').delay(1000).queue(function (next) { $('#popups-wrapper').html(''); next(); })
+            $(elm).html('Copied').removeClass().addClass(newClass).delay(1000).queue(function (next) { $('#popups-wrapper').html(''); next(); })
         } catch (err) {
             alert('Unable to copy!');
         }
@@ -920,7 +981,7 @@ function shareButtonAction(owner, type, fileId, folderId, tokenId) {
         _last_requested_folder_response.subFolders.filter(x => (x.folderId == folderId))[0];
     if (navigator.share) {
         navigator.share({
-            title: 'Example Page',
+            title: `${owner} has shared a ${type} with you.`,
             text: 
 `${owner} has shared a ${type} with you.
 ${(type=='file') ? `📄 File Name: ${fileOrFolder.fileName}
@@ -978,6 +1039,67 @@ ${isFile_ ? `
 You can download the file :here: ${link}`
     }
     return encodeURIComponent(details.trim());
+}
+
+function getTextForFileRequestWithLink(resp, type="whatsapp") {
+    let details = '';
+        let link = window.location.protocol + "//" + window.location.host + '/request/' + resp.tokenId;
+    if(type == "whatsapp"){
+        details +=
+`*${resp.requester}* has requested you to upload a file.
+> *💾 File Name:* ${resp.fileName}
+> *📄 File Description:* ${resp.description} ${(resp.note!=undefined && resp.note!='')? `
+> *📝 Note:* ${resp.note}` : ""} ${(resp.lebel!=undefined && resp.lebel!='')? `
+> *🪧 Lebel:* ${resp.lebel}` : ""}
+You can use the link below to upload the file.
+> 📡 _${link}_
+`;
+    } else if (type == "mail") {
+        details += `
+Hello,
+
+${resp.requester} has requested you to upload a file. Below are the details. Please use the link to upload the file.
+    File: ${resp.fileName}
+    Description: ${resp.description} ${(resp.note!=undefined && resp.note!='')? `
+    Note: ${resp.note}` : ""} ${(resp.lebel!=undefined && resp.lebel!='')? `
+    Lebel: ${resp.lebel}` : ""} ${(resp.fileType!=undefined && resp.fileType!='')? `
+    File Type: ${resp.fileType}` : ""}
+    Requester: ${resp.requester}
+
+${link}
+
+
+    © ${new Date().getFullYear()}, made with ❤️ by MiFi`;
+    } else if(type == "text") {
+        details += `
+Hello,
+
+${resp.requester} has requested you to upload a file.
+    File: ${resp.fileName}
+    Description: ${resp.description}
+    ${(resp.note!=undefined && resp.note!='')? `Note: ${resp.note}` : ""}
+
+Please use the link to upload the file. :here: ${link}`
+    }
+    return encodeURIComponent(details.trim());
+}
+
+function shareButtonActionForRequestFile(owner, fileName, description, note, tokenId) {
+    if (navigator.share) {
+        navigator.share({
+            title: `${owner} has requested a file`,
+            text: 
+`${owner} has requested you to upload a file.
+    File: ${fileName}
+    Description: ${description}
+    ${(note==undefined)? `Note: ${note}` : ""}
+Please use the link to upload the file.`,
+            url: window.location.protocol + "//" + window.location.host + '/request/' + tokenId,
+        })
+            .then(() => successToast(`Request shared successfully!`))
+    } else {
+        errorToast('This Option is not supported on this device.');
+    }
 }
 
 // check for site idle for more than 5 minutes on gobal events

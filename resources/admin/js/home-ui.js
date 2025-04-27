@@ -1,13 +1,20 @@
 // UI component loader : This will load html codes for different pages
 
 function loadComponent(div,componentName, targetDiv = 'component-wrapper'){
-    request('/admin/u/ui/component', {name: componentName, UIroot: false, format:'html/text'}, 'GET', (response) => {
-        if (response.status == 'success') {
-            $('#'+targetDiv).html(response.data);
-            $('#layout-menu > ul > .active').removeClass('active');
-            $(div).addClass('active');
-        }
-    }, true)
+    return new Promise((resolve, reject) => {
+        request('/admin/u/ui/component', {name: componentName, UIroot: false, format:'html/text'}, 'GET', (response) => {
+            if (response.status == 'success') {
+                $('#'+targetDiv).html(response.data);
+                if(div != null) {
+                    $('#layout-menu > ul > .active').removeClass('active');
+                    $(div).addClass('active');
+                }
+                resolve();
+            } else {
+                reject();
+            }
+        }, true)
+    });
 }
 //load the dashboad component during document onload
 loadComponent(this, 'dashboard');
