@@ -52,7 +52,7 @@ function checkAuth(req,res,next){
             res.set("connection", "close");
             res.status(403).send({
                 uri: RouterConfig.force_login_redirect_urn,
-                error: "You are not logged in!",
+                error: "You are not allowed to call APIs outside UI App!",
                 code: "403",
                 data: null
             }).end();
