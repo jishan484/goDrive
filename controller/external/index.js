@@ -6,6 +6,7 @@ const log = require('../../service/logService/index.js');
 
 router.get("/v1/download/:tokenId", downloadFile);
 router.use("/v1/file", getSharedFile);
+router.get("/v1/request/:tokenId", getRequestedFileInfo)
 
 module.exports = router
 
@@ -53,6 +54,17 @@ function downloadFile(req, res) {
 
 function getSharedFile(req,  res) {
     fileService.getSharedFiles(req, (status, data) => {
+        if (status) {
+            res.status(200).json({ status: 'success', data: data, error: null, code: '200' }).end();            
+        } else {
+            res.status(200).json({ status: 'error', data: null, error: data, code: '404' }).end();
+        }
+    });
+}
+
+function getRequestedFileInfo(req, res) {
+    req.body = req.params;
+    fileService.getMyRequests(req, (status, data)=>{
         if (status) {
             res.status(200).json({ status: 'success', data: data, error: null, code: '200' }).end();            
         } else {
