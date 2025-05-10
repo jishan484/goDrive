@@ -8,7 +8,6 @@ function loadSharedFile() {
         type: "GET",
         data: datas,
         success: (data, text) => {
-            console.log(data.data[0])
             renderFiles(data.data[0]);
         }
     });

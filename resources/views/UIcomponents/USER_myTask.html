@@ -6,7 +6,6 @@
     function loadTasks(taskId = null) {
         fetchFileRequests({ createdByOthers: (taskId == null), type: 'task', tokenId: taskId }, (response) => {
             if (response.status == 'success') {
-                console.log(response.data)
                 if (response.data.length == 0) {
                     myRequests.innerHTML = `<div class="alert alert-secondary" role="alert">There are no assignable tasks for you.</div>`;
                 } else myRequests.innerHTML = `<div class="alert alert-primary" role="alert">Task will be closed once a file is successfully uploaded.</div>`;

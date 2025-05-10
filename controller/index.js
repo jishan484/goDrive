@@ -1,8 +1,9 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const {RouterConfig} = require("./../SystemConfig.js");
 const path = require('path');
 const app = express();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || RouterConfig.default_port;
 const parser = express.json();
 
 

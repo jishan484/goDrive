@@ -82,7 +82,9 @@
     function openTask(requestId) {
         loadComponent(null,'myTask')
             .then(() => {
-                loadTasks(requestId);
+                setTimeout(() => {
+                    loadTasks(requestId);
+                }, 100);
             })
     }
 
