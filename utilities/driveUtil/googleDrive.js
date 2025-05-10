@@ -3,19 +3,11 @@ const log = require("../../service/logService");
 const { google } = require('googleapis');
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
+
 
 var credentials = {
-    "installed": {
-        "client_id": "362327116008-s84t091me56g2vb812ho3pl0mssfgagn.apps.googleusercontent.com",
-        "project_id": "driveapp-359312",
-        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-        "token_uri": "https://oauth2.googleapis.com/token",
-        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-        "client_secret": "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",
-        "redirect_uris": [
-            "http://localhost:80/admin/u/drive/callback" //put your domain and port
-        ]
-    }
+    
 };
 
 // this function checks for credential.json file inside /CREDENTIALS folder.
@@ -24,8 +16,8 @@ var credentials = {
 // redirection [GOOGLE DOES NOT ALLOW TO DO THAT, it has to be registered, So using this method]
 function credentials_initialize(){
     let status = fs.existsSync(path.join('CREDENTIALS/google.json'));
-    let cred = fs.readFileSync(path.join('CREDENTIALS/google.json'));
     if(status){
+        let cred = fs.readFileSync(path.join('CREDENTIALS/google.json'));
         try {
             cred = JSON.parse(cred);
             credentials = cred;
@@ -176,6 +168,22 @@ module.exports = class GoogleDrive extends Storage{
             log.log('error', err);
             callback(false, err);
         });
+    }   
+
+    readFileWithRange(nodeId, range, callback){
+        const url = new URL(`https://www.googleapis.com/drive/v3/files/${nodeId}?alt=media`);
+        const options = {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${this.auth.credentials.access_token}`,
+              'Range': range,
+            }
+        };
+        https.request(url, options, res => {
+            if (res.statusCode === 206 || res.statusCode === 200)
+                callback(true, res);
+            else callback(false, "Download failed 500!");
+        }).end();
     }
 
     deleteFile(nodeId , callback , option){
