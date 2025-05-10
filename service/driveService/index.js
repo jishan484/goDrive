@@ -165,6 +165,14 @@ class DriveService{
             callback(false, 'There is no active Drive found!');
         } else if(drive.drive == null){
             callback(false, 'Drives not intiated. Please wait for 10 seconds!');
+        } else if(req.body.range){
+            drive.drive.readFileWithRange(req.body.nodeId, req.body.range,(status,resp)=>{
+                if(status){
+                    callback(true, resp);
+                } else{
+                    callback(false,'Failed to download this file! code : ERRDRV');
+                }
+            });
         } else{
             drive.drive.readFile(req.body.nodeId,(status,resp)=>{
                 if(status){
