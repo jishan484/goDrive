@@ -4,7 +4,7 @@
 a nodejs cloud drive [connect multiple google drive / ftp]
 
 example site : https://mifi.glitch.me <br>
-admin panel : Not developped : in initial stage
+admin panel : https://mifi.glitch.me/admin
 
 please create your own google API credential and put inside /CREDENTIAL folder.
 Modify SystemConfig.js as per your need
@@ -21,9 +21,9 @@ Demo User :
     username : DemoUser
     password : Mifi@User
 (Please change admin password and delete demo user after testing)
-(TODO: give a option during installation for that)
+an option is provided to update admin username and password in the 1st time installation setup
 ````
 
 # Documentation
-Will be available after mid Feb 2023.
+Not available.
 
